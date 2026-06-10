@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"go-analyze/internal/metrics"
+	"github.com/victor-lima-142/go-analyze/internal/metrics"
 )
 
 type PaginatedIndicatorResponse struct {

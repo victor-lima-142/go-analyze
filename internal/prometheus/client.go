@@ -8,9 +8,8 @@ import (
 	promapi "github.com/prometheus/client_golang/api"
 	v1 "github.com/prometheus/client_golang/api/prometheus/v1"
 	"github.com/prometheus/common/model"
-	"go-analyze/internal/metrics"
+	"github.com/victor-lima-142/go-analyze/internal/metrics"
 )
-
 
 type HTTPPrometheusClient struct {
 	api     v1.API

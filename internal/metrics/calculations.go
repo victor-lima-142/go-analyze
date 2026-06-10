@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"go-analyze/internal/numeric"
-	"go-analyze/internal/observability"
+	"github.com/victor-lima-142/go-analyze/internal/numeric"
+	"github.com/victor-lima-142/go-analyze/internal/observability"
 )
 
 type Calculator struct {

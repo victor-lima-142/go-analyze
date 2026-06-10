@@ -8,15 +8,15 @@ import (
 	"syscall"
 	"time"
 
-	"go-analyze/internal/consolidator"
-	"go-analyze/internal/metrics"
-	"go-analyze/internal/notifications"
-	"go-analyze/internal/observability"
-	"go-analyze/internal/prometheus"
-	"go-analyze/internal/scraper"
-	"go-analyze/internal/telemetry"
-	"go-analyze/pkg/config"
-	"go-analyze/pkg/database"
+	"github.com/victor-lima-142/go-analyze/internal/consolidator"
+	"github.com/victor-lima-142/go-analyze/internal/metrics"
+	"github.com/victor-lima-142/go-analyze/internal/notifications"
+	"github.com/victor-lima-142/go-analyze/internal/observability"
+	"github.com/victor-lima-142/go-analyze/internal/prometheus"
+	"github.com/victor-lima-142/go-analyze/internal/scraper"
+	"github.com/victor-lima-142/go-analyze/internal/telemetry"
+	"github.com/victor-lima-142/go-analyze/pkg/config"
+	"github.com/victor-lima-142/go-analyze/pkg/database"
 )
 
 func main() {

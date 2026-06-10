@@ -5,8 +5,8 @@ import (
 	"log/slog"
 	"time"
 
-	"go-analyze/internal/observability"
-	"go-analyze/pkg/models"
+	"github.com/victor-lima-142/go-analyze/internal/observability"
+	"github.com/victor-lima-142/go-analyze/pkg/models"
 )
 
 type QueryParams = models.QueryParams

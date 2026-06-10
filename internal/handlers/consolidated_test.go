@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"go-analyze/pkg/database/entities"
+	"github.com/victor-lima-142/go-analyze/pkg/database/entities"
 )
 
 type mockConsolidationStore struct {

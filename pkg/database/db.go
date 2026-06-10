@@ -7,10 +7,10 @@ import (
 	"strings"
 	"time"
 
-	"go-analyze/internal/metrics"
-	"go-analyze/pkg/config"
-	"go-analyze/pkg/database/entities"
-	"go-analyze/pkg/database/migrations"
+	"github.com/victor-lima-142/go-analyze/internal/metrics"
+	"github.com/victor-lima-142/go-analyze/pkg/config"
+	"github.com/victor-lima-142/go-analyze/pkg/database/entities"
+	"github.com/victor-lima-142/go-analyze/pkg/database/migrations"
 
 	"github.com/lib/pq"
 )

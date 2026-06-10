@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"go-analyze/internal/metrics"
-	"go-analyze/pkg/database/entities"
+	"github.com/victor-lima-142/go-analyze/internal/metrics"
+	"github.com/victor-lima-142/go-analyze/pkg/database/entities"
 )
 
 type DBService interface {

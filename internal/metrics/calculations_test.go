@@ -3,7 +3,7 @@ package metrics
 import (
 	"testing"
 
-	"go-analyze/internal/observability"
+	"github.com/victor-lima-142/go-analyze/internal/observability"
 )
 
 func newTestCalculator() *Calculator {

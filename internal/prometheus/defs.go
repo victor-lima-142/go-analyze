@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"go-analyze/pkg/models"
+	"github.com/victor-lima-142/go-analyze/pkg/models"
 )
 
 type MetricPoint = models.MetricPoint

@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"time"
 
-	"go-analyze/internal/metrics"
-	"go-analyze/internal/numeric"
-	"go-analyze/pkg/database/entities"
+	"github.com/victor-lima-142/go-analyze/internal/metrics"
+	"github.com/victor-lima-142/go-analyze/internal/numeric"
+	"github.com/victor-lima-142/go-analyze/pkg/database/entities"
 )
 
 // AuditDB exposes the historical inputs needed to audit the H1 hypothesis.
@@ -23,17 +23,17 @@ type AuditDB interface {
 // freshly recomputed reference value derived from the same raw inputs and the
 // configured cost model. Designed to validate H1 (error < 10%).
 type AuditResponse struct {
-	Window           string        `json:"window"`
-	StartAt          string        `json:"start_at"`
-	EndAt            string        `json:"end_at"`
-	ScrapesCount     int           `json:"scrapes_count"`
-	CostModel        string        `json:"cost_model"`
-	Reported         float64       `json:"reported_projected_monthly_waste_usd"`
-	Recalculated     float64       `json:"recalculated_projected_monthly_waste_usd"`
-	AbsoluteErrorUSD float64       `json:"absolute_error_usd"`
-	ErrorPercent     float64       `json:"error_percent"`
-	WithinTolerance  bool          `json:"within_10pct_tolerance"`
-	Points           []AuditPoint  `json:"points,omitempty"`
+	Window           string       `json:"window"`
+	StartAt          string       `json:"start_at"`
+	EndAt            string       `json:"end_at"`
+	ScrapesCount     int          `json:"scrapes_count"`
+	CostModel        string       `json:"cost_model"`
+	Reported         float64      `json:"reported_projected_monthly_waste_usd"`
+	Recalculated     float64      `json:"recalculated_projected_monthly_waste_usd"`
+	AbsoluteErrorUSD float64      `json:"absolute_error_usd"`
+	ErrorPercent     float64      `json:"error_percent"`
+	WithinTolerance  bool         `json:"within_10pct_tolerance"`
+	Points           []AuditPoint `json:"points,omitempty"`
 }
 
 type AuditPoint struct {

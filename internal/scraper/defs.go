@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"go-analyze/internal/metrics"
+	"github.com/victor-lima-142/go-analyze/internal/metrics"
 )
 
 type ScraperService interface {

@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"go-analyze/internal/metrics"
+	"github.com/victor-lima-142/go-analyze/internal/metrics"
 )
 
 type WorkloadDetailsResponse struct {

@@ -5,8 +5,8 @@ import (
 	"log/slog"
 	"time"
 
-	"go-analyze/internal/metrics"
-	"go-analyze/internal/telemetry"
+	"github.com/victor-lima-142/go-analyze/internal/metrics"
+	"github.com/victor-lima-142/go-analyze/internal/telemetry"
 )
 
 type Scraper struct {

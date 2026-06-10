@@ -9,9 +9,9 @@ import (
 	"testing"
 	"time"
 
-	"go-analyze/internal/metrics"
-	"go-analyze/internal/observability"
-	"go-analyze/pkg/models"
+	"github.com/victor-lima-142/go-analyze/internal/metrics"
+	"github.com/victor-lima-142/go-analyze/internal/observability"
+	"github.com/victor-lima-142/go-analyze/pkg/models"
 )
 
 type mockPromClient struct {

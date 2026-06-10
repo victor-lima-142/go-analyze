@@ -5,18 +5,18 @@ import (
 	"log/slog"
 	"time"
 
-	"go-analyze/internal/telemetry"
+	"github.com/victor-lima-142/go-analyze/internal/telemetry"
 )
 
 type Notification struct {
-	Indicator         string    `json:"indicator"`
-	Namespace         string    `json:"namespace,omitempty"`
-	Pod               string    `json:"pod,omitempty"`
-	Container         string    `json:"container,omitempty"`
-	Value             float64   `json:"value"`
-	Threshold         float64   `json:"threshold"`
+	Indicator         string        `json:"indicator"`
+	Namespace         string        `json:"namespace,omitempty"`
+	Pod               string        `json:"pod,omitempty"`
+	Container         string        `json:"container,omitempty"`
+	Value             float64       `json:"value"`
+	Threshold         float64       `json:"threshold"`
 	DurationSustained time.Duration `json:"duration_sustained"`
-	FiredAt           time.Time `json:"fired_at"`
+	FiredAt           time.Time     `json:"fired_at"`
 }
 
 type Notifier interface {

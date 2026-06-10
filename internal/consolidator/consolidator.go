@@ -5,10 +5,10 @@ import (
 	"log/slog"
 	"time"
 
-	"go-analyze/internal/notifications"
-	"go-analyze/internal/numeric"
-	"go-analyze/internal/telemetry"
-	"go-analyze/pkg/database/entities"
+	"github.com/victor-lima-142/go-analyze/internal/notifications"
+	"github.com/victor-lima-142/go-analyze/internal/numeric"
+	"github.com/victor-lima-142/go-analyze/internal/telemetry"
+	"github.com/victor-lima-142/go-analyze/pkg/database/entities"
 )
 
 type ConsolidationDB interface {
