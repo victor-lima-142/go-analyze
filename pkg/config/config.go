@@ -40,7 +40,7 @@ type Config struct {
 
 func Load() (*Config, error) {
 	cfg := &Config{
-		PrometheusEndpoint:   os.Getenv("PROMETHEUS_ENDPOINT"),
+		PrometheusEndpoint:   getenv("PROMETHEUS_ENDPOINT", "http://localhost:9090"),
 		ServerAddress:        getenv("SERVER_ADDRESS", ":8080"),
 		QueryTimeout:         durationEnv("QUERY_TIMEOUT", 10*time.Second),
 		DefaultWindow:        getenv("DEFAULT_WINDOW", "10m"),
