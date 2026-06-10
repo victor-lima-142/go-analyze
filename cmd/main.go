@@ -119,6 +119,8 @@ func main() {
 	consolidatedHandler := handlers.NewConsolidatedHandler(dbClient, logger)
 	workloadDetailsHandler := handlers.NewWorkloadDetailsHandler(calculator, dbClient, cfg.DefaultWindow, logger)
 	auditHandler := handlers.NewAuditHandler(dbClient, cfg.CPUHourlyUSD, cfg.MemoryGiBHourlyUSD, cfg.MonthlyHours, cfg.CostModelLabel, logger)
+	experimentResetHandler := handlers.NewExperimentResetHandler(dbClient, tracker, logger)
+
 	healthHandler := handlers.NewHealthHandler(dbClient, func(ctx context.Context) error {
 		probeCtx, cancel := context.WithTimeout(ctx, 2*time.Second)
 		defer cancel()
@@ -137,6 +139,7 @@ func main() {
 	mux.Handle("/api/v1/consolidated", consolidatedHandler)
 	mux.Handle("/api/v1/workloads/details", workloadDetailsHandler)
 	mux.Handle("/api/v1/audit", auditHandler)
+	mux.Handle("/api/v1/experiment/reset", experimentResetHandler)
 
 	server := &http.Server{
 		Addr:              cfg.ServerAddress,

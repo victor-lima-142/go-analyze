@@ -107,5 +107,13 @@ func (t *Tracker) SnapshotState(key IndicatorKey) (above bool, firstAbove time.T
 	return s.above, s.firstAbove, s.lastValue
 }
 
+// Reset clears all tracked states, effectively restarting the duration
+// count for all indicators. This is used between experimental runs.
+func (t *Tracker) Reset() {
+	t.mu.Lock()
+	defer t.mu.Unlock()
+	t.states = make(map[IndicatorKey]*trackedState)
+}
+
 func GreaterThan(value, threshold float64) bool { return value > threshold }
 func LessThan(value, threshold float64) bool    { return value < threshold }

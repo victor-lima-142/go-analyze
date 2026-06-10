@@ -476,3 +476,14 @@ func (d *Database) GetLastWorkloadSnapshots(ctx context.Context, namespace, pod,
 	}
 	return list, nil
 }
+
+// TruncateData removes all records from historical tables. It is used to reset
+// the database state between experimental runs. CASCADE ensures that child
+// snapshots are also removed.
+func (d *Database) TruncateData(ctx context.Context) error {
+	_, err := d.db.ExecContext(ctx, `TRUNCATE TABLE scrapes, consolidations CASCADE`)
+	if err != nil {
+		return fmt.Errorf("failed to truncate tables: %w", err)
+	}
+	return nil
+}
