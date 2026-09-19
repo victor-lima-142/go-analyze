@@ -2,9 +2,11 @@ package handlers
 
 import (
 	"context"
+	"crypto/subtle"
 	"encoding/json"
 	"log/slog"
 	"net/http"
+	"strings"
 )
 
 // ResetDB defines the persistence operations needed to clear experimental state.
@@ -23,9 +25,11 @@ type ExperimentResetHandler struct {
 	db      ResetDB
 	tracker ResetTracker
 	logger  *slog.Logger
+	enabled bool
+	token   string
 }
 
-func NewExperimentResetHandler(db ResetDB, tracker ResetTracker, logger *slog.Logger) *ExperimentResetHandler {
+func NewExperimentResetHandler(db ResetDB, tracker ResetTracker, enabled bool, token string, logger *slog.Logger) *ExperimentResetHandler {
 	if logger == nil {
 		logger = slog.Default()
 	}
@@ -33,6 +37,8 @@ func NewExperimentResetHandler(db ResetDB, tracker ResetTracker, logger *slog.Lo
 		db:      db,
 		tracker: tracker,
 		logger:  logger,
+		enabled: enabled,
+		token:   token,
 	}
 }
 
@@ -42,13 +48,25 @@ func NewExperimentResetHandler(db ResetDB, tracker ResetTracker, logger *slog.Lo
 // @Tags         experiment
 // @Accept       json
 // @Produce      json
+// @Param        Authorization header string true "Bearer token experimental"
 // @Success      200      {object}  map[string]string
+// @Failure      401      {object}  map[string]any
+// @Failure      404      {object}  map[string]any
 // @Failure      405      {object}  map[string]any
 // @Failure      500      {object}  map[string]any
 // @Router       /api/v1/experiment/reset [post]
 func (h *ExperimentResetHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		writeError(w, http.StatusMethodNotAllowed, "method not allowed")
+		return
+	}
+	if !h.enabled {
+		writeError(w, http.StatusNotFound, "experiment reset is disabled")
+		return
+	}
+	provided := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
+	if h.token == "" || provided == "" || subtle.ConstantTimeCompare([]byte(provided), []byte(h.token)) != 1 {
+		writeError(w, http.StatusUnauthorized, "invalid or missing bearer token")
 		return
 	}
 

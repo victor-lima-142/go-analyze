@@ -3,7 +3,6 @@ package metrics
 import (
 	"context"
 	"log/slog"
-	"time"
 
 	"github.com/victor-lima-142/go-analyze/internal/observability"
 	"github.com/victor-lima-142/go-analyze/pkg/models"
@@ -25,7 +24,6 @@ type CalculatorOptions struct {
 	CPUHourlyUSD       float64
 	MemoryGiBHourlyUSD float64
 	MonthlyHours       float64
-	HPAWindow          time.Duration
 	CostModelLabel     string
 	Logger             *slog.Logger
 	Filter             *observability.Filter

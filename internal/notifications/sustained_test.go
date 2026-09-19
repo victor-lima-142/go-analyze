@@ -70,6 +70,24 @@ func TestTracker_BelowThresholdResets(t *testing.T) {
 	}
 }
 
+func TestTracker_GapResetsSustainedCondition(t *testing.T) {
+	notifier := &captureNotifier{}
+	clock := time.Now()
+	tracker := NewTracker(map[string]IndicatorRule{
+		"mem_waste_ratio": {Threshold: .5, RequiredDuration: time.Minute, Comparator: GreaterThan},
+	}, notifier, time.Hour, 20*time.Second)
+	tracker.now = func() time.Time { return clock }
+	key := IndicatorKey{Indicator: "mem_waste_ratio"}
+	tracker.Observe(context.Background(), key, .8)
+	clock = clock.Add(30 * time.Second)
+	tracker.Observe(context.Background(), key, .8)
+	clock = clock.Add(time.Minute)
+	tracker.Observe(context.Background(), key, .8)
+	if len(notifier.got) != 0 {
+		t.Fatalf("gap must restart sustained duration")
+	}
+}
+
 func TestTracker_CooldownPreventsSpam(t *testing.T) {
 	notifier := &captureNotifier{}
 	clock := time.Now()

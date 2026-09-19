@@ -79,7 +79,6 @@ func main() {
 		CPUHourlyUSD:       cfg.CPUHourlyUSD,
 		MemoryGiBHourlyUSD: cfg.MemoryGiBHourlyUSD,
 		MonthlyHours:       cfg.MonthlyHours,
-		HPAWindow:          cfg.HPAWindow,
 		CostModelLabel:     cfg.CostModelLabel,
 		Logger:             logger,
 		Filter:             obsFilter,
@@ -89,9 +88,7 @@ func main() {
 	tracker := notifications.NewTracker(map[string]notifications.IndicatorRule{
 		"cpu_waste_ratio": {Threshold: cfg.WasteThreshold, RequiredDuration: cfg.SustainedCPUMemDur, Comparator: notifications.GreaterThan},
 		"mem_waste_ratio": {Threshold: cfg.WasteThreshold, RequiredDuration: cfg.SustainedCPUMemDur, Comparator: notifications.GreaterThan},
-		"pvc_waste_ratio": {Threshold: cfg.WasteThreshold, RequiredDuration: cfg.SustainedPVCDur, Comparator: notifications.GreaterThan},
-		"hpa_efficiency":  {Threshold: cfg.HPAEfficiencyMin, RequiredDuration: cfg.SustainedCPUMemDur, Comparator: notifications.LessThan},
-	}, notifier, cfg.NotificationCooldown)
+	}, notifier, cfg.NotificationCooldown, 2*cfg.ConsolidateInterval)
 
 	bgScraper := scraper.NewScraper(calculator, dbClient, cfg.ScrapeInterval, cfg.DefaultWindow, logger)
 	go bgScraper.Start(rootCtx)

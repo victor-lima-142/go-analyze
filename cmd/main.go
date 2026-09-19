@@ -11,6 +11,7 @@ import (
 	"syscall"
 	"time"
 
+	_ "github.com/victor-lima-142/go-analyze/docs"
 	"github.com/victor-lima-142/go-analyze/internal/consolidator"
 	"github.com/victor-lima-142/go-analyze/internal/handlers"
 	"github.com/victor-lima-142/go-analyze/internal/metrics"
@@ -95,7 +96,6 @@ func main() {
 		CPUHourlyUSD:       cfg.CPUHourlyUSD,
 		MemoryGiBHourlyUSD: cfg.MemoryGiBHourlyUSD,
 		MonthlyHours:       cfg.MonthlyHours,
-		HPAWindow:          cfg.HPAWindow,
 		CostModelLabel:     cfg.CostModelLabel,
 		Logger:             logger,
 		Filter:             obsFilter,
@@ -105,9 +105,7 @@ func main() {
 	tracker := notifications.NewTracker(map[string]notifications.IndicatorRule{
 		"cpu_waste_ratio": {Threshold: cfg.WasteThreshold, RequiredDuration: cfg.SustainedCPUMemDur, Comparator: notifications.GreaterThan},
 		"mem_waste_ratio": {Threshold: cfg.WasteThreshold, RequiredDuration: cfg.SustainedCPUMemDur, Comparator: notifications.GreaterThan},
-		"pvc_waste_ratio": {Threshold: cfg.WasteThreshold, RequiredDuration: cfg.SustainedPVCDur, Comparator: notifications.GreaterThan},
-		"hpa_efficiency":  {Threshold: cfg.HPAEfficiencyMin, RequiredDuration: cfg.SustainedCPUMemDur, Comparator: notifications.LessThan},
-	}, notifier, cfg.NotificationCooldown)
+	}, notifier, cfg.NotificationCooldown, 2*cfg.ConsolidateInterval)
 
 	bgScraper := scraper.NewScraper(calculator, dbClient, cfg.ScrapeInterval, cfg.DefaultWindow, logger)
 	go bgScraper.Start(rootCtx)
@@ -119,7 +117,7 @@ func main() {
 	consolidatedHandler := handlers.NewConsolidatedHandler(dbClient, logger)
 	workloadDetailsHandler := handlers.NewWorkloadDetailsHandler(calculator, dbClient, cfg.DefaultWindow, logger)
 	auditHandler := handlers.NewAuditHandler(dbClient, cfg.CPUHourlyUSD, cfg.MemoryGiBHourlyUSD, cfg.MonthlyHours, cfg.CostModelLabel, logger)
-	experimentResetHandler := handlers.NewExperimentResetHandler(dbClient, tracker, logger)
+	experimentResetHandler := handlers.NewExperimentResetHandler(dbClient, tracker, cfg.ExperimentResetEnabled, cfg.ExperimentResetToken, logger)
 
 	healthHandler := handlers.NewHealthHandler(dbClient, func(ctx context.Context) error {
 		probeCtx, cancel := context.WithTimeout(ctx, 2*time.Second)

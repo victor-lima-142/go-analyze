@@ -35,7 +35,17 @@ var (
 	NotificationsTotal = promauto.NewCounterVec(prometheus.CounterOpts{
 		Name: "go_analyze_notifications_total",
 		Help: "Number of overprovisioning notifications emitted.",
-	}, []string{"indicator"})
+	}, []string{"indicator", "scope", "namespace", "pod", "container"})
+
+	NotificationLastTimestamp = promauto.NewGaugeVec(prometheus.GaugeOpts{
+		Name: "go_analyze_notification_last_timestamp_seconds",
+		Help: "Unix timestamp of the last overprovisioning notification.",
+	}, []string{"indicator", "scope", "namespace", "pod", "container"})
+
+	NotificationSustainedDuration = promauto.NewGaugeVec(prometheus.GaugeOpts{
+		Name: "go_analyze_notification_sustained_duration_seconds",
+		Help: "Sustained duration observed when the last notification fired.",
+	}, []string{"indicator", "scope", "namespace", "pod", "container"})
 
 	HTTPRequestDuration = promauto.NewHistogramVec(prometheus.HistogramOpts{
 		Name:    "go_analyze_http_request_duration_seconds",

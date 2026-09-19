@@ -11,6 +11,7 @@ import (
 	"syscall"
 	"time"
 
+	_ "github.com/victor-lima-142/go-analyze/docs"
 	"github.com/victor-lima-142/go-analyze/internal/handlers"
 	"github.com/victor-lima-142/go-analyze/internal/metrics"
 	"github.com/victor-lima-142/go-analyze/internal/observability"
@@ -89,7 +90,6 @@ func main() {
 		CPUHourlyUSD:       cfg.CPUHourlyUSD,
 		MemoryGiBHourlyUSD: cfg.MemoryGiBHourlyUSD,
 		MonthlyHours:       cfg.MonthlyHours,
-		HPAWindow:          cfg.HPAWindow,
 		CostModelLabel:     cfg.CostModelLabel,
 		Logger:             logger,
 		Filter:             obsFilter,

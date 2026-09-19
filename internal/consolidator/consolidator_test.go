@@ -66,13 +66,13 @@ func TestConsolidator_consolidateAndSave(t *testing.T) {
 		scrape2.SetScrapedAt(time.Now().Add(-2 * time.Minute))
 
 		// totals: CPU req=2, used=1.4 -> ratio=0.3 ; mem req=2048, used=1024 -> 0.5
-		ind1 := entities.NewIndicatorSnapshot(10, 0.2, 0.4, 0.1, 0.8, 5.0, 1.0, 0.8, 1024, 512, 2.0, 4.0, 1000.0, 500.0)
-		ind2 := entities.NewIndicatorSnapshot(11, 0.4, 0.6, 0.3, 0.8, 7.0, 1.0, 0.6, 1024, 512, 2.0, 4.0, 1000.0, 500.0)
+		ind1 := entities.NewIndicatorSnapshot(10, 0.2, 0.4, 3, 2, 5, 1.0, 0.8, 1024, 512)
+		ind2 := entities.NewIndicatorSnapshot(11, 0.4, 0.6, 4, 3, 7, 1.0, 0.6, 1024, 512)
 
 		limit := 2.0
 		limitBytes := 2048.0
-		wl1 := entities.NewWorkloadItemSnapshot(10, "default", "pod-abc", "app", 1.0, 0.8, &limit, 1024, 512, &limitBytes, 0.2, 0.5, 5.0)
-		wl2 := entities.NewWorkloadItemSnapshot(11, "default", "pod-abc", "app", 1.0, 0.6, &limit, 1024, 256, &limitBytes, 0.4, 0.7, 5.0)
+		wl1 := entities.NewWorkloadItemSnapshot(10, "default", "pod-abc", "app", 1.0, 0.8, &limit, 1024, 512, &limitBytes, 0.2, 0.5, 3, 2, 5.0)
+		wl2 := entities.NewWorkloadItemSnapshot(11, "default", "pod-abc", "app", 1.0, 0.6, &limit, 1024, 256, &limitBytes, 0.4, 0.7, 3, 2, 5.0)
 
 		var savedConsolidation *entities.ConsolidationModel
 		var savedWorkloads []*entities.ConsolidatedWorkloadSnapshotModel
@@ -107,11 +107,8 @@ func TestConsolidator_consolidateAndSave(t *testing.T) {
 		if !almostEqual(savedConsolidation.MemWasteRatio(), 0.5) {
 			t.Errorf("expected recalculated mem waste 0.5, got %f", savedConsolidation.MemWasteRatio())
 		}
-		if !almostEqual(savedConsolidation.HPAEfficiency(), 0.5) {
-			t.Errorf("expected HPA efficiency 0.5, got %f", savedConsolidation.HPAEfficiency())
-		}
-		if !almostEqual(savedConsolidation.PVCWasteRatio(), 0.5) {
-			t.Errorf("expected PVC waste 0.5, got %f", savedConsolidation.PVCWasteRatio())
+		if savedConsolidation.ProjectedMonthlyWasteUSD() != savedConsolidation.CPUProjectedMonthlyWasteUSD()+savedConsolidation.MemoryProjectedMonthlyWasteUSD() {
+			t.Errorf("expected decomposed costs to sum to total")
 		}
 
 		if len(savedWorkloads) != 1 {

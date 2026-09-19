@@ -70,12 +70,11 @@ func (h *ConsolidatedHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 			EndTime:        c.EndTime().Format(time.RFC3339),
 			ScrapesCount:   c.ScrapesCount(),
 			Indicators: ConsolidatedInd{
-				CPUWasteRatio:            c.CPUWasteRatio(),
-				MemWasteRatio:            c.MemWasteRatio(),
-				PVCWasteRatio:            c.PVCWasteRatio(),
-				HPAEfficiency:            c.HPAEfficiency(),
-				ProjectedMonthlyWasteUSD: c.ProjectedMonthlyWasteUSD(),
-				OOMRiskScore:             c.OOMRiskScore(),
+				CPUWasteRatio:                  c.CPUWasteRatio(),
+				MemWasteRatio:                  c.MemWasteRatio(),
+				CPUProjectedMonthlyWasteUSD:    c.CPUProjectedMonthlyWasteUSD(),
+				MemoryProjectedMonthlyWasteUSD: c.MemoryProjectedMonthlyWasteUSD(),
+				ProjectedMonthlyWasteUSD:       c.ProjectedMonthlyWasteUSD(),
 			},
 			Inputs: ConsolidatedInputs{
 				TotalCPURequested:    c.TotalCPURequested(),
@@ -95,19 +94,20 @@ func (h *ConsolidatedHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 			items := make([]ConsolidatedItem, len(wlSnapshots))
 			for j, wl := range wlSnapshots {
 				items[j] = ConsolidatedItem{
-					Namespace:                wl.Namespace(),
-					Pod:                      wl.Pod(),
-					Container:                wl.Container(),
-					CPURequestedCores:        wl.CPURequestedCores(),
-					CPUUsedCores:             wl.CPUUsedCores(),
-					CPULimitCores:            wl.CPULimitCores(),
-					MemoryRequestedBytes:     wl.MemoryRequestedBytes(),
-					MemoryUsedBytes:          wl.MemoryUsedBytes(),
-					MemoryLimitBytes:         wl.MemoryLimitBytes(),
-					CPUWasteRatio:            wl.CPUWasteRatio(),
-					MemWasteRatio:            wl.MemWasteRatio(),
-					OOMRiskScore:             wl.OOMRiskScore(),
-					ProjectedMonthlyWasteUSD: wl.ProjectedMonthlyWasteUSD(),
+					Namespace:                      wl.Namespace(),
+					Pod:                            wl.Pod(),
+					Container:                      wl.Container(),
+					CPURequestedCores:              wl.CPURequestedCores(),
+					CPUUsedCores:                   wl.CPUUsedCores(),
+					CPULimitCores:                  wl.CPULimitCores(),
+					MemoryRequestedBytes:           wl.MemoryRequestedBytes(),
+					MemoryUsedBytes:                wl.MemoryUsedBytes(),
+					MemoryLimitBytes:               wl.MemoryLimitBytes(),
+					CPUWasteRatio:                  wl.CPUWasteRatio(),
+					MemWasteRatio:                  wl.MemWasteRatio(),
+					CPUProjectedMonthlyWasteUSD:    wl.CPUProjectedMonthlyWasteUSD(),
+					MemoryProjectedMonthlyWasteUSD: wl.MemoryProjectedMonthlyWasteUSD(),
+					ProjectedMonthlyWasteUSD:       wl.ProjectedMonthlyWasteUSD(),
 				}
 			}
 			resp.Items = items

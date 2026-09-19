@@ -81,7 +81,7 @@ func (s *ScrapeModel) ReadAll(ctx context.Context, filters map[string]any) ([]En
 		}
 		result = append(result, item)
 	}
-	return result, nil
+	return result, rows.Err()
 }
 
 // Static helper mapping

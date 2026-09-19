@@ -25,8 +25,6 @@ type QueryFilter struct {
 	Namespace string
 	Pod       string
 	Container string
-	PVC       string
-	HPA       string
 }
 
 type IndicatorInputDataset struct {
@@ -34,9 +32,4 @@ type IndicatorInputDataset struct {
 	CPUUsageCores           []models.QueryResult `json:"cpuUsage"`
 	MemoryRequestsBytes     []models.QueryResult `json:"memoryRequestsBytes"`
 	MemoryUsageBytes        []models.QueryResult `json:"memoryUsageBytes"`
-	PVCCapacityBytes        []models.QueryResult `json:"pvcCapacityBytes"`
-	PVCUsedBytes            []models.QueryResult `json:"pvcUsedBytes"`
-	HPACurrentReplicas      []models.QueryResult `json:"hpaCurrentReplicas"`
-	HPADesiredReplicas      []models.QueryResult `json:"hpaDesiredReplicas"`
-	HPAReplicaSpec          []models.QueryResult `json:"hpaReplicaSpec"`
 }

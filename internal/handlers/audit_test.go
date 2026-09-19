@@ -14,6 +14,11 @@ import (
 type mockAuditDB struct {
 	scrapes    []*entities.ScrapeModel
 	indicators []*entities.IndicatorSnapshotModel
+	items      []*entities.WorkloadItemSnapshotModel
+}
+
+func (m *mockAuditDB) GetWorkloadItemSnapshotsForScrapes(ctx context.Context, scrapeIDs []int) ([]*entities.WorkloadItemSnapshotModel, error) {
+	return m.items, nil
 }
 
 func (m *mockAuditDB) GetScrapesInRange(ctx context.Context, start, end time.Time) ([]*entities.ScrapeModel, error) {
@@ -32,15 +37,16 @@ func TestAuditHandler_RecalculatesMatchingValues(t *testing.T) {
 	// cpu_waste_cores = 1 - 0.5 = 0.5; cost = 0.5 * 0.04048 * 720 = 14.5728
 	// mem_waste_GiB = (2GiB - 1GiB) = 1; cost = 1 * 0.004445 * 720 = 3.2004
 	// total = 17.7732
-	ind := entities.NewIndicatorSnapshot(1, 0.5, 0.5, 0, 0, 17.7732,
+	ind := entities.NewIndicatorSnapshot(1, 0.5, 0.5, 14.5728, 3.2004, 17.7732,
 		1.0, 0.5,
 		2*1024*1024*1024, 1*1024*1024*1024,
-		0, 0, 0, 0,
 	)
+	item := entities.NewWorkloadItemSnapshot(1, "default", "pod", "app", 1, .5, nil, 2*1024*1024*1024, 1*1024*1024*1024, nil, .5, .5, 14.5728, 3.2004, 17.7732)
 
 	db := &mockAuditDB{
 		scrapes:    []*entities.ScrapeModel{s},
 		indicators: []*entities.IndicatorSnapshotModel{ind},
+		items:      []*entities.WorkloadItemSnapshotModel{item},
 	}
 	handler := NewAuditHandler(db, 0.04048, 0.004445, 720, "fargate-test", newDiscardLogger())
 
@@ -71,14 +77,15 @@ func TestAuditHandler_DetectsDivergence(t *testing.T) {
 	s.SetID(1)
 
 	// reported 100, recalculation will be derived from inputs and be far from 100
-	ind := entities.NewIndicatorSnapshot(1, 0.5, 0.5, 0, 0, 100.0,
+	ind := entities.NewIndicatorSnapshot(1, 0.5, 0.5, 50, 50, 100.0,
 		1.0, 0.5, 2*1024*1024*1024, 1*1024*1024*1024,
-		0, 0, 0, 0,
 	)
+	item := entities.NewWorkloadItemSnapshot(1, "default", "pod", "app", 1, .5, nil, 2*1024*1024*1024, 1*1024*1024*1024, nil, .5, .5, 14.5728, 3.2004, 17.7732)
 
 	db := &mockAuditDB{
 		scrapes:    []*entities.ScrapeModel{s},
 		indicators: []*entities.IndicatorSnapshotModel{ind},
+		items:      []*entities.WorkloadItemSnapshotModel{item},
 	}
 	handler := NewAuditHandler(db, 0.04048, 0.004445, 720, "fargate-test", newDiscardLogger())
 
@@ -93,5 +100,26 @@ func TestAuditHandler_DetectsDivergence(t *testing.T) {
 	}
 	if len(resp.Points) != 1 {
 		t.Errorf("expected 1 point, got %d", len(resp.Points))
+	}
+}
+
+
+func TestAuditReferenceZeroAndNoItems(t *testing.T) {
+	if got := auditErrorPercent(0, 0); got != 0 {
+		t.Fatalf("zero/zero=%v", got)
+	}
+	if got := auditErrorPercent(1, 0); got != 100 {
+		t.Fatalf("nonzero/zero=%v", got)
+	}
+	s := entities.NewScrape(1)
+	s.SetID(1)
+	ind := entities.NewIndicatorSnapshot(1, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+	h := NewAuditHandler(&mockAuditDB{scrapes: []*entities.ScrapeModel{s}, indicators: []*entities.IndicatorSnapshotModel{ind}}, 1, 1, 1, "test", newDiscardLogger())
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/api/v1/audit", nil))
+	var response AuditResponse
+	_ = json.NewDecoder(rec.Body).Decode(&response)
+	if response.Conclusive || response.WithinTolerance || response.AuditedScrapesCount != 0 || response.SkippedScrapesCount != 1 {
+		t.Fatalf("unexpected response: %+v", response)
 	}
 }

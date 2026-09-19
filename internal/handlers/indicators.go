@@ -51,8 +51,6 @@ func NewIndicatorHandler(calculator Calculator, defaultWindow string, logger *sl
 // @Param        namespace query     string  false  "Filtrar por Namespace do Kubernetes"
 // @Param        pod       query     string  false  "Filtrar por Pod do Kubernetes"
 // @Param        container query     string  false  "Filtrar por Container do Kubernetes"
-// @Param        pvc       query     string  false  "Filtrar por nome de PVC"
-// @Param        hpa       query     string  false  "Filtrar por nome de HPA"
 // @Success      200       {object}  PaginatedIndicatorResponse
 // @Failure      405       {object}  map[string]any "Método HTTP não permitido"
 // @Failure      502       {object}  map[string]any "Falha ao consultar o Prometheus ou calcular indicadores"
@@ -75,8 +73,6 @@ func (h *IndicatorHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		Namespace: q.Get("namespace"),
 		Pod:       q.Get("pod"),
 		Container: q.Get("container"),
-		PVC:       q.Get("pvc"),
-		HPA:       q.Get("hpa"),
 		Window:    metrics.NormalizeWindow(window),
 	}
 

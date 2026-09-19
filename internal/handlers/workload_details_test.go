@@ -35,9 +35,10 @@ func TestWorkloadDetailsHandler_ServeHTTP(t *testing.T) {
 							CPURequestedCores: 0.5, CPUUsedCores: 0.25, CPULimitCores: 1.0,
 							CPUWasteRatio:        0.5,
 							MemoryRequestedBytes: 1024, MemoryUsedBytes: 512, MemoryLimitBytes: 2048,
-							MemWasteRatio:            0.5,
-							ProjectedMonthlyWasteUSD: 5.0,
-							OOMRiskScore:             0.25,
+							MemWasteRatio:                  0.5,
+							CPUProjectedMonthlyWasteUSD:    3,
+							MemoryProjectedMonthlyWasteUSD: 2,
+							ProjectedMonthlyWasteUSD:       5.0,
 						},
 					},
 				}, nil
@@ -48,8 +49,7 @@ func TestWorkloadDetailsHandler_ServeHTTP(t *testing.T) {
 		limitBytes := float64(2048)
 		store := &mockConsolidationStore{
 			getLastWorkloadSnapshotsFunc: func(ctx context.Context, namespace, pod, container string, limitParam int, startTime, endTime *time.Time) ([]*entities.HistoricalWorkloadSnapshot, error) {
-				snap := entities.NewConsolidatedWorkloadSnapshot(1, "default", "my-pod-123", "nginx", 0.5, 0.25, &limit, 1024, 512, &limitBytes, 0.5, 0.5, 5.0)
-				snap.SetOOMRiskScore(0.25)
+				snap := entities.NewConsolidatedWorkloadSnapshot(1, "default", "my-pod-123", "nginx", 0.5, 0.25, &limit, 1024, 512, &limitBytes, 0.5, 0.5, 3, 2, 5.0)
 				return []*entities.HistoricalWorkloadSnapshot{
 					{ConsolidatedAt: time.Now().Add(-2 * time.Hour), Snapshot: snap},
 					{ConsolidatedAt: time.Now().Add(-1 * time.Hour), Snapshot: snap},
@@ -69,7 +69,7 @@ func TestWorkloadDetailsHandler_ServeHTTP(t *testing.T) {
 		if err := json.NewDecoder(rec.Body).Decode(&resp); err != nil {
 			t.Fatalf("decode: %v", err)
 		}
-		if resp.Current == nil || resp.Current.CPUWasteRatio != 0.5 || resp.Current.OOMRiskScore != 0.25 {
+		if resp.Current == nil || resp.Current.CPUWasteRatio != 0.5 || resp.Current.CPUProjectedMonthlyWasteUSD != 3 {
 			t.Errorf("current wrong: %+v", resp.Current)
 		}
 		if resp.Historical == nil || resp.Historical.Last10ConsolidationsCount != 2 {

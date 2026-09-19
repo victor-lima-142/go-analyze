@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/victor-lima-142/go-analyze/internal/metrics"
@@ -19,44 +20,48 @@ type WorkloadDetailsResponse struct {
 }
 
 type CurrentWorkloadMetrics struct {
-	CPURequestedCores        float64  `json:"cpu_requested_cores"`
-	CPUUsedCores             float64  `json:"cpu_used_cores"`
-	CPULimitCores            *float64 `json:"cpu_limit_cores,omitempty"`
-	CPUWasteRatio            float64  `json:"cpu_waste_ratio"`
-	MemoryRequestedBytes     float64  `json:"memory_requested_bytes"`
-	MemoryUsedBytes          float64  `json:"memory_used_bytes"`
-	MemoryLimitBytes         *float64 `json:"memory_limit_bytes,omitempty"`
-	MemWasteRatio            float64  `json:"mem_waste_ratio"`
-	OOMRiskScore             float64  `json:"oom_risk_score"`
-	ProjectedMonthlyWasteUSD float64  `json:"projected_monthly_waste_usd"`
-	Timestamp                string   `json:"timestamp"`
+	CPURequestedCores              float64  `json:"cpu_requested_cores"`
+	CPUUsedCores                   float64  `json:"cpu_used_cores"`
+	CPULimitCores                  *float64 `json:"cpu_limit_cores,omitempty"`
+	CPUWasteRatio                  float64  `json:"cpu_waste_ratio"`
+	MemoryRequestedBytes           float64  `json:"memory_requested_bytes"`
+	MemoryUsedBytes                float64  `json:"memory_used_bytes"`
+	MemoryLimitBytes               *float64 `json:"memory_limit_bytes,omitempty"`
+	MemWasteRatio                  float64  `json:"mem_waste_ratio"`
+	CPUProjectedMonthlyWasteUSD    float64  `json:"cpu_projected_monthly_waste_usd"`
+	MemoryProjectedMonthlyWasteUSD float64  `json:"memory_projected_monthly_waste_usd"`
+	ProjectedMonthlyWasteUSD       float64  `json:"projected_monthly_waste_usd"`
+	Timestamp                      string   `json:"timestamp"`
 }
 
 type HistoricalWorkloadSummary struct {
-	Last10ConsolidationsCount   int                     `json:"last_10_consolidations_count"`
-	AvgCPURequestedCores        float64                 `json:"avg_cpu_requested_cores"`
-	AvgCPUUsedCores             float64                 `json:"avg_cpu_used_cores"`
-	AvgCPUWasteRatio            float64                 `json:"avg_cpu_waste_ratio"`
-	AvgMemoryRequestedBytes     float64                 `json:"avg_memory_requested_bytes"`
-	AvgMemoryUsedBytes          float64                 `json:"avg_memory_used_bytes"`
-	AvgMemWasteRatio            float64                 `json:"avg_mem_waste_ratio"`
-	AvgProjectedMonthlyWasteUSD float64                 `json:"avg_projected_monthly_waste_usd"`
-	Points                      []HistoricalDetailPoint `json:"points"`
+	Last10ConsolidationsCount         int                     `json:"last_10_consolidations_count"`
+	AvgCPURequestedCores              float64                 `json:"avg_cpu_requested_cores"`
+	AvgCPUUsedCores                   float64                 `json:"avg_cpu_used_cores"`
+	AvgCPUWasteRatio                  float64                 `json:"avg_cpu_waste_ratio"`
+	AvgMemoryRequestedBytes           float64                 `json:"avg_memory_requested_bytes"`
+	AvgMemoryUsedBytes                float64                 `json:"avg_memory_used_bytes"`
+	AvgMemWasteRatio                  float64                 `json:"avg_mem_waste_ratio"`
+	AvgProjectedMonthlyWasteUSD       float64                 `json:"avg_projected_monthly_waste_usd"`
+	AvgCPUProjectedMonthlyWasteUSD    float64                 `json:"avg_cpu_projected_monthly_waste_usd"`
+	AvgMemoryProjectedMonthlyWasteUSD float64                 `json:"avg_memory_projected_monthly_waste_usd"`
+	Points                            []HistoricalDetailPoint `json:"points"`
 }
 
 type HistoricalDetailPoint struct {
-	ConsolidationID          int      `json:"consolidation_id"`
-	Timestamp                string   `json:"timestamp"`
-	CPURequestedCores        float64  `json:"cpu_requested_cores"`
-	CPUUsedCores             float64  `json:"cpu_used_cores"`
-	CPULimitCores            *float64 `json:"cpu_limit_cores,omitempty"`
-	CPUWasteRatio            float64  `json:"cpu_waste_ratio"`
-	MemoryRequestedBytes     float64  `json:"memory_requested_bytes"`
-	MemoryUsedBytes          float64  `json:"memory_used_bytes"`
-	MemoryLimitBytes         *float64 `json:"memory_limit_bytes,omitempty"`
-	MemWasteRatio            float64  `json:"mem_waste_ratio"`
-	OOMRiskScore             float64  `json:"oom_risk_score"`
-	ProjectedMonthlyWasteUSD float64  `json:"projected_monthly_waste_usd"`
+	ConsolidationID                int      `json:"consolidation_id"`
+	Timestamp                      string   `json:"timestamp"`
+	CPURequestedCores              float64  `json:"cpu_requested_cores"`
+	CPUUsedCores                   float64  `json:"cpu_used_cores"`
+	CPULimitCores                  *float64 `json:"cpu_limit_cores,omitempty"`
+	CPUWasteRatio                  float64  `json:"cpu_waste_ratio"`
+	MemoryRequestedBytes           float64  `json:"memory_requested_bytes"`
+	MemoryUsedBytes                float64  `json:"memory_used_bytes"`
+	MemoryLimitBytes               *float64 `json:"memory_limit_bytes,omitempty"`
+	MemWasteRatio                  float64  `json:"mem_waste_ratio"`
+	CPUProjectedMonthlyWasteUSD    float64  `json:"cpu_projected_monthly_waste_usd"`
+	MemoryProjectedMonthlyWasteUSD float64  `json:"memory_projected_monthly_waste_usd"`
+	ProjectedMonthlyWasteUSD       float64  `json:"projected_monthly_waste_usd"`
 }
 
 type WorkloadDetailsHandler struct {
@@ -129,7 +134,7 @@ func (h *WorkloadDetailsHandler) ServeHTTP(w http.ResponseWriter, r *http.Reques
 
 	if err == nil && calcRes != nil {
 		for _, item := range calcRes.Items {
-			if item.Namespace == namespace && item.Container == container && (pod == "" || item.Pod == pod) {
+			if item.Namespace == namespace && item.Container == container && podPrefixMatch(item.Pod, pod) {
 				var cpuLimit *float64
 				if item.CPULimitCores > 0 {
 					val := item.CPULimitCores
@@ -141,17 +146,18 @@ func (h *WorkloadDetailsHandler) ServeHTTP(w http.ResponseWriter, r *http.Reques
 					memLimit = &val
 				}
 				current = &CurrentWorkloadMetrics{
-					CPURequestedCores:        item.CPURequestedCores,
-					CPUUsedCores:             item.CPUUsedCores,
-					CPULimitCores:            cpuLimit,
-					CPUWasteRatio:            item.CPUWasteRatio,
-					MemoryRequestedBytes:     item.MemoryRequestedBytes,
-					MemoryUsedBytes:          item.MemoryUsedBytes,
-					MemoryLimitBytes:         memLimit,
-					MemWasteRatio:            item.MemWasteRatio,
-					OOMRiskScore:             item.OOMRiskScore,
-					ProjectedMonthlyWasteUSD: item.ProjectedMonthlyWasteUSD,
-					Timestamp:                time.Now().Format(time.RFC3339),
+					CPURequestedCores:              item.CPURequestedCores,
+					CPUUsedCores:                   item.CPUUsedCores,
+					CPULimitCores:                  cpuLimit,
+					CPUWasteRatio:                  item.CPUWasteRatio,
+					MemoryRequestedBytes:           item.MemoryRequestedBytes,
+					MemoryUsedBytes:                item.MemoryUsedBytes,
+					MemoryLimitBytes:               memLimit,
+					MemWasteRatio:                  item.MemWasteRatio,
+					CPUProjectedMonthlyWasteUSD:    item.CPUProjectedMonthlyWasteUSD,
+					MemoryProjectedMonthlyWasteUSD: item.MemoryProjectedMonthlyWasteUSD,
+					ProjectedMonthlyWasteUSD:       item.ProjectedMonthlyWasteUSD,
+					Timestamp:                      time.Now().Format(time.RFC3339),
 				}
 				break
 			}
@@ -187,25 +193,26 @@ func (h *WorkloadDetailsHandler) ServeHTTP(w http.ResponseWriter, r *http.Reques
 
 	var sumCpuReq, sumCpuUsed, sumCpuWaste float64
 	var sumMemReq, sumMemUsed, sumMemWaste float64
-	var sumProjected float64
+	var sumCPUProjected, sumMemoryProjected float64
 	count := len(snapshots)
 
 	points := make([]HistoricalDetailPoint, 0, count)
 	for _, s := range snapshots {
 		snap := s.Snapshot
 		pt := HistoricalDetailPoint{
-			ConsolidationID:          snap.ConsolidationID(),
-			Timestamp:                s.ConsolidatedAt.Format(time.RFC3339),
-			CPURequestedCores:        snap.CPURequestedCores(),
-			CPUUsedCores:             snap.CPUUsedCores(),
-			CPULimitCores:            snap.CPULimitCores(),
-			CPUWasteRatio:            snap.CPUWasteRatio(),
-			MemoryRequestedBytes:     snap.MemoryRequestedBytes(),
-			MemoryUsedBytes:          snap.MemoryUsedBytes(),
-			MemoryLimitBytes:         snap.MemoryLimitBytes(),
-			MemWasteRatio:            snap.MemWasteRatio(),
-			OOMRiskScore:             snap.OOMRiskScore(),
-			ProjectedMonthlyWasteUSD: snap.ProjectedMonthlyWasteUSD(),
+			ConsolidationID:                snap.ConsolidationID(),
+			Timestamp:                      s.ConsolidatedAt.Format(time.RFC3339),
+			CPURequestedCores:              snap.CPURequestedCores(),
+			CPUUsedCores:                   snap.CPUUsedCores(),
+			CPULimitCores:                  snap.CPULimitCores(),
+			CPUWasteRatio:                  snap.CPUWasteRatio(),
+			MemoryRequestedBytes:           snap.MemoryRequestedBytes(),
+			MemoryUsedBytes:                snap.MemoryUsedBytes(),
+			MemoryLimitBytes:               snap.MemoryLimitBytes(),
+			MemWasteRatio:                  snap.MemWasteRatio(),
+			CPUProjectedMonthlyWasteUSD:    snap.CPUProjectedMonthlyWasteUSD(),
+			MemoryProjectedMonthlyWasteUSD: snap.MemoryProjectedMonthlyWasteUSD(),
+			ProjectedMonthlyWasteUSD:       snap.ProjectedMonthlyWasteUSD(),
 		}
 		points = append(points, pt)
 
@@ -215,7 +222,8 @@ func (h *WorkloadDetailsHandler) ServeHTTP(w http.ResponseWriter, r *http.Reques
 		sumMemReq += snap.MemoryRequestedBytes()
 		sumMemUsed += snap.MemoryUsedBytes()
 		sumMemWaste += snap.MemWasteRatio()
-		sumProjected += snap.ProjectedMonthlyWasteUSD()
+		sumCPUProjected += snap.CPUProjectedMonthlyWasteUSD()
+		sumMemoryProjected += snap.MemoryProjectedMonthlyWasteUSD()
 	}
 
 	var hist HistoricalWorkloadSummary
@@ -228,7 +236,9 @@ func (h *WorkloadDetailsHandler) ServeHTTP(w http.ResponseWriter, r *http.Reques
 		hist.AvgMemoryRequestedBytes = sumMemReq / float64(count)
 		hist.AvgMemoryUsedBytes = sumMemUsed / float64(count)
 		hist.AvgMemWasteRatio = sumMemWaste / float64(count)
-		hist.AvgProjectedMonthlyWasteUSD = sumProjected / float64(count)
+		hist.AvgCPUProjectedMonthlyWasteUSD = sumCPUProjected / float64(count)
+		hist.AvgMemoryProjectedMonthlyWasteUSD = sumMemoryProjected / float64(count)
+		hist.AvgProjectedMonthlyWasteUSD = hist.AvgCPUProjectedMonthlyWasteUSD + hist.AvgMemoryProjectedMonthlyWasteUSD
 	}
 
 	resp := WorkloadDetailsResponse{
@@ -244,4 +254,15 @@ func (h *WorkloadDetailsHandler) ServeHTTP(w http.ResponseWriter, r *http.Reques
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
 		h.logger.Error("error encoding details response", "error", err)
 	}
+}
+
+func podPrefixMatch(actual, requested string) bool {
+	if requested == "" {
+		return true
+	}
+	if strings.Contains(requested, "%") {
+		prefix := strings.SplitN(requested, "%", 2)[0]
+		return strings.HasPrefix(actual, prefix)
+	}
+	return strings.HasPrefix(actual, requested)
 }

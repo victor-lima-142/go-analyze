@@ -5,37 +5,41 @@ import (
 )
 
 type WorkloadItemSnapshotModel struct {
-	id                       int
-	scrapeID                 int
-	namespace                string
-	pod                      string
-	container                string
-	cpuRequestedCores        float64
-	cpuUsedCores             float64
-	cpuLimitCores            *float64
-	memoryRequestedBytes     float64
-	memoryUsedBytes          float64
-	memoryLimitBytes         *float64
-	cpuWasteRatio            float64
-	memWasteRatio            float64
-	projectedMonthlyWasteUSD float64
+	id                             int
+	scrapeID                       int
+	namespace                      string
+	pod                            string
+	container                      string
+	cpuRequestedCores              float64
+	cpuUsedCores                   float64
+	cpuLimitCores                  *float64
+	memoryRequestedBytes           float64
+	memoryUsedBytes                float64
+	memoryLimitBytes               *float64
+	cpuWasteRatio                  float64
+	memWasteRatio                  float64
+	cpuProjectedMonthlyWasteUSD    float64
+	memoryProjectedMonthlyWasteUSD float64
+	projectedMonthlyWasteUSD       float64
 }
 
-func NewWorkloadItemSnapshot(scrapeID int, ns, pod, container string, cpuReq, cpuUsed float64, cpuLimit *float64, memReq, memUsed float64, memLimit *float64, cpuWaste, memWaste, projected float64) *WorkloadItemSnapshotModel {
+func NewWorkloadItemSnapshot(scrapeID int, ns, pod, container string, cpuReq, cpuUsed float64, cpuLimit *float64, memReq, memUsed float64, memLimit *float64, cpuWaste, memWaste, cpuProjected, memoryProjected, projected float64) *WorkloadItemSnapshotModel {
 	return &WorkloadItemSnapshotModel{
-		scrapeID:                 scrapeID,
-		namespace:                ns,
-		pod:                      pod,
-		container:                container,
-		cpuRequestedCores:        cpuReq,
-		cpuUsedCores:             cpuUsed,
-		cpuLimitCores:            cpuLimit,
-		memoryRequestedBytes:     memReq,
-		memoryUsedBytes:          memUsed,
-		memoryLimitBytes:         memLimit,
-		cpuWasteRatio:            cpuWaste,
-		memWasteRatio:            memWaste,
-		projectedMonthlyWasteUSD: projected,
+		scrapeID:                       scrapeID,
+		namespace:                      ns,
+		pod:                            pod,
+		container:                      container,
+		cpuRequestedCores:              cpuReq,
+		cpuUsedCores:                   cpuUsed,
+		cpuLimitCores:                  cpuLimit,
+		memoryRequestedBytes:           memReq,
+		memoryUsedBytes:                memUsed,
+		memoryLimitBytes:               memLimit,
+		cpuWasteRatio:                  cpuWaste,
+		memWasteRatio:                  memWaste,
+		cpuProjectedMonthlyWasteUSD:    cpuProjected,
+		memoryProjectedMonthlyWasteUSD: memoryProjected,
+		projectedMonthlyWasteUSD:       projected,
 	}
 }
 
@@ -80,6 +84,18 @@ func (w *WorkloadItemSnapshotModel) SetCPUWasteRatio(val float64) { w.cpuWasteRa
 
 func (w *WorkloadItemSnapshotModel) MemWasteRatio() float64       { return w.memWasteRatio }
 func (w *WorkloadItemSnapshotModel) SetMemWasteRatio(val float64) { w.memWasteRatio = val }
+func (w *WorkloadItemSnapshotModel) CPUProjectedMonthlyWasteUSD() float64 {
+	return w.cpuProjectedMonthlyWasteUSD
+}
+func (w *WorkloadItemSnapshotModel) SetCPUProjectedMonthlyWasteUSD(v float64) {
+	w.cpuProjectedMonthlyWasteUSD = v
+}
+func (w *WorkloadItemSnapshotModel) MemoryProjectedMonthlyWasteUSD() float64 {
+	return w.memoryProjectedMonthlyWasteUSD
+}
+func (w *WorkloadItemSnapshotModel) SetMemoryProjectedMonthlyWasteUSD(v float64) {
+	w.memoryProjectedMonthlyWasteUSD = v
+}
 
 func (w *WorkloadItemSnapshotModel) ProjectedMonthlyWasteUSD() float64 {
 	return w.projectedMonthlyWasteUSD
@@ -104,6 +120,8 @@ func (w *WorkloadItemSnapshotModel) Migrate(ctx context.Context) error {
 		memory_limit_bytes NUMERIC(20,4),
 		cpu_waste_ratio NUMERIC(5,4) NOT NULL,
 		mem_waste_ratio NUMERIC(5,4) NOT NULL,
+		cpu_projected_monthly_waste_usd NUMERIC(12,4) NOT NULL,
+		memory_projected_monthly_waste_usd NUMERIC(12,4) NOT NULL,
 		projected_monthly_waste_usd NUMERIC(12,4) NOT NULL
 	);`
 	_, err := DefaultDB.ExecContext(ctx, q)
@@ -119,24 +137,24 @@ func (w *WorkloadItemSnapshotModel) Create(ctx context.Context) error {
 	q := `INSERT INTO workload_item_snapshots (
 		scrape_id, namespace, pod, container, cpu_requested_cores, cpu_used_cores, cpu_limit_cores,
 		memory_requested_bytes, memory_used_bytes, memory_limit_bytes, cpu_waste_ratio, mem_waste_ratio,
-		projected_monthly_waste_usd
-	) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING id`
+		cpu_projected_monthly_waste_usd, memory_projected_monthly_waste_usd, projected_monthly_waste_usd
+	) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15) RETURNING id`
 	return DefaultDB.QueryRowContext(ctx, q,
 		w.scrapeID, w.namespace, w.pod, w.container, w.cpuRequestedCores, w.cpuUsedCores, w.cpuLimitCores,
 		w.memoryRequestedBytes, w.memoryUsedBytes, w.memoryLimitBytes, w.cpuWasteRatio, w.memWasteRatio,
-		w.projectedMonthlyWasteUSD).Scan(&w.id)
+		w.cpuProjectedMonthlyWasteUSD, w.memoryProjectedMonthlyWasteUSD, w.projectedMonthlyWasteUSD).Scan(&w.id)
 }
 
 func (w *WorkloadItemSnapshotModel) Update(ctx context.Context) error {
 	q := `UPDATE workload_item_snapshots SET
 		scrape_id = $1, namespace = $2, pod = $3, container = $4, cpu_requested_cores = $5, cpu_used_cores = $6,
 		cpu_limit_cores = $7, memory_requested_bytes = $8, memory_used_bytes = $9, memory_limit_bytes = $10,
-		cpu_waste_ratio = $11, mem_waste_ratio = $12, projected_monthly_waste_usd = $13
-		WHERE id = $14`
+		cpu_waste_ratio = $11, mem_waste_ratio = $12, cpu_projected_monthly_waste_usd = $13,
+		memory_projected_monthly_waste_usd = $14, projected_monthly_waste_usd = $15 WHERE id = $16`
 	_, err := DefaultDB.ExecContext(ctx, q,
 		w.scrapeID, w.namespace, w.pod, w.container, w.cpuRequestedCores, w.cpuUsedCores, w.cpuLimitCores,
 		w.memoryRequestedBytes, w.memoryUsedBytes, w.memoryLimitBytes, w.cpuWasteRatio, w.memWasteRatio,
-		w.projectedMonthlyWasteUSD, w.id)
+		w.cpuProjectedMonthlyWasteUSD, w.memoryProjectedMonthlyWasteUSD, w.projectedMonthlyWasteUSD, w.id)
 	return err
 }
 
@@ -150,18 +168,18 @@ func (w *WorkloadItemSnapshotModel) Read(ctx context.Context, filters map[string
 	where, args := buildWhereClause(filters)
 	q := `SELECT id, scrape_id, namespace, pod, container, cpu_requested_cores, cpu_used_cores, cpu_limit_cores,
 		memory_requested_bytes, memory_used_bytes, memory_limit_bytes, cpu_waste_ratio, mem_waste_ratio,
-		projected_monthly_waste_usd FROM workload_item_snapshots` + where + ` LIMIT 1`
+		cpu_projected_monthly_waste_usd, memory_projected_monthly_waste_usd, projected_monthly_waste_usd FROM workload_item_snapshots` + where + ` LIMIT 1`
 	return DefaultDB.QueryRowContext(ctx, q, args...).Scan(
 		&w.id, &w.scrapeID, &w.namespace, &w.pod, &w.container, &w.cpuRequestedCores, &w.cpuUsedCores, &w.cpuLimitCores,
 		&w.memoryRequestedBytes, &w.memoryUsedBytes, &w.memoryLimitBytes, &w.cpuWasteRatio, &w.memWasteRatio,
-		&w.projectedMonthlyWasteUSD)
+		&w.cpuProjectedMonthlyWasteUSD, &w.memoryProjectedMonthlyWasteUSD, &w.projectedMonthlyWasteUSD)
 }
 
 func (w *WorkloadItemSnapshotModel) ReadAll(ctx context.Context, filters map[string]any) ([]Entity, error) {
 	where, args := buildWhereClause(filters)
 	q := `SELECT id, scrape_id, namespace, pod, container, cpu_requested_cores, cpu_used_cores, cpu_limit_cores,
 		memory_requested_bytes, memory_used_bytes, memory_limit_bytes, cpu_waste_ratio, mem_waste_ratio,
-		projected_monthly_waste_usd FROM workload_item_snapshots` + where
+		cpu_projected_monthly_waste_usd, memory_projected_monthly_waste_usd, projected_monthly_waste_usd FROM workload_item_snapshots` + where + ` ORDER BY namespace, pod, container`
 	rows, err := DefaultDB.QueryContext(ctx, q, args...)
 	if err != nil {
 		return nil, err
@@ -174,13 +192,13 @@ func (w *WorkloadItemSnapshotModel) ReadAll(ctx context.Context, filters map[str
 		err := rows.Scan(
 			&item.id, &item.scrapeID, &item.namespace, &item.pod, &item.container, &item.cpuRequestedCores, &item.cpuUsedCores, &item.cpuLimitCores,
 			&item.memoryRequestedBytes, &item.memoryUsedBytes, &item.memoryLimitBytes, &item.cpuWasteRatio, &item.memWasteRatio,
-			&item.projectedMonthlyWasteUSD)
+			&item.cpuProjectedMonthlyWasteUSD, &item.memoryProjectedMonthlyWasteUSD, &item.projectedMonthlyWasteUSD)
 		if err != nil {
 			return nil, err
 		}
 		result = append(result, item)
 	}
-	return result, nil
+	return result, rows.Err()
 }
 
 // Static helper mapping

@@ -78,7 +78,6 @@ func TestConsolidatedHandler_ServeHTTP(t *testing.T) {
 		)
 		cModel.SetID(42)
 		cModel.SetConsolidatedAt(time.Now())
-		cModel.SetOOMRiskScore(0.05)
 
 		var limitParam int
 		var offsetParam int = -1
@@ -99,10 +98,9 @@ func TestConsolidatedHandler_ServeHTTP(t *testing.T) {
 					42, "heavy", "my-pod", "my-container",
 					1.0, 0.5, &limitVal,
 					1024.0, 512.0, &limitBytes,
-					0.5, 0.5, 2.5,
+					0.5, 0.5, 1.5, 1.0, 2.5,
 				)
 				wModel.SetID(101)
-				wModel.SetOOMRiskScore(0.25)
 				return []*entities.ConsolidatedWorkloadSnapshotModel{wModel}, nil
 			},
 		}
@@ -129,11 +127,11 @@ func TestConsolidatedHandler_ServeHTTP(t *testing.T) {
 		if len(resp.Content) != 1 || resp.Content[0].ID != 42 {
 			t.Fatalf("content wrong: %+v", resp.Content)
 		}
-		if resp.Content[0].Indicators.OOMRiskScore != 0.05 {
-			t.Errorf("OOMRiskScore not propagated: %f", resp.Content[0].Indicators.OOMRiskScore)
+		if resp.Content[0].Indicators.ProjectedMonthlyWasteUSD != 5.5 {
+			t.Errorf("total cost not propagated")
 		}
-		if len(resp.Content[0].Items) != 1 || resp.Content[0].Items[0].OOMRiskScore != 0.25 {
-			t.Errorf("workload OOM not propagated: %+v", resp.Content[0].Items)
+		if len(resp.Content[0].Items) != 1 || resp.Content[0].Items[0].CPUProjectedMonthlyWasteUSD != 1.5 {
+			t.Errorf("workload costs not propagated: %+v", resp.Content[0].Items)
 		}
 	})
 

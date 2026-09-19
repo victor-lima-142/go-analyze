@@ -5,8 +5,8 @@ import (
 	"errors"
 	"log/slog"
 	"math"
+	"sort"
 	"sync"
-	"time"
 
 	"github.com/victor-lima-142/go-analyze/internal/numeric"
 	"github.com/victor-lima-142/go-analyze/internal/observability"
@@ -17,7 +17,6 @@ type Calculator struct {
 	cpuHourlyUSD       float64
 	memoryGiBHourlyUSD float64
 	monthlyHours       float64
-	hpaWindow          time.Duration
 	costModelLabel     string
 	logger             *slog.Logger
 	filter             *observability.Filter
@@ -32,16 +31,11 @@ func NewCalculator(opts CalculatorOptions) *Calculator {
 	if logger == nil {
 		logger = slog.Default()
 	}
-	hpaWindow := opts.HPAWindow
-	if hpaWindow <= 0 {
-		hpaWindow = 72 * time.Hour
-	}
 	return &Calculator{
 		client:             opts.Client,
 		cpuHourlyUSD:       opts.CPUHourlyUSD,
 		memoryGiBHourlyUSD: opts.MemoryGiBHourlyUSD,
 		monthlyHours:       opts.MonthlyHours,
-		hpaWindow:          hpaWindow,
 		costModelLabel:     opts.CostModelLabel,
 		logger:             logger,
 		filter:             filter,
@@ -81,10 +75,6 @@ func (c *Calculator) Calculate(ctx context.Context, p QueryParams) (*IndicatorRe
 		"memReq": MemoryRequestQuery(p),
 		"memUse": MemoryUsageQuery(p),
 		"memLim": MemoryLimitQuery(p),
-		"hpaAvg": HPAAvgReplicasQuery(p, c.hpaWindow),
-		"hpaMax": HPAMaxReplicasQuery(p, c.hpaWindow),
-		"pvcCap": PVCCapacityQuery(p),
-		"pvcUse": PVCUsedQuery(p),
 	}
 	results := c.parallelInstant(ctx, core)
 
@@ -109,7 +99,7 @@ func (c *Calculator) Calculate(ctx context.Context, p QueryParams) (*IndicatorRe
 
 	var totalCPURequested, totalCPUUsed, totalCPULimit float64
 	var totalMemRequested, totalMemUsed, totalMemLimit float64
-	var totalProjectedWaste float64
+	var totalCPUProjectedWaste, totalMemoryProjectedWaste float64
 
 	for _, key := range keys {
 		cpuRequested := byCPUReq[key]
@@ -128,38 +118,37 @@ func (c *Calculator) Calculate(ctx context.Context, p QueryParams) (*IndicatorRe
 
 		cpuWasteRatio := CPUWasteRatio(cpuRequested, cpuUsed)
 		memWasteRatio := MemWasteRatio(memRequested, memUsed)
-		oomRisk := OOMRiskScore(memUsed, memLimit)
-		projected := ProjectedMonthlyWasteUSD(cpuRequested, cpuUsed, memRequested, memUsed, c.cpuHourlyUSD, c.memoryGiBHourlyUSD, c.monthlyHours)
-		totalProjectedWaste += projected
+		cpuProjected := CPUProjectedMonthlyWasteUSD(cpuRequested, cpuUsed, c.cpuHourlyUSD, c.monthlyHours)
+		memoryProjected := MemoryProjectedMonthlyWasteUSD(memRequested, memUsed, c.memoryGiBHourlyUSD, c.monthlyHours)
+		projected := numeric.Round4(cpuProjected + memoryProjected)
+		totalCPUProjectedWaste += cpuProjected
+		totalMemoryProjectedWaste += memoryProjected
 
 		labels := splitKey(key)
 		items = append(items, WorkloadItem{
-			Namespace:                labels[0],
-			Pod:                      labels[1],
-			Container:                labels[2],
-			CPURequestedCores:        cpuRequested,
-			CPUUsedCores:             cpuUsed,
-			CPULimitCores:            cpuLimit,
-			MemoryRequestedBytes:     memRequested,
-			MemoryUsedBytes:          memUsed,
-			MemoryLimitBytes:         memLimit,
-			CPUWasteRatio:            cpuWasteRatio,
-			MemWasteRatio:            memWasteRatio,
-			OOMRiskScore:             oomRisk,
-			ProjectedMonthlyWasteUSD: projected,
+			Namespace:                      labels[0],
+			Pod:                            labels[1],
+			Container:                      labels[2],
+			CPURequestedCores:              cpuRequested,
+			CPUUsedCores:                   cpuUsed,
+			CPULimitCores:                  cpuLimit,
+			MemoryRequestedBytes:           memRequested,
+			MemoryUsedBytes:                memUsed,
+			MemoryLimitBytes:               memLimit,
+			CPUWasteRatio:                  cpuWasteRatio,
+			MemWasteRatio:                  memWasteRatio,
+			CPUProjectedMonthlyWasteUSD:    cpuProjected,
+			MemoryProjectedMonthlyWasteUSD: memoryProjected,
+			ProjectedMonthlyWasteUSD:       projected,
 		})
 	}
 
-	hpaAvg, hpaMax := c.collectAux(results, "hpaAvg", "hpaMax", "hpa")
-	pvcCapacity, pvcUsed := c.collectAux(results, "pvcCap", "pvcUse", "pvc")
-
 	indicators := Indicators{
-		CPUWasteRatio:            CPUWasteRatio(totalCPURequested, totalCPUUsed),
-		MemWasteRatio:            MemWasteRatio(totalMemRequested, totalMemUsed),
-		ProjectedMonthlyWasteUSD: numeric.Round4(totalProjectedWaste),
-		HPAEfficiency:            HPAEfficiency(hpaAvg, hpaMax),
-		PVCWasteRatio:            PVCWasteRatio(pvcCapacity, pvcUsed),
-		OOMRiskScore:             OOMRiskScore(totalMemUsed, totalMemLimit),
+		CPUWasteRatio:                  CPUWasteRatio(totalCPURequested, totalCPUUsed),
+		MemWasteRatio:                  MemWasteRatio(totalMemRequested, totalMemUsed),
+		CPUProjectedMonthlyWasteUSD:    numeric.Round4(totalCPUProjectedWaste),
+		MemoryProjectedMonthlyWasteUSD: numeric.Round4(totalMemoryProjectedWaste),
+		ProjectedMonthlyWasteUSD:       numeric.Round4(totalCPUProjectedWaste + totalMemoryProjectedWaste),
 	}
 
 	return &IndicatorResponse{
@@ -172,83 +161,38 @@ func (c *Calculator) Calculate(ctx context.Context, p QueryParams) (*IndicatorRe
 			MemoryRequestedBytes: totalMemRequested,
 			MemoryUsedBytes:      totalMemUsed,
 			MemoryLimitBytes:     totalMemLimit,
-			HPAAvgReplicas:       hpaAvg,
-			HPAMaxReplicas:       hpaMax,
-			PVCCapacityBytes:     pvcCapacity,
-			PVCUsedBytes:         pvcUsed,
 		},
 		Items:     items,
 		CostModel: c.costModelLabel,
 	}, nil
 }
 
-// collectAux extracts auxiliary indicator samples (HPA/PVC) and distinguishes
-// "metric absent" (no error, no samples) from "real query failure" so callers
-// can decide how to proceed. Failure logs a warning and returns zeros.
-func (c *Calculator) collectAux(results map[string]instantResult, leftKey, rightKey, indicator string) (float64, float64) {
-	left := results[leftKey]
-	right := results[rightKey]
-	if left.err != nil || right.err != nil {
-		c.logger.Warn("auxiliary metric query failed",
-			"indicator", indicator,
-			"left_error", left.err,
-			"right_error", right.err,
-		)
-		return 0, 0
-	}
-	return c.sumValues(left.samples), c.sumValues(right.samples)
-}
-
 func CPUWasteRatio(requested, used float64) float64 {
-	if requested <= 0 {
-		return 0
-	}
-	return numeric.Round4((requested - used) / requested)
+	return wasteRatio(requested, used)
 }
 
 func MemWasteRatio(requested, used float64) float64 {
+	return wasteRatio(requested, used)
+}
+
+func wasteRatio(requested, used float64) float64 {
 	if requested <= 0 {
 		return 0
 	}
-	return numeric.Round4((requested - used) / requested)
+	return numeric.Round4(math.Min(1, math.Max(0, (requested-used)/requested)))
+}
+
+func CPUProjectedMonthlyWasteUSD(requested, used, hourlyUSD, monthlyHours float64) float64 {
+	return numeric.Round4(math.Max(requested-used, 0) * hourlyUSD * monthlyHours)
+}
+
+func MemoryProjectedMonthlyWasteUSD(requestedBytes, usedBytes, gibHourlyUSD, monthlyHours float64) float64 {
+	wasteGiB := math.Max(requestedBytes-usedBytes, 0) / 1024 / 1024 / 1024
+	return numeric.Round4(wasteGiB * gibHourlyUSD * monthlyHours)
 }
 
 func ProjectedMonthlyWasteUSD(cpuRequested, cpuUsed, memRequestedBytes, memUsedBytes, cpuHourlyUSD, memGiBHourlyUSD, monthlyHours float64) float64 {
-	cpuWasteCores := math.Max(cpuRequested-cpuUsed, 0)
-	memWasteGiB := math.Max(memRequestedBytes-memUsedBytes, 0) / 1024 / 1024 / 1024
-	return numeric.Round4(((cpuWasteCores * cpuHourlyUSD) + (memWasteGiB * memGiBHourlyUSD)) * monthlyHours)
-}
-
-func HPAEfficiency(avgReplicas, maxReplicas float64) float64 {
-	if maxReplicas <= 0 {
-		return 0
-	}
-	return numeric.Round4(avgReplicas / maxReplicas)
-}
-
-func PVCWasteRatio(capacity, used float64) float64 {
-	if capacity <= 0 {
-		return 0
-	}
-	return numeric.Round4((capacity - used) / capacity)
-}
-
-// OOMRiskScore quantifies how close memory usage is to the configured limit.
-// Returns 0 when there is no limit defined or when the value is meaningless.
-// Score >= 0.85 indicates real risk of OOMKill; the Cenário B of the TCC uses
-// the *inverse* (< 0.15) as evidence that the over-provisioning is "pure".
-func OOMRiskScore(used, limit float64) float64 {
-	if limit <= 0 {
-		return 0
-	}
-	ratio := used / limit
-	if ratio < 0 {
-		ratio = 0
-	}
-	if ratio > 1 {
-		ratio = 1
-	}
-	return numeric.Round4(ratio)
+	return numeric.Round4(CPUProjectedMonthlyWasteUSD(cpuRequested, cpuUsed, cpuHourlyUSD, monthlyHours) + MemoryProjectedMonthlyWasteUSD(memRequestedBytes, memUsedBytes, memGiBHourlyUSD, monthlyHours))
 }
 
 func (c *Calculator) indexByWorkload(samples []Sample) map[string]float64 {
@@ -321,6 +265,16 @@ func unionKeys(maps ...map[string]float64) []string {
 	for key := range seen {
 		keys = append(keys, key)
 	}
+	sort.Slice(keys, func(i, j int) bool {
+		a, b := splitKey(keys[i]), splitKey(keys[j])
+		if a[0] != b[0] {
+			return a[0] < b[0]
+		}
+		if a[1] != b[1] {
+			return a[1] < b[1]
+		}
+		return a[2] < b[2]
+	})
 	return keys
 }
 

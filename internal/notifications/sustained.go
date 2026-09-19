@@ -20,10 +20,11 @@ type IndicatorRule struct {
 }
 
 type trackedState struct {
-	above           bool
-	firstAbove      time.Time
-	lastValue       float64
-	lastNotifiedAt  time.Time
+	above          bool
+	firstAbove     time.Time
+	lastValue      float64
+	lastNotifiedAt time.Time
+	lastObservedAt time.Time
 }
 
 type Tracker struct {
@@ -33,15 +34,21 @@ type Tracker struct {
 	notifier Notifier
 	now      func() time.Time
 	cooldown time.Duration
+	maxGap   time.Duration
 }
 
-func NewTracker(rules map[string]IndicatorRule, notifier Notifier, cooldown time.Duration) *Tracker {
+func NewTracker(rules map[string]IndicatorRule, notifier Notifier, cooldown time.Duration, maxGap ...time.Duration) *Tracker {
+	var gap time.Duration
+	if len(maxGap) > 0 {
+		gap = maxGap[0]
+	}
 	return &Tracker{
 		rules:    rules,
 		states:   make(map[IndicatorKey]*trackedState),
 		notifier: notifier,
 		now:      time.Now,
 		cooldown: cooldown,
+		maxGap:   gap,
 	}
 }
 
@@ -62,6 +69,11 @@ func (t *Tracker) Observe(ctx context.Context, key IndicatorKey, value float64) 
 		t.states[key] = state
 	}
 	state.lastValue = value
+	if state.above && t.maxGap > 0 && !state.lastObservedAt.IsZero() && now.Sub(state.lastObservedAt) > t.maxGap {
+		state.above = false
+		state.firstAbove = time.Time{}
+	}
+	state.lastObservedAt = now
 
 	exceeds := rule.Comparator(value, rule.Threshold)
 	if !exceeds {
@@ -85,14 +97,15 @@ func (t *Tracker) Observe(ctx context.Context, key IndicatorKey, value float64) 
 	}
 	state.lastNotifiedAt = now
 	t.notifier.Notify(ctx, Notification{
-		Indicator:         key.Indicator,
-		Namespace:         key.Namespace,
-		Pod:               key.Pod,
-		Container:         key.Container,
-		Value:             value,
-		Threshold:         rule.Threshold,
-		DurationSustained: sustained,
-		FiredAt:           now,
+		Indicator:          key.Indicator,
+		Namespace:          key.Namespace,
+		Pod:                key.Pod,
+		Container:          key.Container,
+		Value:              value,
+		Threshold:          rule.Threshold,
+		DurationSustained:  sustained,
+		ConfiguredDuration: rule.RequiredDuration,
+		FiredAt:            now,
 	})
 }
 

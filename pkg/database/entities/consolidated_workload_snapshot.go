@@ -11,38 +11,41 @@ type HistoricalWorkloadSnapshot struct {
 }
 
 type ConsolidatedWorkloadSnapshotModel struct {
-	id                       int
-	consolidationID          int
-	namespace                string
-	pod                      string
-	container                string
-	cpuRequestedCores        float64
-	cpuUsedCores             float64
-	cpuLimitCores            *float64
-	memoryRequestedBytes     float64
-	memoryUsedBytes          float64
-	memoryLimitBytes         *float64
-	cpuWasteRatio            float64
-	memWasteRatio            float64
-	projectedMonthlyWasteUSD float64
-	oomRiskScore             float64
+	id                             int
+	consolidationID                int
+	namespace                      string
+	pod                            string
+	container                      string
+	cpuRequestedCores              float64
+	cpuUsedCores                   float64
+	cpuLimitCores                  *float64
+	memoryRequestedBytes           float64
+	memoryUsedBytes                float64
+	memoryLimitBytes               *float64
+	cpuWasteRatio                  float64
+	memWasteRatio                  float64
+	cpuProjectedMonthlyWasteUSD    float64
+	memoryProjectedMonthlyWasteUSD float64
+	projectedMonthlyWasteUSD       float64
 }
 
-func NewConsolidatedWorkloadSnapshot(consolidationID int, ns, pod, container string, cpuReq, cpuUsed float64, cpuLimit *float64, memReq, memUsed float64, memLimit *float64, cpuWaste, memWaste, projected float64) *ConsolidatedWorkloadSnapshotModel {
+func NewConsolidatedWorkloadSnapshot(consolidationID int, ns, pod, container string, cpuReq, cpuUsed float64, cpuLimit *float64, memReq, memUsed float64, memLimit *float64, cpuWaste, memWaste, cpuProjected, memoryProjected, projected float64) *ConsolidatedWorkloadSnapshotModel {
 	return &ConsolidatedWorkloadSnapshotModel{
-		consolidationID:          consolidationID,
-		namespace:                ns,
-		pod:                      pod,
-		container:                container,
-		cpuRequestedCores:        cpuReq,
-		cpuUsedCores:             cpuUsed,
-		cpuLimitCores:            cpuLimit,
-		memoryRequestedBytes:     memReq,
-		memoryUsedBytes:          memUsed,
-		memoryLimitBytes:         memLimit,
-		cpuWasteRatio:            cpuWaste,
-		memWasteRatio:            memWaste,
-		projectedMonthlyWasteUSD: projected,
+		consolidationID:                consolidationID,
+		namespace:                      ns,
+		pod:                            pod,
+		container:                      container,
+		cpuRequestedCores:              cpuReq,
+		cpuUsedCores:                   cpuUsed,
+		cpuLimitCores:                  cpuLimit,
+		memoryRequestedBytes:           memReq,
+		memoryUsedBytes:                memUsed,
+		memoryLimitBytes:               memLimit,
+		cpuWasteRatio:                  cpuWaste,
+		memWasteRatio:                  memWaste,
+		cpuProjectedMonthlyWasteUSD:    cpuProjected,
+		memoryProjectedMonthlyWasteUSD: memoryProjected,
+		projectedMonthlyWasteUSD:       projected,
 	}
 }
 
@@ -62,8 +65,10 @@ func (w *ConsolidatedWorkloadSnapshotModel) SetPod(val string) { w.pod = val }
 func (w *ConsolidatedWorkloadSnapshotModel) Container() string       { return w.container }
 func (w *ConsolidatedWorkloadSnapshotModel) SetContainer(val string) { w.container = val }
 
-func (w *ConsolidatedWorkloadSnapshotModel) CPURequestedCores() float64       { return w.cpuRequestedCores }
-func (w *ConsolidatedWorkloadSnapshotModel) SetCPURequestedCores(val float64) { w.cpuRequestedCores = val }
+func (w *ConsolidatedWorkloadSnapshotModel) CPURequestedCores() float64 { return w.cpuRequestedCores }
+func (w *ConsolidatedWorkloadSnapshotModel) SetCPURequestedCores(val float64) {
+	w.cpuRequestedCores = val
+}
 
 func (w *ConsolidatedWorkloadSnapshotModel) CPUUsedCores() float64       { return w.cpuUsedCores }
 func (w *ConsolidatedWorkloadSnapshotModel) SetCPUUsedCores(val float64) { w.cpuUsedCores = val }
@@ -71,7 +76,9 @@ func (w *ConsolidatedWorkloadSnapshotModel) SetCPUUsedCores(val float64) { w.cpu
 func (w *ConsolidatedWorkloadSnapshotModel) CPULimitCores() *float64       { return w.cpuLimitCores }
 func (w *ConsolidatedWorkloadSnapshotModel) SetCPULimitCores(val *float64) { w.cpuLimitCores = val }
 
-func (w *ConsolidatedWorkloadSnapshotModel) MemoryRequestedBytes() float64 { return w.memoryRequestedBytes }
+func (w *ConsolidatedWorkloadSnapshotModel) MemoryRequestedBytes() float64 {
+	return w.memoryRequestedBytes
+}
 func (w *ConsolidatedWorkloadSnapshotModel) SetMemoryRequestedBytes(val float64) {
 	w.memoryRequestedBytes = val
 }
@@ -79,14 +86,28 @@ func (w *ConsolidatedWorkloadSnapshotModel) SetMemoryRequestedBytes(val float64)
 func (w *ConsolidatedWorkloadSnapshotModel) MemoryUsedBytes() float64       { return w.memoryUsedBytes }
 func (w *ConsolidatedWorkloadSnapshotModel) SetMemoryUsedBytes(val float64) { w.memoryUsedBytes = val }
 
-func (w *ConsolidatedWorkloadSnapshotModel) MemoryLimitBytes() *float64       { return w.memoryLimitBytes }
-func (w *ConsolidatedWorkloadSnapshotModel) SetMemoryLimitBytes(val *float64) { w.memoryLimitBytes = val }
+func (w *ConsolidatedWorkloadSnapshotModel) MemoryLimitBytes() *float64 { return w.memoryLimitBytes }
+func (w *ConsolidatedWorkloadSnapshotModel) SetMemoryLimitBytes(val *float64) {
+	w.memoryLimitBytes = val
+}
 
 func (w *ConsolidatedWorkloadSnapshotModel) CPUWasteRatio() float64       { return w.cpuWasteRatio }
 func (w *ConsolidatedWorkloadSnapshotModel) SetCPUWasteRatio(val float64) { w.cpuWasteRatio = val }
 
 func (w *ConsolidatedWorkloadSnapshotModel) MemWasteRatio() float64       { return w.memWasteRatio }
 func (w *ConsolidatedWorkloadSnapshotModel) SetMemWasteRatio(val float64) { w.memWasteRatio = val }
+func (w *ConsolidatedWorkloadSnapshotModel) CPUProjectedMonthlyWasteUSD() float64 {
+	return w.cpuProjectedMonthlyWasteUSD
+}
+func (w *ConsolidatedWorkloadSnapshotModel) SetCPUProjectedMonthlyWasteUSD(v float64) {
+	w.cpuProjectedMonthlyWasteUSD = v
+}
+func (w *ConsolidatedWorkloadSnapshotModel) MemoryProjectedMonthlyWasteUSD() float64 {
+	return w.memoryProjectedMonthlyWasteUSD
+}
+func (w *ConsolidatedWorkloadSnapshotModel) SetMemoryProjectedMonthlyWasteUSD(v float64) {
+	w.memoryProjectedMonthlyWasteUSD = v
+}
 
 func (w *ConsolidatedWorkloadSnapshotModel) ProjectedMonthlyWasteUSD() float64 {
 	return w.projectedMonthlyWasteUSD
@@ -94,9 +115,6 @@ func (w *ConsolidatedWorkloadSnapshotModel) ProjectedMonthlyWasteUSD() float64 {
 func (w *ConsolidatedWorkloadSnapshotModel) SetProjectedMonthlyWasteUSD(val float64) {
 	w.projectedMonthlyWasteUSD = val
 }
-
-func (w *ConsolidatedWorkloadSnapshotModel) OOMRiskScore() float64       { return w.oomRiskScore }
-func (w *ConsolidatedWorkloadSnapshotModel) SetOOMRiskScore(val float64) { w.oomRiskScore = val }
 
 // Entity Interface Implementation
 func (w *ConsolidatedWorkloadSnapshotModel) Migrate(ctx context.Context) error {
@@ -114,6 +132,8 @@ func (w *ConsolidatedWorkloadSnapshotModel) Migrate(ctx context.Context) error {
 		memory_limit_bytes NUMERIC(20,4),
 		cpu_waste_ratio NUMERIC(5,4) NOT NULL,
 		mem_waste_ratio NUMERIC(5,4) NOT NULL,
+		cpu_projected_monthly_waste_usd NUMERIC(12,4) NOT NULL,
+		memory_projected_monthly_waste_usd NUMERIC(12,4) NOT NULL,
 		projected_monthly_waste_usd NUMERIC(12,4) NOT NULL
 	);`
 	_, err := DefaultDB.ExecContext(ctx, q)
@@ -129,24 +149,24 @@ func (w *ConsolidatedWorkloadSnapshotModel) Create(ctx context.Context) error {
 	q := `INSERT INTO consolidated_workload_snapshots (
 		consolidation_id, namespace, pod, container, cpu_requested_cores, cpu_used_cores, cpu_limit_cores,
 		memory_requested_bytes, memory_used_bytes, memory_limit_bytes, cpu_waste_ratio, mem_waste_ratio,
-		projected_monthly_waste_usd
-	) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING id`
+		cpu_projected_monthly_waste_usd, memory_projected_monthly_waste_usd, projected_monthly_waste_usd
+	) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15) RETURNING id`
 	return DefaultDB.QueryRowContext(ctx, q,
 		w.consolidationID, w.namespace, w.pod, w.container, w.cpuRequestedCores, w.cpuUsedCores, w.cpuLimitCores,
 		w.memoryRequestedBytes, w.memoryUsedBytes, w.memoryLimitBytes, w.cpuWasteRatio, w.memWasteRatio,
-		w.projectedMonthlyWasteUSD).Scan(&w.id)
+		w.cpuProjectedMonthlyWasteUSD, w.memoryProjectedMonthlyWasteUSD, w.projectedMonthlyWasteUSD).Scan(&w.id)
 }
 
 func (w *ConsolidatedWorkloadSnapshotModel) Update(ctx context.Context) error {
 	q := `UPDATE consolidated_workload_snapshots SET
 		consolidation_id = $1, namespace = $2, pod = $3, container = $4, cpu_requested_cores = $5, cpu_used_cores = $6,
 		cpu_limit_cores = $7, memory_requested_bytes = $8, memory_used_bytes = $9, memory_limit_bytes = $10,
-		cpu_waste_ratio = $11, mem_waste_ratio = $12, projected_monthly_waste_usd = $13
-		WHERE id = $14`
+		cpu_waste_ratio = $11, mem_waste_ratio = $12, cpu_projected_monthly_waste_usd = $13,
+		memory_projected_monthly_waste_usd = $14, projected_monthly_waste_usd = $15 WHERE id = $16`
 	_, err := DefaultDB.ExecContext(ctx, q,
 		w.consolidationID, w.namespace, w.pod, w.container, w.cpuRequestedCores, w.cpuUsedCores, w.cpuLimitCores,
 		w.memoryRequestedBytes, w.memoryUsedBytes, w.memoryLimitBytes, w.cpuWasteRatio, w.memWasteRatio,
-		w.projectedMonthlyWasteUSD, w.id)
+		w.cpuProjectedMonthlyWasteUSD, w.memoryProjectedMonthlyWasteUSD, w.projectedMonthlyWasteUSD, w.id)
 	return err
 }
 
@@ -160,18 +180,18 @@ func (w *ConsolidatedWorkloadSnapshotModel) Read(ctx context.Context, filters ma
 	where, args := buildWhereClause(filters)
 	q := `SELECT id, consolidation_id, namespace, pod, container, cpu_requested_cores, cpu_used_cores, cpu_limit_cores,
 		memory_requested_bytes, memory_used_bytes, memory_limit_bytes, cpu_waste_ratio, mem_waste_ratio,
-		projected_monthly_waste_usd FROM consolidated_workload_snapshots` + where + ` LIMIT 1`
+		cpu_projected_monthly_waste_usd, memory_projected_monthly_waste_usd, projected_monthly_waste_usd FROM consolidated_workload_snapshots` + where + ` LIMIT 1`
 	return DefaultDB.QueryRowContext(ctx, q, args...).Scan(
 		&w.id, &w.consolidationID, &w.namespace, &w.pod, &w.container, &w.cpuRequestedCores, &w.cpuUsedCores, &w.cpuLimitCores,
 		&w.memoryRequestedBytes, &w.memoryUsedBytes, &w.memoryLimitBytes, &w.cpuWasteRatio, &w.memWasteRatio,
-		&w.projectedMonthlyWasteUSD)
+		&w.cpuProjectedMonthlyWasteUSD, &w.memoryProjectedMonthlyWasteUSD, &w.projectedMonthlyWasteUSD)
 }
 
 func (w *ConsolidatedWorkloadSnapshotModel) ReadAll(ctx context.Context, filters map[string]any) ([]Entity, error) {
 	where, args := buildWhereClause(filters)
 	q := `SELECT id, consolidation_id, namespace, pod, container, cpu_requested_cores, cpu_used_cores, cpu_limit_cores,
 		memory_requested_bytes, memory_used_bytes, memory_limit_bytes, cpu_waste_ratio, mem_waste_ratio,
-		projected_monthly_waste_usd FROM consolidated_workload_snapshots` + where
+		cpu_projected_monthly_waste_usd, memory_projected_monthly_waste_usd, projected_monthly_waste_usd FROM consolidated_workload_snapshots` + where + ` ORDER BY namespace, pod, container`
 	rows, err := DefaultDB.QueryContext(ctx, q, args...)
 	if err != nil {
 		return nil, err
@@ -184,13 +204,13 @@ func (w *ConsolidatedWorkloadSnapshotModel) ReadAll(ctx context.Context, filters
 		err := rows.Scan(
 			&item.id, &item.consolidationID, &item.namespace, &item.pod, &item.container, &item.cpuRequestedCores, &item.cpuUsedCores, &item.cpuLimitCores,
 			&item.memoryRequestedBytes, &item.memoryUsedBytes, &item.memoryLimitBytes, &item.cpuWasteRatio, &item.memWasteRatio,
-			&item.projectedMonthlyWasteUSD)
+			&item.cpuProjectedMonthlyWasteUSD, &item.memoryProjectedMonthlyWasteUSD, &item.projectedMonthlyWasteUSD)
 		if err != nil {
 			return nil, err
 		}
 		result = append(result, item)
 	}
-	return result, nil
+	return result, rows.Err()
 }
 
 // Static helper mapping

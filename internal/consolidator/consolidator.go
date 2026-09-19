@@ -3,6 +3,7 @@ package consolidator
 import (
 	"context"
 	"log/slog"
+	"sort"
 	"time"
 
 	"github.com/victor-lima-142/go-analyze/internal/notifications"
@@ -115,22 +116,19 @@ func (c *Consolidator) consolidateAndSave(ctx context.Context) {
 	}
 
 	var sumCPUReq, sumCPUUsed, sumMemReq, sumMemUsed float64
-	var sumPVCCap, sumPVCUsed float64
-	var sumHPAAvg, sumHPAMax float64
-	var sumProjected, sumMemLimit float64
+	var sumCPUProjected, sumMemoryProjected float64
 	for _, ind := range indicators {
 		sumCPUReq += ind.TotalCPURequested()
 		sumCPUUsed += ind.TotalCPUUsed()
 		sumMemReq += ind.TotalMemoryRequested()
 		sumMemUsed += ind.TotalMemoryUsed()
-		sumPVCCap += ind.PVCCapacityBytes()
-		sumPVCUsed += ind.PVCUsedBytes()
-		sumHPAAvg += ind.HPAAvgReplicas()
-		sumHPAMax += ind.HPAMaxReplicas()
-		sumProjected += ind.ProjectedMonthlyWasteUSD()
+		sumCPUProjected += ind.CPUProjectedMonthlyWasteUSD()
+		sumMemoryProjected += ind.MemoryProjectedMonthlyWasteUSD()
 	}
 	indCount := float64(len(indicators))
-	avgProjected := numeric.Round4(sumProjected / indCount)
+	avgCPUProjected := numeric.Round4(sumCPUProjected / indCount)
+	avgMemoryProjected := numeric.Round4(sumMemoryProjected / indCount)
+	avgProjected := numeric.Round4(avgCPUProjected + avgMemoryProjected)
 
 	avgCPUReq := sumCPUReq / indCount
 	avgCPUUsed := sumCPUUsed / indCount
@@ -139,29 +137,25 @@ func (c *Consolidator) consolidateAndSave(ctx context.Context) {
 
 	cpuWaste := ratioOver(true, sumCPUReq-sumCPUUsed, sumCPUReq)
 	memWaste := ratioOver(true, sumMemReq-sumMemUsed, sumMemReq)
-	pvcWaste := ratioOver(true, sumPVCCap-sumPVCUsed, sumPVCCap)
-	hpaEff := ratioOver(false, sumHPAAvg, sumHPAMax)
-	oomRisk := ratioOver(false, sumMemUsed, sumMemLimit)
-
 	consolidation := entities.NewConsolidation(
 		start, now, scrapesCount,
-		cpuWaste, memWaste, pvcWaste, hpaEff, avgProjected,
+		cpuWaste, memWaste, avgCPUProjected, avgMemoryProjected, avgProjected,
 		avgCPUReq, avgCPUUsed, avgMemReq, avgMemUsed,
 	)
-	consolidation.SetOOMRiskScore(oomRisk)
 
 	type wlKey struct{ namespace, pod, container string }
 	type wlStats struct {
-		cpuReqSum     float64
-		cpuUsedSum    float64
-		cpuLimitSum   float64
-		cpuLimitCount int
-		memReqSum     float64
-		memUsedSum    float64
-		memLimitSum   float64
-		memLimitCount int
-		projectedSum  float64
-		count         int
+		cpuReqSum          float64
+		cpuUsedSum         float64
+		cpuLimitSum        float64
+		cpuLimitCount      int
+		memReqSum          float64
+		memUsedSum         float64
+		memLimitSum        float64
+		memLimitCount      int
+		cpuProjectedSum    float64
+		memoryProjectedSum float64
+		count              int
 	}
 
 	grouped := make(map[wlKey]*wlStats)
@@ -186,7 +180,8 @@ func (c *Consolidator) consolidateAndSave(ctx context.Context) {
 			stats.memLimitSum += *wl.MemoryLimitBytes()
 			stats.memLimitCount++
 		}
-		stats.projectedSum += wl.ProjectedMonthlyWasteUSD()
+		stats.cpuProjectedSum += wl.CPUProjectedMonthlyWasteUSD()
+		stats.memoryProjectedSum += wl.MemoryProjectedMonthlyWasteUSD()
 	}
 
 	var consolidatedWorkloads []*entities.ConsolidatedWorkloadSnapshotModel
@@ -209,6 +204,8 @@ func (c *Consolidator) consolidateAndSave(ctx context.Context) {
 		wMemReqAvg := stats.memReqSum / count
 		wMemUsedAvg := stats.memUsedSum / count
 
+		cpuProjected := numeric.Round4(stats.cpuProjectedSum / count)
+		memoryProjected := numeric.Round4(stats.memoryProjectedSum / count)
 		cw := entities.NewConsolidatedWorkloadSnapshot(
 			0,
 			key.namespace, key.pod, key.container,
@@ -216,13 +213,22 @@ func (c *Consolidator) consolidateAndSave(ctx context.Context) {
 			wMemReqAvg, wMemUsedAvg, memLimit,
 			ratioOver(true, wCPUReqAvg-wCPUUsedAvg, wCPUReqAvg),
 			ratioOver(true, wMemReqAvg-wMemUsedAvg, wMemReqAvg),
-			numeric.Round4(stats.projectedSum/count),
+			cpuProjected,
+			memoryProjected,
+			numeric.Round4(cpuProjected+memoryProjected),
 		)
-		if memLimit != nil && *memLimit > 0 {
-			cw.SetOOMRiskScore(numeric.Round4(wMemUsedAvg / *memLimit))
-		}
 		consolidatedWorkloads = append(consolidatedWorkloads, cw)
 	}
+	sort.Slice(consolidatedWorkloads, func(i, j int) bool {
+		a, b := consolidatedWorkloads[i], consolidatedWorkloads[j]
+		if a.Namespace() != b.Namespace() {
+			return a.Namespace() < b.Namespace()
+		}
+		if a.Pod() != b.Pod() {
+			return a.Pod() < b.Pod()
+		}
+		return a.Container() < b.Container()
+	})
 
 	if err := c.db.SaveConsolidation(ctx, consolidation, consolidatedWorkloads); err != nil {
 		telemetry.ConsolidationErrors.Inc()
@@ -241,9 +247,6 @@ func (c *Consolidator) consolidateAndSave(ctx context.Context) {
 	if c.tracker != nil {
 		c.tracker.Observe(ctx, notifications.IndicatorKey{Indicator: "cpu_waste_ratio"}, cpuWaste)
 		c.tracker.Observe(ctx, notifications.IndicatorKey{Indicator: "mem_waste_ratio"}, memWaste)
-		c.tracker.Observe(ctx, notifications.IndicatorKey{Indicator: "pvc_waste_ratio"}, pvcWaste)
-		c.tracker.Observe(ctx, notifications.IndicatorKey{Indicator: "hpa_efficiency"}, hpaEff)
-
 		for _, cw := range consolidatedWorkloads {
 			c.tracker.Observe(ctx, notifications.IndicatorKey{
 				Indicator: "cpu_waste_ratio",

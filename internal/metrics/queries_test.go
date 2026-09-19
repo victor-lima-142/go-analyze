@@ -3,7 +3,6 @@ package metrics
 import (
 	"strings"
 	"testing"
-	"time"
 )
 
 func TestNormalizeWindow(t *testing.T) {
@@ -32,25 +31,6 @@ func TestNormalizeWindow(t *testing.T) {
 	}
 }
 
-func TestFormatDurationPromQL(t *testing.T) {
-	cases := []struct {
-		d    time.Duration
-		want string
-	}{
-		{72 * time.Hour, "3d"},
-		{7 * 24 * time.Hour, "7d"},
-		{2 * time.Hour, "2h"},
-		{30 * time.Minute, "30m"},
-		{0, "3d"},
-	}
-	for _, c := range cases {
-		got := FormatDurationPromQL(c.d)
-		if got != c.want {
-			t.Errorf("FormatDurationPromQL(%s) = %q; want %q", c.d, got, c.want)
-		}
-	}
-}
-
 func TestCPUQueries(t *testing.T) {
 	p := QueryParams{
 		Namespace: "default",
@@ -64,7 +44,7 @@ func TestCPUQueries(t *testing.T) {
 		if !strings.Contains(q, "kube_pod_container_resource_requests") {
 			t.Errorf("expected CPURequestQuery to query requests, got: %s", q)
 		}
-		if !strings.Contains(q, `namespace="default"`) || !strings.Contains(q, `pod="nginx-pod"`) || !strings.Contains(q, `container="nginx-container"`) {
+		if !strings.Contains(q, `namespace="default"`) || !strings.Contains(q, `pod=~"^nginx-pod.*$"`) || !strings.Contains(q, `container="nginx-container"`) {
 			t.Errorf("expected CPURequestQuery to contain label matchers, got: %s", q)
 		}
 	})
@@ -116,51 +96,6 @@ func TestMemoryQueries(t *testing.T) {
 		q := MemoryUsageQuery(p)
 		if !strings.Contains(q, "container_memory_working_set_bytes") {
 			t.Errorf("expected MemoryUsageQuery to query container_memory_working_set_bytes, got: %s", q)
-		}
-	})
-}
-
-func TestHPAAndPVCQueries(t *testing.T) {
-	p := QueryParams{
-		Namespace: "prod-ns",
-		HPA:       "my-hpa",
-		PVC:       "my-pvc",
-	}
-
-	t.Run("HPAAvgReplicasQuery", func(t *testing.T) {
-		q := HPAAvgReplicasQuery(p, 72*time.Hour)
-		if !strings.Contains(q, "kube_horizontalpodautoscaler_status_current_replicas") {
-			t.Errorf("expected HPAAvgReplicasQuery to query replicas, got: %s", q)
-		}
-		if !strings.Contains(q, `namespace="prod-ns"`) || !strings.Contains(q, `horizontalpodautoscaler="my-hpa"`) {
-			t.Errorf("expected HPAAvgReplicasQuery to contain namespace and hpa matchers, got: %s", q)
-		}
-		if !strings.Contains(q, "[3d]") {
-			t.Errorf("expected HPAAvgReplicasQuery to contain configured [3d] window, got: %s", q)
-		}
-	})
-
-	t.Run("HPAMaxReplicasQuery", func(t *testing.T) {
-		q := HPAMaxReplicasQuery(p, 72*time.Hour)
-		if !strings.Contains(q, "kube_horizontalpodautoscaler_spec_max_replicas") {
-			t.Errorf("expected HPAMaxReplicasQuery to query spec max replicas, got: %s", q)
-		}
-	})
-
-	t.Run("PVCCapacityQuery", func(t *testing.T) {
-		q := PVCCapacityQuery(p)
-		if !strings.Contains(q, "kubelet_volume_stats_capacity_bytes") {
-			t.Errorf("expected PVCCapacityQuery to query volume capacity, got: %s", q)
-		}
-		if !strings.Contains(q, `namespace="prod-ns"`) || !strings.Contains(q, `persistentvolumeclaim="my-pvc"`) {
-			t.Errorf("expected PVCCapacityQuery to contain namespace and pvc matchers, got: %s", q)
-		}
-	})
-
-	t.Run("PVCUsedQuery", func(t *testing.T) {
-		q := PVCUsedQuery(p)
-		if !strings.Contains(q, "kubelet_volume_stats_used_bytes") {
-			t.Errorf("expected PVCUsedQuery to query volume usage, got: %s", q)
 		}
 	})
 }

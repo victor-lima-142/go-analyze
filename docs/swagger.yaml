@@ -1,0 +1,637 @@
+basePath: /
+definitions:
+  handlers.AuditPoint:
+    properties:
+      absolute_error:
+        type: number
+      error_percent:
+        type: number
+      recalculated:
+        type: number
+      recalculated_cpu:
+        type: number
+      recalculated_memory:
+        type: number
+      reported:
+        type: number
+      reported_cpu:
+        type: number
+      reported_memory:
+        type: number
+      scrape_id:
+        type: integer
+    type: object
+  handlers.AuditResponse:
+    properties:
+      absolute_error_usd:
+        type: number
+      audit_type:
+        type: string
+      audited_scrapes_count:
+        type: integer
+      conclusive:
+        type: boolean
+      cost_model:
+        type: string
+      end_at:
+        type: string
+      error_percent:
+        type: number
+      points:
+        items:
+          $ref: '#/definitions/handlers.AuditPoint'
+        type: array
+      recalculated_cpu_projected_monthly_waste_usd:
+        type: number
+      recalculated_memory_projected_monthly_waste_usd:
+        type: number
+      recalculated_projected_monthly_waste_usd:
+        type: number
+      reported_cpu_projected_monthly_waste_usd:
+        type: number
+      reported_memory_projected_monthly_waste_usd:
+        type: number
+      reported_projected_monthly_waste_usd:
+        type: number
+      scrapes_count:
+        type: integer
+      skipped_scrapes_count:
+        type: integer
+      start_at:
+        type: string
+      window:
+        type: string
+      within_10pct_tolerance:
+        type: boolean
+    type: object
+  handlers.ConsolidatedInd:
+    properties:
+      cpu_projected_monthly_waste_usd:
+        type: number
+      cpu_waste_ratio:
+        type: number
+      mem_waste_ratio:
+        type: number
+      memory_projected_monthly_waste_usd:
+        type: number
+      projected_monthly_waste_usd:
+        type: number
+    type: object
+  handlers.ConsolidatedInputs:
+    properties:
+      total_cpu_requested:
+        type: number
+      total_cpu_used:
+        type: number
+      total_memory_requested_bytes:
+        type: number
+      total_memory_used_bytes:
+        type: number
+    type: object
+  handlers.ConsolidatedItem:
+    properties:
+      container:
+        type: string
+      cpu_limit_cores:
+        type: number
+      cpu_projected_monthly_waste_usd:
+        type: number
+      cpu_requested_cores:
+        type: number
+      cpu_used_cores:
+        type: number
+      cpu_waste_ratio:
+        type: number
+      mem_waste_ratio:
+        type: number
+      memory_limit_bytes:
+        type: number
+      memory_projected_monthly_waste_usd:
+        type: number
+      memory_requested_bytes:
+        type: number
+      memory_used_bytes:
+        type: number
+      namespace:
+        type: string
+      pod:
+        type: string
+      projected_monthly_waste_usd:
+        type: number
+    type: object
+  handlers.ConsolidatedResponse:
+    properties:
+      consolidated_at:
+        type: string
+      end_time:
+        type: string
+      id:
+        type: integer
+      indicators:
+        $ref: '#/definitions/handlers.ConsolidatedInd'
+      inputs:
+        $ref: '#/definitions/handlers.ConsolidatedInputs'
+      items:
+        items:
+          $ref: '#/definitions/handlers.ConsolidatedItem'
+        type: array
+      scrapes_count:
+        type: integer
+      start_time:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.CurrentWorkloadMetrics:
+    properties:
+      cpu_limit_cores:
+        type: number
+      cpu_projected_monthly_waste_usd:
+        type: number
+      cpu_requested_cores:
+        type: number
+      cpu_used_cores:
+        type: number
+      cpu_waste_ratio:
+        type: number
+      mem_waste_ratio:
+        type: number
+      memory_limit_bytes:
+        type: number
+      memory_projected_monthly_waste_usd:
+        type: number
+      memory_requested_bytes:
+        type: number
+      memory_used_bytes:
+        type: number
+      projected_monthly_waste_usd:
+        type: number
+      timestamp:
+        type: string
+    type: object
+  handlers.HistoricalDetailPoint:
+    properties:
+      consolidation_id:
+        type: integer
+      cpu_limit_cores:
+        type: number
+      cpu_projected_monthly_waste_usd:
+        type: number
+      cpu_requested_cores:
+        type: number
+      cpu_used_cores:
+        type: number
+      cpu_waste_ratio:
+        type: number
+      mem_waste_ratio:
+        type: number
+      memory_limit_bytes:
+        type: number
+      memory_projected_monthly_waste_usd:
+        type: number
+      memory_requested_bytes:
+        type: number
+      memory_used_bytes:
+        type: number
+      projected_monthly_waste_usd:
+        type: number
+      timestamp:
+        type: string
+    type: object
+  handlers.HistoricalWorkloadSummary:
+    properties:
+      avg_cpu_projected_monthly_waste_usd:
+        type: number
+      avg_cpu_requested_cores:
+        type: number
+      avg_cpu_used_cores:
+        type: number
+      avg_cpu_waste_ratio:
+        type: number
+      avg_mem_waste_ratio:
+        type: number
+      avg_memory_projected_monthly_waste_usd:
+        type: number
+      avg_memory_requested_bytes:
+        type: number
+      avg_memory_used_bytes:
+        type: number
+      avg_projected_monthly_waste_usd:
+        type: number
+      last_10_consolidations_count:
+        type: integer
+      points:
+        items:
+          $ref: '#/definitions/handlers.HistoricalDetailPoint'
+        type: array
+    type: object
+  handlers.PaginatedConsolidatedResponse:
+    properties:
+      content:
+        items:
+          $ref: '#/definitions/handlers.ConsolidatedResponse'
+        type: array
+      hasNext:
+        type: boolean
+      hasPrevious:
+        type: boolean
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      totalItems:
+        type: integer
+      totalPages:
+        type: integer
+    type: object
+  handlers.PaginatedIndicatorResponse:
+    properties:
+      content:
+        items:
+          $ref: '#/definitions/metrics.WorkloadItem'
+        type: array
+      cost_model:
+        type: string
+      filters:
+        $ref: '#/definitions/metrics.QueryParams'
+      hasNext:
+        type: boolean
+      hasPrevious:
+        type: boolean
+      indicators:
+        $ref: '#/definitions/metrics.Indicators'
+      inputs:
+        $ref: '#/definitions/metrics.Inputs'
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      timestamp:
+        type: string
+      totalItems:
+        type: integer
+      totalPages:
+        type: integer
+    type: object
+  handlers.WorkloadDetailsResponse:
+    properties:
+      container:
+        type: string
+      current:
+        $ref: '#/definitions/handlers.CurrentWorkloadMetrics'
+      historical:
+        $ref: '#/definitions/handlers.HistoricalWorkloadSummary'
+      namespace:
+        type: string
+      pod:
+        type: string
+    type: object
+  metrics.Indicators:
+    properties:
+      cpu_projected_monthly_waste_usd:
+        type: number
+      cpu_waste_ratio:
+        type: number
+      mem_waste_ratio:
+        type: number
+      memory_projected_monthly_waste_usd:
+        type: number
+      projected_monthly_waste_usd:
+        type: number
+    type: object
+  metrics.Inputs:
+    properties:
+      cpu_limit_cores:
+        type: number
+      cpu_requested_cores:
+        type: number
+      cpu_used_cores:
+        type: number
+      memory_limit_bytes:
+        type: number
+      memory_requested_bytes:
+        type: number
+      memory_used_bytes:
+        type: number
+    type: object
+  metrics.QueryParams:
+    properties:
+      container:
+        type: string
+      namespace:
+        type: string
+      pod:
+        type: string
+      window:
+        type: string
+    type: object
+  metrics.WorkloadItem:
+    properties:
+      container:
+        type: string
+      cpu_limit_cores:
+        type: number
+      cpu_projected_monthly_waste_usd:
+        type: number
+      cpu_requested_cores:
+        type: number
+      cpu_used_cores:
+        type: number
+      cpu_waste_ratio:
+        type: number
+      mem_waste_ratio:
+        type: number
+      memory_limit_bytes:
+        type: number
+      memory_projected_monthly_waste_usd:
+        type: number
+      memory_requested_bytes:
+        type: number
+      memory_used_bytes:
+        type: number
+      namespace:
+        type: string
+      pod:
+        type: string
+      projected_monthly_waste_usd:
+        type: number
+    type: object
+host: localhost:8080
+info:
+  contact:
+    name: Suporte Go-Analyze
+  description: Esta é a API do analisador de recursos e custos de workloads Kubernetes
+    (go-analyze).
+  title: Go Analyze API
+  version: "1.0"
+paths:
+  /api/v1/audit:
+    get:
+      description: Recalcula os custos de CPU e memória com implementação independente
+        e verifica apenas a consistência interna do valor reportado; não valida faturamento
+        real.
+      parameters:
+      - description: 'Período rápido (ex: 1hr, 5d, 10d)'
+        in: query
+        name: period
+        type: string
+      - description: Data inicial (RFC3339)
+        in: query
+        name: start_at
+        type: string
+      - description: Data final
+        in: query
+        name: end_at
+        type: string
+      - description: Inclui ponto-a-ponto
+        in: query
+        name: details
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.AuditResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Auditar projeção de custo
+      tags:
+      - audit
+  /api/v1/consolidated:
+    get:
+      consumes:
+      - application/json
+      description: Retorna uma lista paginada das consolidações salvas no banco de
+        dados, com filtros de data opcionais e opção de incluir workloads detalhados.
+      parameters:
+      - description: 'Número da página (padrão: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Tamanho da página (padrão: 50, máx: 1000)'
+        in: query
+        name: pageSize
+        type: integer
+      - description: Limite alternativo de tamanho de página
+        in: query
+        name: limit
+        type: integer
+      - description: 'Se deve incluir itens consolidados de workloads (padrão: true)'
+        in: query
+        name: include_items
+        type: boolean
+      - description: 'Período rápido (ex: 1min, 5min, 10min, 30min, 1hr, 5d, 10d)'
+        in: query
+        name: period
+        type: string
+      - description: 'Data inicial (ex: RFC3339 ou 2006-01-02)'
+        in: query
+        name: start_at
+        type: string
+      - description: Data final
+        in: query
+        name: end_at
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.PaginatedConsolidatedResponse'
+        "400":
+          description: Parâmetros de filtro ou data inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "405":
+          description: Método HTTP não permitido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno ao consultar o banco de dados
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Listar consolidações históricas
+      tags:
+      - consolidated
+  /api/v1/experiment/reset:
+    post:
+      consumes:
+      - application/json
+      description: Limpa as tabelas de histórico do banco de dados e zera o estado
+        interno dos trackers de notificação para uma nova rodada de teste.
+      parameters:
+      - description: Bearer token experimental
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "405":
+          description: Method Not Allowed
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Resetar dados do experimento
+      tags:
+      - experiment
+  /api/v1/indicators:
+    get:
+      consumes:
+      - application/json
+      description: Calcula e retorna os indicadores atuais de otimização de recursos
+        a partir do Prometheus.
+      parameters:
+      - description: 'Janela de tempo para o cálculo (ex: 30s, 1m, 5m, 10m, 30m, 1h)'
+        in: query
+        name: window
+        type: string
+      - description: 'Número da página (padrão: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Tamanho da página (padrão: 50, máx: 1000)'
+        in: query
+        name: pageSize
+        type: integer
+      - description: Limite alternativo de tamanho de página
+        in: query
+        name: limit
+        type: integer
+      - description: Filtrar por Namespace do Kubernetes
+        in: query
+        name: namespace
+        type: string
+      - description: Filtrar por Pod do Kubernetes
+        in: query
+        name: pod
+        type: string
+      - description: Filtrar por Container do Kubernetes
+        in: query
+        name: container
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.PaginatedIndicatorResponse'
+        "405":
+          description: Método HTTP não permitido
+          schema:
+            additionalProperties: true
+            type: object
+        "502":
+          description: Falha ao consultar o Prometheus ou calcular indicadores
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Obter indicadores calculados atuais
+      tags:
+      - indicators
+  /api/v1/workloads/details:
+    get:
+      consumes:
+      - application/json
+      description: Retorna as métricas atuais de execução em tempo real e um histórico
+        das consolidações registradas para o workload. O parâmetro `pod` é tratado
+        como prefixo (LIKE) quando não contém o caractere %.
+      parameters:
+      - description: Namespace do Kubernetes
+        in: query
+        name: namespace
+        required: true
+        type: string
+      - description: Nome do Container no Kubernetes
+        in: query
+        name: container
+        required: true
+        type: string
+      - description: Prefixo do Pod no Kubernetes (LIKE)
+        in: query
+        name: pod
+        type: string
+      - description: Janela de tempo para o cálculo atual
+        in: query
+        name: window
+        type: string
+      - description: 'Período rápido para busca histórica (ex: 1hr, 5d, 10d)'
+        in: query
+        name: period
+        type: string
+      - description: 'Data inicial para histórico (ex: RFC3339)'
+        in: query
+        name: start_at
+        type: string
+      - description: Data final para histórico
+        in: query
+        name: end_at
+        type: string
+      - description: 'Número máximo de pontos históricos a retornar (padrão: 10)'
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.WorkloadDetailsResponse'
+        "400":
+          description: Namespace e container são parâmetros obrigatórios ou datas
+            inválidas
+          schema:
+            additionalProperties: true
+            type: object
+        "405":
+          description: Método HTTP não permitido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro ao carregar os dados históricos
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Obter detalhes de um workload específico
+      tags:
+      - workloads
+swagger: "2.0"

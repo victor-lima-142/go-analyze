@@ -85,15 +85,14 @@ func (d *Database) SaveSnapshot(ctx context.Context, res *metrics.IndicatorRespo
 	ind := res.Indicators
 	inp := res.Inputs
 	if _, err := tx.ExecContext(ctx, `INSERT INTO indicator_snapshots (
-        scrape_id, cpu_waste_ratio, mem_waste_ratio, pvc_waste_ratio, hpa_efficiency, projected_monthly_waste_usd,
-        total_cpu_requested, total_cpu_used, total_memory_requested_bytes, total_memory_used_bytes,
-        hpa_avg_replicas, hpa_max_replicas, pvc_capacity_bytes, pvc_used_bytes, oom_risk_score
-    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)`,
+		scrape_id, cpu_waste_ratio, mem_waste_ratio, cpu_projected_monthly_waste_usd,
+		memory_projected_monthly_waste_usd, projected_monthly_waste_usd,
+		total_cpu_requested, total_cpu_used, total_memory_requested_bytes, total_memory_used_bytes
+	) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
 		scrapeID,
-		ind.CPUWasteRatio, ind.MemWasteRatio, ind.PVCWasteRatio, ind.HPAEfficiency, ind.ProjectedMonthlyWasteUSD,
+		ind.CPUWasteRatio, ind.MemWasteRatio, ind.CPUProjectedMonthlyWasteUSD,
+		ind.MemoryProjectedMonthlyWasteUSD, ind.ProjectedMonthlyWasteUSD,
 		inp.CPURequestedCores, inp.CPUUsedCores, inp.MemoryRequestedBytes, inp.MemoryUsedBytes,
-		inp.HPAAvgReplicas, inp.HPAMaxReplicas, inp.PVCCapacityBytes, inp.PVCUsedBytes,
-		ind.OOMRiskScore,
 	); err != nil {
 		return fmt.Errorf("insert indicator_snapshot: %w", err)
 	}
@@ -101,8 +100,8 @@ func (d *Database) SaveSnapshot(ctx context.Context, res *metrics.IndicatorRespo
 	stmt, err := tx.PrepareContext(ctx, `INSERT INTO workload_item_snapshots (
         scrape_id, namespace, pod, container, cpu_requested_cores, cpu_used_cores, cpu_limit_cores,
         memory_requested_bytes, memory_used_bytes, memory_limit_bytes, cpu_waste_ratio, mem_waste_ratio,
-        projected_monthly_waste_usd, oom_risk_score
-    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)`)
+		cpu_projected_monthly_waste_usd, memory_projected_monthly_waste_usd, projected_monthly_waste_usd
+	) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)`)
 	if err != nil {
 		return fmt.Errorf("prepare workload insert: %w", err)
 	}
@@ -114,7 +113,7 @@ func (d *Database) SaveSnapshot(ctx context.Context, res *metrics.IndicatorRespo
 		if _, err := stmt.ExecContext(ctx,
 			scrapeID, item.Namespace, item.Pod, item.Container, item.CPURequestedCores, item.CPUUsedCores, cpuLimit,
 			item.MemoryRequestedBytes, item.MemoryUsedBytes, memLimit, item.CPUWasteRatio, item.MemWasteRatio,
-			item.ProjectedMonthlyWasteUSD, item.OOMRiskScore,
+			item.CPUProjectedMonthlyWasteUSD, item.MemoryProjectedMonthlyWasteUSD, item.ProjectedMonthlyWasteUSD,
 		); err != nil {
 			return fmt.Errorf("insert workload item: %w", err)
 		}
@@ -151,16 +150,16 @@ func (d *Database) GetScrapesInRange(ctx context.Context, start, end time.Time) 
 		s.SetDurationMs(durationMs)
 		scrapes = append(scrapes, s)
 	}
-	return scrapes, nil
+	return scrapes, rows.Err()
 }
 
 func (d *Database) GetIndicatorSnapshotsForScrapes(ctx context.Context, scrapeIDs []int) ([]*entities.IndicatorSnapshotModel, error) {
 	if len(scrapeIDs) == 0 {
 		return nil, nil
 	}
-	q := `SELECT id, scrape_id, cpu_waste_ratio, mem_waste_ratio, pvc_waste_ratio, hpa_efficiency, projected_monthly_waste_usd,
-		total_cpu_requested, total_cpu_used, total_memory_requested_bytes, total_memory_used_bytes,
-		hpa_avg_replicas, hpa_max_replicas, pvc_capacity_bytes, pvc_used_bytes
+	q := `SELECT id, scrape_id, cpu_waste_ratio, mem_waste_ratio, cpu_projected_monthly_waste_usd,
+		memory_projected_monthly_waste_usd, projected_monthly_waste_usd,
+		total_cpu_requested, total_cpu_used, total_memory_requested_bytes, total_memory_used_bytes
 		FROM indicator_snapshots WHERE scrape_id = ANY($1)`
 	rows, err := d.db.QueryContext(ctx, q, pq.Array(scrapeIDs))
 	if err != nil {
@@ -171,26 +170,23 @@ func (d *Database) GetIndicatorSnapshotsForScrapes(ctx context.Context, scrapeID
 	var list []*entities.IndicatorSnapshotModel
 	for rows.Next() {
 		var id, scrapeID int
-		var cpuWaste, memWaste, pvcWaste, hpaEff, projected float64
+		var cpuWaste, memWaste, cpuProjected, memoryProjected, projected float64
 		var totalCPUReq, totalCPUUsed, totalMemReq, totalMemUsed float64
-		var hpaAvg, hpaMax, pvcCap, pvcUsed float64
 		err := rows.Scan(
-			&id, &scrapeID, &cpuWaste, &memWaste, &pvcWaste, &hpaEff, &projected,
+			&id, &scrapeID, &cpuWaste, &memWaste, &cpuProjected, &memoryProjected, &projected,
 			&totalCPUReq, &totalCPUUsed, &totalMemReq, &totalMemUsed,
-			&hpaAvg, &hpaMax, &pvcCap, &pvcUsed,
 		)
 		if err != nil {
 			return nil, err
 		}
 		item := entities.NewIndicatorSnapshot(
-			scrapeID, cpuWaste, memWaste, pvcWaste, hpaEff, projected,
+			scrapeID, cpuWaste, memWaste, cpuProjected, memoryProjected, projected,
 			totalCPUReq, totalCPUUsed, totalMemReq, totalMemUsed,
-			hpaAvg, hpaMax, pvcCap, pvcUsed,
 		)
 		item.SetID(id)
 		list = append(list, item)
 	}
-	return list, nil
+	return list, rows.Err()
 }
 
 func (d *Database) GetWorkloadItemSnapshotsForScrapes(ctx context.Context, scrapeIDs []int) ([]*entities.WorkloadItemSnapshotModel, error) {
@@ -199,7 +195,7 @@ func (d *Database) GetWorkloadItemSnapshotsForScrapes(ctx context.Context, scrap
 	}
 	q := `SELECT id, scrape_id, namespace, pod, container, cpu_requested_cores, cpu_used_cores, cpu_limit_cores,
 		memory_requested_bytes, memory_used_bytes, memory_limit_bytes, cpu_waste_ratio, mem_waste_ratio,
-		projected_monthly_waste_usd
+		cpu_projected_monthly_waste_usd, memory_projected_monthly_waste_usd, projected_monthly_waste_usd
 		FROM workload_item_snapshots WHERE scrape_id = ANY($1)`
 	rows, err := d.db.QueryContext(ctx, q, pq.Array(scrapeIDs))
 	if err != nil {
@@ -215,22 +211,22 @@ func (d *Database) GetWorkloadItemSnapshotsForScrapes(ctx context.Context, scrap
 		var cpuLimit *float64
 		var memReq, memUsed float64
 		var memLimit *float64
-		var cpuWaste, memWaste, projected float64
+		var cpuWaste, memWaste, cpuProjected, memoryProjected, projected float64
 		err := rows.Scan(
 			&id, &scrapeID, &ns, &pod, &container, &cpuReq, &cpuUsed, &cpuLimit,
-			&memReq, &memUsed, &memLimit, &cpuWaste, &memWaste, &projected,
+			&memReq, &memUsed, &memLimit, &cpuWaste, &memWaste, &cpuProjected, &memoryProjected, &projected,
 		)
 		if err != nil {
 			return nil, err
 		}
 		item := entities.NewWorkloadItemSnapshot(
 			scrapeID, ns, pod, container, cpuReq, cpuUsed, cpuLimit,
-			memReq, memUsed, memLimit, cpuWaste, memWaste, projected,
+			memReq, memUsed, memLimit, cpuWaste, memWaste, cpuProjected, memoryProjected, projected,
 		)
 		item.SetID(id)
 		list = append(list, item)
 	}
-	return list, nil
+	return list, rows.Err()
 }
 
 func (d *Database) SaveConsolidation(ctx context.Context, consolidation *entities.ConsolidationModel, workloads []*entities.ConsolidatedWorkloadSnapshotModel) error {
@@ -242,17 +238,16 @@ func (d *Database) SaveConsolidation(ctx context.Context, consolidation *entitie
 
 	q1 := `INSERT INTO consolidations (
 		consolidated_at, start_time, end_time, scrapes_count, cpu_waste_ratio, mem_waste_ratio,
-		pvc_waste_ratio, hpa_efficiency, projected_monthly_waste_usd, total_cpu_requested, total_cpu_used,
-		total_memory_requested_bytes, total_memory_used_bytes, oom_risk_score
-	) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING id`
+		cpu_projected_monthly_waste_usd, memory_projected_monthly_waste_usd, projected_monthly_waste_usd,
+		total_cpu_requested, total_cpu_used, total_memory_requested_bytes, total_memory_used_bytes
+	) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING id`
 	var cid int
 	err = tx.QueryRowContext(ctx, q1,
 		consolidation.ConsolidatedAt(), consolidation.StartTime(), consolidation.EndTime(),
 		consolidation.ScrapesCount(), consolidation.CPUWasteRatio(), consolidation.MemWasteRatio(),
-		consolidation.PVCWasteRatio(), consolidation.HPAEfficiency(), consolidation.ProjectedMonthlyWasteUSD(),
+		consolidation.CPUProjectedMonthlyWasteUSD(), consolidation.MemoryProjectedMonthlyWasteUSD(), consolidation.ProjectedMonthlyWasteUSD(),
 		consolidation.TotalCPURequested(), consolidation.TotalCPUUsed(),
 		consolidation.TotalMemoryRequested(), consolidation.TotalMemoryUsed(),
-		consolidation.OOMRiskScore(),
 	).Scan(&cid)
 	if err != nil {
 		return fmt.Errorf("failed to save consolidation header in transaction: %w", err)
@@ -262,8 +257,8 @@ func (d *Database) SaveConsolidation(ctx context.Context, consolidation *entitie
 	q2 := `INSERT INTO consolidated_workload_snapshots (
 		consolidation_id, namespace, pod, container, cpu_requested_cores, cpu_used_cores, cpu_limit_cores,
 		memory_requested_bytes, memory_used_bytes, memory_limit_bytes, cpu_waste_ratio, mem_waste_ratio,
-		projected_monthly_waste_usd, oom_risk_score
-	) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`
+		cpu_projected_monthly_waste_usd, memory_projected_monthly_waste_usd, projected_monthly_waste_usd
+	) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)`
 	stmt, err := tx.PrepareContext(ctx, q2)
 	if err != nil {
 		return err
@@ -274,7 +269,7 @@ func (d *Database) SaveConsolidation(ctx context.Context, consolidation *entitie
 		_, err = stmt.ExecContext(ctx,
 			cid, w.Namespace(), w.Pod(), w.Container(), w.CPURequestedCores(), w.CPUUsedCores(), w.CPULimitCores(),
 			w.MemoryRequestedBytes(), w.MemoryUsedBytes(), w.MemoryLimitBytes(), w.CPUWasteRatio(), w.MemWasteRatio(),
-			w.ProjectedMonthlyWasteUSD(), w.OOMRiskScore())
+			w.CPUProjectedMonthlyWasteUSD(), w.MemoryProjectedMonthlyWasteUSD(), w.ProjectedMonthlyWasteUSD())
 		if err != nil {
 			return fmt.Errorf("failed to save consolidated workload snapshot: %w", err)
 		}
@@ -289,7 +284,7 @@ func (d *Database) GetConsolidations(ctx context.Context, limit, offset int, sta
 
 	var selectQuery strings.Builder
 	selectQuery.WriteString(`SELECT id, consolidated_at, start_time, end_time, scrapes_count, cpu_waste_ratio, mem_waste_ratio,
-		pvc_waste_ratio, hpa_efficiency, projected_monthly_waste_usd, total_cpu_requested, total_cpu_used,
+		cpu_projected_monthly_waste_usd, memory_projected_monthly_waste_usd, projected_monthly_waste_usd, total_cpu_requested, total_cpu_used,
 		total_memory_requested_bytes, total_memory_used_bytes
 		FROM consolidations`)
 
@@ -335,32 +330,32 @@ func (d *Database) GetConsolidations(ctx context.Context, limit, offset int, sta
 	for rows.Next() {
 		var id, scrapesCount int
 		var consolidatedAt, startTimeVal, endTimeVal time.Time
-		var cpuWaste, memWaste, pvcWaste, hpaEff, projected float64
+		var cpuWaste, memWaste, cpuProjected, memoryProjected, projected float64
 		var totalCPUReq, totalCPUUsed, totalMemReq, totalMemUsed float64
 		err := rows.Scan(
 			&id, &consolidatedAt, &startTimeVal, &endTimeVal, &scrapesCount, &cpuWaste, &memWaste,
-			&pvcWaste, &hpaEff, &projected, &totalCPUReq, &totalCPUUsed,
+			&cpuProjected, &memoryProjected, &projected, &totalCPUReq, &totalCPUUsed,
 			&totalMemReq, &totalMemUsed,
 		)
 		if err != nil {
 			return nil, 0, err
 		}
 		item := entities.NewConsolidation(
-			startTimeVal, endTimeVal, scrapesCount, cpuWaste, memWaste, pvcWaste, hpaEff, projected,
+			startTimeVal, endTimeVal, scrapesCount, cpuWaste, memWaste, cpuProjected, memoryProjected, projected,
 			totalCPUReq, totalCPUUsed, totalMemReq, totalMemUsed,
 		)
 		item.SetID(id)
 		item.SetConsolidatedAt(consolidatedAt)
 		list = append(list, item)
 	}
-	return list, totalItems, nil
+	return list, totalItems, rows.Err()
 }
 
 func (d *Database) GetConsolidatedWorkloads(ctx context.Context, consolidationID int) ([]*entities.ConsolidatedWorkloadSnapshotModel, error) {
 	q := `SELECT id, consolidation_id, namespace, pod, container, cpu_requested_cores, cpu_used_cores, cpu_limit_cores,
 		memory_requested_bytes, memory_used_bytes, memory_limit_bytes, cpu_waste_ratio, mem_waste_ratio,
-		projected_monthly_waste_usd
-		FROM consolidated_workload_snapshots WHERE consolidation_id = $1`
+		cpu_projected_monthly_waste_usd, memory_projected_monthly_waste_usd, projected_monthly_waste_usd
+		FROM consolidated_workload_snapshots WHERE consolidation_id = $1 ORDER BY namespace, pod, container`
 	rows, err := d.db.QueryContext(ctx, q, consolidationID)
 	if err != nil {
 		return nil, err
@@ -375,22 +370,22 @@ func (d *Database) GetConsolidatedWorkloads(ctx context.Context, consolidationID
 		var cpuLimit *float64
 		var memReq, memUsed float64
 		var memLimit *float64
-		var cpuWaste, memWaste, projected float64
+		var cpuWaste, memWaste, cpuProjected, memoryProjected, projected float64
 		err := rows.Scan(
 			&id, &cid, &ns, &pod, &container, &cpuReq, &cpuUsed, &cpuLimit,
-			&memReq, &memUsed, &memLimit, &cpuWaste, &memWaste, &projected,
+			&memReq, &memUsed, &memLimit, &cpuWaste, &memWaste, &cpuProjected, &memoryProjected, &projected,
 		)
 		if err != nil {
 			return nil, err
 		}
 		item := entities.NewConsolidatedWorkloadSnapshot(
 			cid, ns, pod, container, cpuReq, cpuUsed, cpuLimit,
-			memReq, memUsed, memLimit, cpuWaste, memWaste, projected,
+			memReq, memUsed, memLimit, cpuWaste, memWaste, cpuProjected, memoryProjected, projected,
 		)
 		item.SetID(id)
 		list = append(list, item)
 	}
-	return list, nil
+	return list, rows.Err()
 }
 
 // GetLastWorkloadSnapshots returns historical consolidated snapshots for the
@@ -399,7 +394,8 @@ func (d *Database) GetConsolidatedWorkloads(ctx context.Context, consolidationID
 func (d *Database) GetLastWorkloadSnapshots(ctx context.Context, namespace, pod, container string, limit int, startTime, endTime *time.Time) ([]*entities.HistoricalWorkloadSnapshot, error) {
 	var q strings.Builder
 	q.WriteString(`SELECT w.id, w.consolidation_id, w.namespace, w.pod, w.container, w.cpu_requested_cores, w.cpu_used_cores, w.cpu_limit_cores,
-		w.memory_requested_bytes, w.memory_used_bytes, w.memory_limit_bytes, w.cpu_waste_ratio, w.mem_waste_ratio, w.projected_monthly_waste_usd,
+		w.memory_requested_bytes, w.memory_used_bytes, w.memory_limit_bytes, w.cpu_waste_ratio, w.mem_waste_ratio,
+		w.cpu_projected_monthly_waste_usd, w.memory_projected_monthly_waste_usd, w.projected_monthly_waste_usd,
 		c.consolidated_at
 		FROM consolidated_workload_snapshots w
 		JOIN consolidations c ON w.consolidation_id = c.id
@@ -451,12 +447,12 @@ func (d *Database) GetLastWorkloadSnapshots(ctx context.Context, namespace, pod,
 		var cpuLimit *float64
 		var memReq, memUsed float64
 		var memLimit *float64
-		var cpuWaste, memWaste, projected float64
+		var cpuWaste, memWaste, cpuProjected, memoryProjected, projected float64
 		var consolidatedAt time.Time
 
 		err := rows.Scan(
 			&id, &cid, &ns, &p, &containerName, &cpuReq, &cpuUsed, &cpuLimit,
-			&memReq, &memUsed, &memLimit, &cpuWaste, &memWaste, &projected,
+			&memReq, &memUsed, &memLimit, &cpuWaste, &memWaste, &cpuProjected, &memoryProjected, &projected,
 			&consolidatedAt,
 		)
 		if err != nil {
@@ -465,7 +461,7 @@ func (d *Database) GetLastWorkloadSnapshots(ctx context.Context, namespace, pod,
 
 		snap := entities.NewConsolidatedWorkloadSnapshot(
 			cid, ns, p, containerName, cpuReq, cpuUsed, cpuLimit,
-			memReq, memUsed, memLimit, cpuWaste, memWaste, projected,
+			memReq, memUsed, memLimit, cpuWaste, memWaste, cpuProjected, memoryProjected, projected,
 		)
 		snap.SetID(id)
 
@@ -474,7 +470,7 @@ func (d *Database) GetLastWorkloadSnapshots(ctx context.Context, namespace, pod,
 			ConsolidatedAt: consolidatedAt,
 		})
 	}
-	return list, nil
+	return list, rows.Err()
 }
 
 // TruncateData removes all records from historical tables. It is used to reset
