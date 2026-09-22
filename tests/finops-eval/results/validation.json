@@ -1,0 +1,99 @@
+{
+  "commands": [
+    {
+      "name": "go-test",
+      "command": "go test ./...",
+      "exit_code": 0,
+      "duration_seconds": 0.657,
+      "log": "results/logs/validation-go-test.log",
+      "summary": [
+        "?   \tgithub.com/victor-lima-142/go-analyze/pkg/models\t[no test files]"
+      ]
+    },
+    {
+      "name": "go-test-race",
+      "command": "go test -race ./...",
+      "exit_code": 0,
+      "duration_seconds": 1.93,
+      "log": "results/logs/validation-go-test-race.log",
+      "summary": [
+        "?   \tgithub.com/victor-lima-142/go-analyze/pkg/models\t[no test files]"
+      ]
+    },
+    {
+      "name": "go-vet",
+      "command": "go vet ./...",
+      "exit_code": 0,
+      "duration_seconds": 0.185,
+      "log": "results/logs/validation-go-vet.log",
+      "summary": []
+    },
+    {
+      "name": "postgres-integration",
+      "command": "go test ./pkg/database/migrations -run TestPostgresFreshUpgradePersistenceTransactionAndCascade -v",
+      "exit_code": 0,
+      "duration_seconds": 0.098,
+      "log": "results/logs/validation-postgres-integration.log",
+      "summary": [
+        "ok  \tgithub.com/victor-lima-142/go-analyze/pkg/database/migrations\t(cached)"
+      ]
+    },
+    {
+      "name": "python-compile",
+      "command": "/home/victor-reboredo/Documents/mba/tests/finops-eval/env/bin/python -m compileall -q harness tests",
+      "exit_code": 0,
+      "duration_seconds": 0.039,
+      "log": "results/logs/validation-python-compile.log",
+      "summary": []
+    },
+    {
+      "name": "python-tests",
+      "command": "/home/victor-reboredo/Documents/mba/tests/finops-eval/env/bin/python -m unittest discover -s tests -v",
+      "exit_code": 0,
+      "duration_seconds": 0.077,
+      "log": "results/logs/validation-python-tests.log",
+      "summary": [
+        "OK"
+      ]
+    },
+    {
+      "name": "campaign-dry-run",
+      "command": "/home/victor-reboredo/Documents/mba/tests/finops-eval/env/bin/python -m harness.run --dry-run",
+      "exit_code": 0,
+      "duration_seconds": 0.071,
+      "log": "results/logs/validation-campaign-dry-run.log",
+      "summary": [
+        "[22:54:33] 2: cpu_positive (positive)"
+      ]
+    },
+    {
+      "name": "contracts",
+      "command": "/home/victor-reboredo/Documents/mba/tests/finops-eval/env/bin/python -m harness.contracts",
+      "exit_code": 0,
+      "duration_seconds": 0.268,
+      "log": "results/logs/validation-contracts.log",
+      "summary": [
+        "{\"ok\": true, \"passed\": 29, \"total\": 29, \"semantic\": {\"ratios_in_range\": true, \"cost_sum\": true}}"
+      ]
+    },
+    {
+      "name": "manifests-server-dry-run",
+      "command": "minikube -p mba-finops kubectl -- apply --dry-run=server -f k8s/postgres.yaml -f k8s/go-analyze.yaml -f manifests/",
+      "exit_code": 0,
+      "duration_seconds": 0.374,
+      "log": "results/logs/validation-manifests-server-dry-run.log",
+      "summary": [
+        "pod/memory-positive created (server dry run)"
+      ]
+    },
+    {
+      "name": "git-diff-check",
+      "command": "git diff --check",
+      "exit_code": 0,
+      "duration_seconds": 0.002,
+      "log": "results/logs/validation-git-diff-check.log",
+      "summary": []
+    }
+  ],
+  "ok": true
+}

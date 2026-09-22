@@ -1,0 +1,32 @@
+grafana:
+  enabled: false
+alertmanager:
+  enabled: false
+defaultRules:
+  create: false
+prometheus-node-exporter:
+  enabled: false
+nodeExporter:
+  enabled: false
+kubeStateMetrics:
+  enabled: true
+prometheusOperator:
+  enabled: true
+prometheus:
+  enabled: true
+  prometheusSpec:
+    retention: 24h
+    scrapeInterval: 10s
+    evaluationInterval: 10s
+    resources:
+      requests: {cpu: 250m, memory: 512Mi}
+      limits: {cpu: "2", memory: 3Gi}
+kubelet:
+  enabled: true
+  serviceMonitor:
+    cAdvisor: true
+    cAdvisorInterval: 10s
+kube-state-metrics:
+  prometheus:
+    monitor:
+      interval: 10s

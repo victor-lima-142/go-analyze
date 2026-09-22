@@ -1,0 +1,64 @@
+{
+  "commit": "333b3300b8224b0bd7f05f04a8628790a4290ab6",
+  "dirty": true,
+  "configuration": {
+    "experiment": {
+      "repetitions": 10,
+      "seed": 20260919,
+      "analyzer_base_url": "http://localhost:8081",
+      "prometheus_base_url": "http://localhost:9090",
+      "namespace": "finops-test",
+      "window": "5m",
+      "window_seconds": 300,
+      "sustained_duration_seconds": 300,
+      "margin_seconds": 90,
+      "maturation_seconds": 720,
+      "polling_seconds": 10,
+      "settle_seconds": 30,
+      "notification_metric": "go_analyze_notifications_total",
+      "reset_token_env": "EXPERIMENT_RESET_TOKEN"
+    },
+    "scenarios": [
+      {
+        "name": "memory_positive",
+        "label": "positive",
+        "manifest": "manifests/memory_positive.yaml",
+        "pod": "memory-positive",
+        "container": "stress",
+        "indicator": "mem_waste_ratio"
+      },
+      {
+        "name": "memory_negative",
+        "label": "negative",
+        "manifest": "manifests/memory_negative.yaml",
+        "pod": "memory-negative",
+        "container": "stress",
+        "indicator": "mem_waste_ratio"
+      },
+      {
+        "name": "cpu_positive",
+        "label": "positive",
+        "manifest": "manifests/cpu_positive.yaml",
+        "pod": "cpu-positive",
+        "container": "stress",
+        "indicator": "cpu_waste_ratio"
+      },
+      {
+        "name": "cpu_negative",
+        "label": "negative",
+        "manifest": "manifests/cpu_negative.yaml",
+        "pod": "cpu-negative",
+        "container": "stress",
+        "indicator": "cpu_waste_ratio"
+      }
+    ]
+  },
+  "started_at": "2026-09-19T17:25:03.568276+00:00",
+  "finished_at": "2026-09-20T01:51:46.767158+00:00",
+  "versions": {
+    "python": "3.14.7",
+    "go": "go version go1.27.1 linux/amd64",
+    "kubectl": "Client Version: v1.35.1",
+    "cluster": "Client Version: v1.35.1"
+  }
+}

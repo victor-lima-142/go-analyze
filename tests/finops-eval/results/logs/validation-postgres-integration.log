@@ -1,0 +1,8 @@
+=== RUN   TestPostgresFreshUpgradePersistenceTransactionAndCascade
+=== RUN   TestPostgresFreshUpgradePersistenceTransactionAndCascade/fresh
+=== RUN   TestPostgresFreshUpgradePersistenceTransactionAndCascade/upgrade
+--- PASS: TestPostgresFreshUpgradePersistenceTransactionAndCascade (0.24s)
+    --- PASS: TestPostgresFreshUpgradePersistenceTransactionAndCascade/fresh (0.14s)
+    --- PASS: TestPostgresFreshUpgradePersistenceTransactionAndCascade/upgrade (0.11s)
+PASS
+ok  	github.com/victor-lima-142/go-analyze/pkg/database/migrations	(cached)

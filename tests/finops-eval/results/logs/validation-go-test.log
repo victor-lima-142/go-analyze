@@ -1,0 +1,18 @@
+?   	github.com/victor-lima-142/go-analyze/cmd	[no test files]
+?   	github.com/victor-lima-142/go-analyze/cmd/scraper	[no test files]
+?   	github.com/victor-lima-142/go-analyze/cmd/server	[no test files]
+?   	github.com/victor-lima-142/go-analyze/docs	[no test files]
+ok  	github.com/victor-lima-142/go-analyze/internal/consolidator	0.049s
+ok  	github.com/victor-lima-142/go-analyze/internal/handlers	0.003s
+ok  	github.com/victor-lima-142/go-analyze/internal/metrics	0.002s
+ok  	github.com/victor-lima-142/go-analyze/internal/notifications	0.003s
+ok  	github.com/victor-lima-142/go-analyze/internal/numeric	0.002s
+ok  	github.com/victor-lima-142/go-analyze/internal/observability	0.002s
+ok  	github.com/victor-lima-142/go-analyze/internal/prometheus	0.003s
+ok  	github.com/victor-lima-142/go-analyze/internal/scraper	0.050s
+?   	github.com/victor-lima-142/go-analyze/internal/telemetry	[no test files]
+?   	github.com/victor-lima-142/go-analyze/pkg/config	[no test files]
+?   	github.com/victor-lima-142/go-analyze/pkg/database	[no test files]
+?   	github.com/victor-lima-142/go-analyze/pkg/database/entities	[no test files]
+ok  	github.com/victor-lima-142/go-analyze/pkg/database/migrations	0.212s
+?   	github.com/victor-lima-142/go-analyze/pkg/models	[no test files]

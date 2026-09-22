@@ -24,8 +24,6 @@ COPY --from=builder /app/main .
 COPY entrypoint.sh .
 RUN chmod +x entrypoint.sh
 
-COPY .env* ./
-
 EXPOSE 8080
 
 ENTRYPOINT ["./entrypoint.sh"]

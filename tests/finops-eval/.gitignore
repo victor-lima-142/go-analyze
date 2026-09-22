@@ -1,0 +1,7 @@
+env/
+bin/
+venv/
+
+**__pycache__/
+*.py[cod]
+**.pyc

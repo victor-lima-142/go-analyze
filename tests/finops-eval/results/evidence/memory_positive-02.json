@@ -1,0 +1,1703 @@
+{
+  "record": {
+    "scenario": "memory_positive",
+    "label": "positive",
+    "indicator": "mem_waste_ratio",
+    "run": 2,
+    "status": "valid",
+    "notified": true,
+    "cross_notification": false,
+    "indicator_value": 0.6628,
+    "cpu_cost_usd": 0.1783,
+    "memory_cost_usd": 1.0607,
+    "total_cost_usd": 1.239,
+    "detected_at": "2026-09-20T00:16:25.188407+00:00",
+    "detection_latency_seconds": 0.0012576560000070458,
+    "scrapes_count": 76,
+    "consolidations_count": 25,
+    "audited_scrapes_count": 76,
+    "skipped_scrapes_count": 0,
+    "audit_reported_usd": 309.6223,
+    "audit_recalculated_usd": 309.613,
+    "error_percent": 0.003,
+    "within_tolerance": true,
+    "started_at": "2026-09-20T00:10:28.979261+00:00",
+    "timestamp": "2026-09-20T00:23:05.003513+00:00",
+    "error": "",
+    "classification": "TP"
+  },
+  "indicator_item": {
+    "namespace": "finops-test",
+    "pod": "memory-positive",
+    "container": "stress",
+    "cpu_requested_cores": 0.5,
+    "cpu_used_cores": 0,
+    "cpu_limit_cores": 0.5,
+    "memory_requested_bytes": 536870912,
+    "memory_used_bytes": 0,
+    "memory_limit_bytes": 671088640,
+    "cpu_waste_ratio": 1,
+    "mem_waste_ratio": 1,
+    "cpu_projected_monthly_waste_usd": 14.5728,
+    "memory_projected_monthly_waste_usd": 1.6002,
+    "projected_monthly_waste_usd": 16.173
+  },
+  "classification_item": {
+    "namespace": "finops-test",
+    "pod": "memory-positive",
+    "container": "stress",
+    "cpu_requested_cores": 0.5,
+    "cpu_used_cores": 0.4939,
+    "cpu_limit_cores": 0.5,
+    "memory_requested_bytes": 536870912,
+    "memory_used_bytes": 181009066.6667,
+    "memory_limit_bytes": 671088640,
+    "cpu_waste_ratio": 0.0122,
+    "mem_waste_ratio": 0.6628,
+    "cpu_projected_monthly_waste_usd": 0.1783,
+    "memory_projected_monthly_waste_usd": 1.0607,
+    "projected_monthly_waste_usd": 1.239
+  },
+  "audit": {
+    "audit_type": "internal_consistency",
+    "window": "30m0s",
+    "start_at": "2026-09-19T23:53:04Z",
+    "end_at": "2026-09-20T00:23:04Z",
+    "scrapes_count": 76,
+    "audited_scrapes_count": 76,
+    "skipped_scrapes_count": 0,
+    "conclusive": true,
+    "cost_model": "aws-fargate-us-east-1-static",
+    "reported_projected_monthly_waste_usd": 309.6223,
+    "recalculated_projected_monthly_waste_usd": 309.613,
+    "reported_cpu_projected_monthly_waste_usd": 232.1656,
+    "recalculated_cpu_projected_monthly_waste_usd": 232.1563,
+    "reported_memory_projected_monthly_waste_usd": 77.4567,
+    "recalculated_memory_projected_monthly_waste_usd": 77.4567,
+    "absolute_error_usd": 0.0093,
+    "error_percent": 0.003,
+    "within_10pct_tolerance": true
+  },
+  "consolidated": {
+    "content": [
+      {
+        "id": 1119,
+        "consolidated_at": "2026-09-20T00:22:50Z",
+        "timestamp": "2026-09-20T00:22:50Z",
+        "start_time": "2026-09-20T00:20:50Z",
+        "end_time": "2026-09-20T00:22:50Z",
+        "scrapes_count": 12,
+        "indicators": {
+          "cpu_waste_ratio": 0.0122,
+          "mem_waste_ratio": 0.6628,
+          "cpu_projected_monthly_waste_usd": 0.1783,
+          "memory_projected_monthly_waste_usd": 1.0607,
+          "projected_monthly_waste_usd": 1.239
+        },
+        "inputs": {
+          "total_cpu_requested": 0.5,
+          "total_cpu_used": 0.4939,
+          "total_memory_requested_bytes": 536870912,
+          "total_memory_used_bytes": 181009066.6667
+        },
+        "items": [
+          {
+            "namespace": "finops-test",
+            "pod": "memory-positive",
+            "container": "stress",
+            "cpu_requested_cores": 0.5,
+            "cpu_used_cores": 0.4939,
+            "cpu_limit_cores": 0.5,
+            "memory_requested_bytes": 536870912,
+            "memory_used_bytes": 181009066.6667,
+            "memory_limit_bytes": 671088640,
+            "cpu_waste_ratio": 0.0122,
+            "mem_waste_ratio": 0.6628,
+            "cpu_projected_monthly_waste_usd": 0.1783,
+            "memory_projected_monthly_waste_usd": 1.0607,
+            "projected_monthly_waste_usd": 1.239
+          }
+        ]
+      },
+      {
+        "id": 1118,
+        "consolidated_at": "2026-09-20T00:22:20Z",
+        "timestamp": "2026-09-20T00:22:20Z",
+        "start_time": "2026-09-20T00:20:20Z",
+        "end_time": "2026-09-20T00:22:20Z",
+        "scrapes_count": 12,
+        "indicators": {
+          "cpu_waste_ratio": 0.0115,
+          "mem_waste_ratio": 0.6629,
+          "cpu_projected_monthly_waste_usd": 0.1681,
+          "memory_projected_monthly_waste_usd": 1.0607,
+          "projected_monthly_waste_usd": 1.2288
+        },
+        "inputs": {
+          "total_cpu_requested": 0.5,
+          "total_cpu_used": 0.4942,
+          "total_memory_requested_bytes": 536870912,
+          "total_memory_used_bytes": 180987221.3333
+        },
+        "items": [
+          {
+            "namespace": "finops-test",
+            "pod": "memory-positive",
+            "container": "stress",
+            "cpu_requested_cores": 0.5,
+            "cpu_used_cores": 0.4942,
+            "cpu_limit_cores": 0.5,
+            "memory_requested_bytes": 536870912,
+            "memory_used_bytes": 180987221.3333,
+            "memory_limit_bytes": 671088640,
+            "cpu_waste_ratio": 0.0115,
+            "mem_waste_ratio": 0.6629,
+            "cpu_projected_monthly_waste_usd": 0.1681,
+            "memory_projected_monthly_waste_usd": 1.0607,
+            "projected_monthly_waste_usd": 1.2288
+          }
+        ]
+      },
+      {
+        "id": 1117,
+        "consolidated_at": "2026-09-20T00:21:50Z",
+        "timestamp": "2026-09-20T00:21:50Z",
+        "start_time": "2026-09-20T00:19:50Z",
+        "end_time": "2026-09-20T00:21:50Z",
+        "scrapes_count": 12,
+        "indicators": {
+          "cpu_waste_ratio": 0.0107,
+          "mem_waste_ratio": 0.6629,
+          "cpu_projected_monthly_waste_usd": 0.1568,
+          "memory_projected_monthly_waste_usd": 1.0607,
+          "projected_monthly_waste_usd": 1.2175
+        },
+        "inputs": {
+          "total_cpu_requested": 0.5,
+          "total_cpu_used": 0.4946,
+          "total_memory_requested_bytes": 536870912,
+          "total_memory_used_bytes": 180987221.3333
+        },
+        "items": [
+          {
+            "namespace": "finops-test",
+            "pod": "memory-positive",
+            "container": "stress",
+            "cpu_requested_cores": 0.5,
+            "cpu_used_cores": 0.4946,
+            "cpu_limit_cores": 0.5,
+            "memory_requested_bytes": 536870912,
+            "memory_used_bytes": 180987221.3333,
+            "memory_limit_bytes": 671088640,
+            "cpu_waste_ratio": 0.0107,
+            "mem_waste_ratio": 0.6629,
+            "cpu_projected_monthly_waste_usd": 0.1568,
+            "memory_projected_monthly_waste_usd": 1.0607,
+            "projected_monthly_waste_usd": 1.2175
+          }
+        ]
+      },
+      {
+        "id": 1116,
+        "consolidated_at": "2026-09-20T00:21:20Z",
+        "timestamp": "2026-09-20T00:21:20Z",
+        "start_time": "2026-09-20T00:19:20Z",
+        "end_time": "2026-09-20T00:21:20Z",
+        "scrapes_count": 12,
+        "indicators": {
+          "cpu_waste_ratio": 0.0109,
+          "mem_waste_ratio": 0.6629,
+          "cpu_projected_monthly_waste_usd": 0.1598,
+          "memory_projected_monthly_waste_usd": 1.0607,
+          "projected_monthly_waste_usd": 1.2205
+        },
+        "inputs": {
+          "total_cpu_requested": 0.5,
+          "total_cpu_used": 0.4945,
+          "total_memory_requested_bytes": 536870912,
+          "total_memory_used_bytes": 180987221.3333
+        },
+        "items": [
+          {
+            "namespace": "finops-test",
+            "pod": "memory-positive",
+            "container": "stress",
+            "cpu_requested_cores": 0.5,
+            "cpu_used_cores": 0.4945,
+            "cpu_limit_cores": 0.5,
+            "memory_requested_bytes": 536870912,
+            "memory_used_bytes": 180987221.3333,
+            "memory_limit_bytes": 671088640,
+            "cpu_waste_ratio": 0.0109,
+            "mem_waste_ratio": 0.6629,
+            "cpu_projected_monthly_waste_usd": 0.1598,
+            "memory_projected_monthly_waste_usd": 1.0607,
+            "projected_monthly_waste_usd": 1.2205
+          }
+        ]
+      },
+      {
+        "id": 1115,
+        "consolidated_at": "2026-09-20T00:20:50Z",
+        "timestamp": "2026-09-20T00:20:50Z",
+        "start_time": "2026-09-20T00:18:50Z",
+        "end_time": "2026-09-20T00:20:50Z",
+        "scrapes_count": 12,
+        "indicators": {
+          "cpu_waste_ratio": 0.0116,
+          "mem_waste_ratio": 0.663,
+          "cpu_projected_monthly_waste_usd": 0.1692,
+          "memory_projected_monthly_waste_usd": 1.061,
+          "projected_monthly_waste_usd": 1.2302
+        },
+        "inputs": {
+          "total_cpu_requested": 0.5,
+          "total_cpu_used": 0.4942,
+          "total_memory_requested_bytes": 536870912,
+          "total_memory_used_bytes": 180899840
+        },
+        "items": [
+          {
+            "namespace": "finops-test",
+            "pod": "memory-positive",
+            "container": "stress",
+            "cpu_requested_cores": 0.5,
+            "cpu_used_cores": 0.4942,
+            "cpu_limit_cores": 0.5,
+            "memory_requested_bytes": 536870912,
+            "memory_used_bytes": 180899840,
+            "memory_limit_bytes": 671088640,
+            "cpu_waste_ratio": 0.0116,
+            "mem_waste_ratio": 0.663,
+            "cpu_projected_monthly_waste_usd": 0.1692,
+            "memory_projected_monthly_waste_usd": 1.061,
+            "projected_monthly_waste_usd": 1.2302
+          }
+        ]
+      },
+      {
+        "id": 1114,
+        "consolidated_at": "2026-09-20T00:20:20Z",
+        "timestamp": "2026-09-20T00:20:20Z",
+        "start_time": "2026-09-20T00:18:20Z",
+        "end_time": "2026-09-20T00:20:20Z",
+        "scrapes_count": 12,
+        "indicators": {
+          "cpu_waste_ratio": 0.0089,
+          "mem_waste_ratio": 0.663,
+          "cpu_projected_monthly_waste_usd": 0.13,
+          "memory_projected_monthly_waste_usd": 1.061,
+          "projected_monthly_waste_usd": 1.191
+        },
+        "inputs": {
+          "total_cpu_requested": 0.5,
+          "total_cpu_used": 0.4955,
+          "total_memory_requested_bytes": 536870912,
+          "total_memory_used_bytes": 180899840
+        },
+        "items": [
+          {
+            "namespace": "finops-test",
+            "pod": "memory-positive",
+            "container": "stress",
+            "cpu_requested_cores": 0.5,
+            "cpu_used_cores": 0.4955,
+            "cpu_limit_cores": 0.5,
+            "memory_requested_bytes": 536870912,
+            "memory_used_bytes": 180899840,
+            "memory_limit_bytes": 671088640,
+            "cpu_waste_ratio": 0.0089,
+            "mem_waste_ratio": 0.663,
+            "cpu_projected_monthly_waste_usd": 0.13,
+            "memory_projected_monthly_waste_usd": 1.061,
+            "projected_monthly_waste_usd": 1.191
+          }
+        ]
+      },
+      {
+        "id": 1113,
+        "consolidated_at": "2026-09-20T00:19:50Z",
+        "timestamp": "2026-09-20T00:19:50Z",
+        "start_time": "2026-09-20T00:17:50Z",
+        "end_time": "2026-09-20T00:19:50Z",
+        "scrapes_count": 12,
+        "indicators": {
+          "cpu_waste_ratio": 0.0134,
+          "mem_waste_ratio": 0.663,
+          "cpu_projected_monthly_waste_usd": 0.1956,
+          "memory_projected_monthly_waste_usd": 1.0609,
+          "projected_monthly_waste_usd": 1.2565
+        },
+        "inputs": {
+          "total_cpu_requested": 0.5,
+          "total_cpu_used": 0.4933,
+          "total_memory_requested_bytes": 536870912,
+          "total_memory_used_bytes": 180921685.3333
+        },
+        "items": [
+          {
+            "namespace": "finops-test",
+            "pod": "memory-positive",
+            "container": "stress",
+            "cpu_requested_cores": 0.5,
+            "cpu_used_cores": 0.4933,
+            "cpu_limit_cores": 0.5,
+            "memory_requested_bytes": 536870912,
+            "memory_used_bytes": 180921685.3333,
+            "memory_limit_bytes": 671088640,
+            "cpu_waste_ratio": 0.0134,
+            "mem_waste_ratio": 0.663,
+            "cpu_projected_monthly_waste_usd": 0.1956,
+            "memory_projected_monthly_waste_usd": 1.0609,
+            "projected_monthly_waste_usd": 1.2565
+          }
+        ]
+      },
+      {
+        "id": 1112,
+        "consolidated_at": "2026-09-20T00:19:20Z",
+        "timestamp": "2026-09-20T00:19:20Z",
+        "start_time": "2026-09-20T00:17:20Z",
+        "end_time": "2026-09-20T00:19:20Z",
+        "scrapes_count": 12,
+        "indicators": {
+          "cpu_waste_ratio": 0.0157,
+          "mem_waste_ratio": 0.663,
+          "cpu_projected_monthly_waste_usd": 0.2288,
+          "memory_projected_monthly_waste_usd": 1.0609,
+          "projected_monthly_waste_usd": 1.2897
+        },
+        "inputs": {
+          "total_cpu_requested": 0.5,
+          "total_cpu_used": 0.4922,
+          "total_memory_requested_bytes": 536870912,
+          "total_memory_used_bytes": 180943530.6667
+        },
+        "items": [
+          {
+            "namespace": "finops-test",
+            "pod": "memory-positive",
+            "container": "stress",
+            "cpu_requested_cores": 0.5,
+            "cpu_used_cores": 0.4921,
+            "cpu_limit_cores": 0.5,
+            "memory_requested_bytes": 536870912,
+            "memory_used_bytes": 180943530.6667,
+            "memory_limit_bytes": 671088640,
+            "cpu_waste_ratio": 0.0157,
+            "mem_waste_ratio": 0.663,
+            "cpu_projected_monthly_waste_usd": 0.2288,
+            "memory_projected_monthly_waste_usd": 1.0609,
+            "projected_monthly_waste_usd": 1.2897
+          }
+        ]
+      },
+      {
+        "id": 1111,
+        "consolidated_at": "2026-09-20T00:18:50Z",
+        "timestamp": "2026-09-20T00:18:50Z",
+        "start_time": "2026-09-20T00:16:50Z",
+        "end_time": "2026-09-20T00:18:50Z",
+        "scrapes_count": 12,
+        "indicators": {
+          "cpu_waste_ratio": 0.0162,
+          "mem_waste_ratio": 0.663,
+          "cpu_projected_monthly_waste_usd": 0.2366,
+          "memory_projected_monthly_waste_usd": 1.0609,
+          "projected_monthly_waste_usd": 1.2975
+        },
+        "inputs": {
+          "total_cpu_requested": 0.5,
+          "total_cpu_used": 0.4919,
+          "total_memory_requested_bytes": 536870912,
+          "total_memory_used_bytes": 180943530.6667
+        },
+        "items": [
+          {
+            "namespace": "finops-test",
+            "pod": "memory-positive",
+            "container": "stress",
+            "cpu_requested_cores": 0.5,
+            "cpu_used_cores": 0.4919,
+            "cpu_limit_cores": 0.5,
+            "memory_requested_bytes": 536870912,
+            "memory_used_bytes": 180943530.6667,
+            "memory_limit_bytes": 671088640,
+            "cpu_waste_ratio": 0.0162,
+            "mem_waste_ratio": 0.663,
+            "cpu_projected_monthly_waste_usd": 0.2366,
+            "memory_projected_monthly_waste_usd": 1.0609,
+            "projected_monthly_waste_usd": 1.2975
+          }
+        ]
+      },
+      {
+        "id": 1110,
+        "consolidated_at": "2026-09-20T00:18:20Z",
+        "timestamp": "2026-09-20T00:18:20Z",
+        "start_time": "2026-09-20T00:16:20Z",
+        "end_time": "2026-09-20T00:18:20Z",
+        "scrapes_count": 12,
+        "indicators": {
+          "cpu_waste_ratio": 0.0162,
+          "mem_waste_ratio": 0.663,
+          "cpu_projected_monthly_waste_usd": 0.2367,
+          "memory_projected_monthly_waste_usd": 1.0609,
+          "projected_monthly_waste_usd": 1.2976
+        },
+        "inputs": {
+          "total_cpu_requested": 0.5,
+          "total_cpu_used": 0.4919,
+          "total_memory_requested_bytes": 536870912,
+          "total_memory_used_bytes": 180943530.6667
+        },
+        "items": [
+          {
+            "namespace": "finops-test",
+            "pod": "memory-positive",
+            "container": "stress",
+            "cpu_requested_cores": 0.5,
+            "cpu_used_cores": 0.4919,
+            "cpu_limit_cores": 0.5,
+            "memory_requested_bytes": 536870912,
+            "memory_used_bytes": 180943530.6667,
+            "memory_limit_bytes": 671088640,
+            "cpu_waste_ratio": 0.0162,
+            "mem_waste_ratio": 0.663,
+            "cpu_projected_monthly_waste_usd": 0.2367,
+            "memory_projected_monthly_waste_usd": 1.0609,
+            "projected_monthly_waste_usd": 1.2976
+          }
+        ]
+      },
+      {
+        "id": 1109,
+        "consolidated_at": "2026-09-20T00:17:50Z",
+        "timestamp": "2026-09-20T00:17:50Z",
+        "start_time": "2026-09-20T00:15:50Z",
+        "end_time": "2026-09-20T00:17:50Z",
+        "scrapes_count": 12,
+        "indicators": {
+          "cpu_waste_ratio": 0.0159,
+          "mem_waste_ratio": 0.6629,
+          "cpu_projected_monthly_waste_usd": 0.2331,
+          "memory_projected_monthly_waste_usd": 1.0608,
+          "projected_monthly_waste_usd": 1.2939
+        },
+        "inputs": {
+          "total_cpu_requested": 0.5,
+          "total_cpu_used": 0.492,
+          "total_memory_requested_bytes": 536870912,
+          "total_memory_used_bytes": 180965376
+        },
+        "items": [
+          {
+            "namespace": "finops-test",
+            "pod": "memory-positive",
+            "container": "stress",
+            "cpu_requested_cores": 0.5,
+            "cpu_used_cores": 0.492,
+            "cpu_limit_cores": 0.5,
+            "memory_requested_bytes": 536870912,
+            "memory_used_bytes": 180965376,
+            "memory_limit_bytes": 671088640,
+            "cpu_waste_ratio": 0.016,
+            "mem_waste_ratio": 0.6629,
+            "cpu_projected_monthly_waste_usd": 0.2331,
+            "memory_projected_monthly_waste_usd": 1.0608,
+            "projected_monthly_waste_usd": 1.2939
+          }
+        ]
+      },
+      {
+        "id": 1108,
+        "consolidated_at": "2026-09-20T00:17:20Z",
+        "timestamp": "2026-09-20T00:17:20Z",
+        "start_time": "2026-09-20T00:15:20Z",
+        "end_time": "2026-09-20T00:17:20Z",
+        "scrapes_count": 12,
+        "indicators": {
+          "cpu_waste_ratio": 0.0433,
+          "mem_waste_ratio": 0.663,
+          "cpu_projected_monthly_waste_usd": 0.6314,
+          "memory_projected_monthly_waste_usd": 1.0609,
+          "projected_monthly_waste_usd": 1.6923
+        },
+        "inputs": {
+          "total_cpu_requested": 0.5,
+          "total_cpu_used": 0.4784,
+          "total_memory_requested_bytes": 536870912,
+          "total_memory_used_bytes": 180943530.6667
+        },
+        "items": [
+          {
+            "namespace": "finops-test",
+            "pod": "memory-positive",
+            "container": "stress",
+            "cpu_requested_cores": 0.5,
+            "cpu_used_cores": 0.4784,
+            "cpu_limit_cores": 0.5,
+            "memory_requested_bytes": 536870912,
+            "memory_used_bytes": 180943530.6667,
+            "memory_limit_bytes": 671088640,
+            "cpu_waste_ratio": 0.0433,
+            "mem_waste_ratio": 0.663,
+            "cpu_projected_monthly_waste_usd": 0.6314,
+            "memory_projected_monthly_waste_usd": 1.0609,
+            "projected_monthly_waste_usd": 1.6923
+          }
+        ]
+      },
+      {
+        "id": 1107,
+        "consolidated_at": "2026-09-20T00:16:50Z",
+        "timestamp": "2026-09-20T00:16:50Z",
+        "start_time": "2026-09-20T00:14:50Z",
+        "end_time": "2026-09-20T00:16:50Z",
+        "scrapes_count": 12,
+        "indicators": {
+          "cpu_waste_ratio": 0.0599,
+          "mem_waste_ratio": 0.663,
+          "cpu_projected_monthly_waste_usd": 1.4012,
+          "memory_projected_monthly_waste_usd": 1.0609,
+          "projected_monthly_waste_usd": 2.4621
+        },
+        "inputs": {
+          "total_cpu_requested": 0.5,
+          "total_cpu_used": 0.4701,
+          "total_memory_requested_bytes": 536870912,
+          "total_memory_used_bytes": 180943530.6667
+        },
+        "items": [
+          {
+            "namespace": "finops-test",
+            "pod": "cpu-negative",
+            "container": "",
+            "cpu_requested_cores": 0,
+            "cpu_used_cores": 0.1087,
+            "memory_requested_bytes": 0,
+            "memory_used_bytes": 0,
+            "cpu_waste_ratio": 0,
+            "mem_waste_ratio": 0,
+            "cpu_projected_monthly_waste_usd": 0,
+            "memory_projected_monthly_waste_usd": 0,
+            "projected_monthly_waste_usd": 0
+          },
+          {
+            "namespace": "finops-test",
+            "pod": "memory-positive",
+            "container": "stress",
+            "cpu_requested_cores": 0.5,
+            "cpu_used_cores": 0.4519,
+            "cpu_limit_cores": 0.5,
+            "memory_requested_bytes": 536870912,
+            "memory_used_bytes": 180943530.6667,
+            "memory_limit_bytes": 671088640,
+            "cpu_waste_ratio": 0.0961,
+            "mem_waste_ratio": 0.663,
+            "cpu_projected_monthly_waste_usd": 1.4012,
+            "memory_projected_monthly_waste_usd": 1.0609,
+            "projected_monthly_waste_usd": 2.4621
+          }
+        ]
+      },
+      {
+        "id": 1106,
+        "consolidated_at": "2026-09-20T00:16:20Z",
+        "timestamp": "2026-09-20T00:16:20Z",
+        "start_time": "2026-09-20T00:14:20Z",
+        "end_time": "2026-09-20T00:16:20Z",
+        "scrapes_count": 12,
+        "indicators": {
+          "cpu_waste_ratio": 0.0514,
+          "mem_waste_ratio": 0.663,
+          "cpu_projected_monthly_waste_usd": 2.6003,
+          "memory_projected_monthly_waste_usd": 1.0609,
+          "projected_monthly_waste_usd": 3.6612
+        },
+        "inputs": {
+          "total_cpu_requested": 0.5,
+          "total_cpu_used": 0.4743,
+          "total_memory_requested_bytes": 536870912,
+          "total_memory_used_bytes": 180943530.6667
+        },
+        "items": [
+          {
+            "namespace": "finops-test",
+            "pod": "cpu-negative",
+            "container": "",
+            "cpu_requested_cores": 0,
+            "cpu_used_cores": 0.1524,
+            "memory_requested_bytes": 0,
+            "memory_used_bytes": 0,
+            "cpu_waste_ratio": 0,
+            "mem_waste_ratio": 0,
+            "cpu_projected_monthly_waste_usd": 0,
+            "memory_projected_monthly_waste_usd": 0,
+            "projected_monthly_waste_usd": 0
+          },
+          {
+            "namespace": "finops-test",
+            "pod": "memory-positive",
+            "container": "stress",
+            "cpu_requested_cores": 0.5,
+            "cpu_used_cores": 0.4108,
+            "cpu_limit_cores": 0.5,
+            "memory_requested_bytes": 536870912,
+            "memory_used_bytes": 180943530.6667,
+            "memory_limit_bytes": 671088640,
+            "cpu_waste_ratio": 0.1784,
+            "mem_waste_ratio": 0.663,
+            "cpu_projected_monthly_waste_usd": 2.6003,
+            "memory_projected_monthly_waste_usd": 1.0609,
+            "projected_monthly_waste_usd": 3.6612
+          }
+        ]
+      },
+      {
+        "id": 1105,
+        "consolidated_at": "2026-09-20T00:15:50Z",
+        "timestamp": "2026-09-20T00:15:50Z",
+        "start_time": "2026-09-20T00:13:50Z",
+        "end_time": "2026-09-20T00:15:50Z",
+        "scrapes_count": 12,
+        "indicators": {
+          "cpu_waste_ratio": 0.0164,
+          "mem_waste_ratio": 0.663,
+          "cpu_projected_monthly_waste_usd": 4.054,
+          "memory_projected_monthly_waste_usd": 1.061,
+          "projected_monthly_waste_usd": 5.115
+        },
+        "inputs": {
+          "total_cpu_requested": 0.5,
+          "total_cpu_used": 0.4918,
+          "total_memory_requested_bytes": 536870912,
+          "total_memory_used_bytes": 180899840
+        },
+        "items": [
+          {
+            "namespace": "finops-test",
+            "pod": "cpu-negative",
+            "container": "",
+            "cpu_requested_cores": 0,
+            "cpu_used_cores": 0.1964,
+            "memory_requested_bytes": 0,
+            "memory_used_bytes": 0,
+            "cpu_waste_ratio": 0,
+            "mem_waste_ratio": 0,
+            "cpu_projected_monthly_waste_usd": 0,
+            "memory_projected_monthly_waste_usd": 0,
+            "projected_monthly_waste_usd": 0
+          },
+          {
+            "namespace": "finops-test",
+            "pod": "memory-positive",
+            "container": "stress",
+            "cpu_requested_cores": 0.5,
+            "cpu_used_cores": 0.3609,
+            "cpu_limit_cores": 0.5,
+            "memory_requested_bytes": 536870912,
+            "memory_used_bytes": 180899840,
+            "memory_limit_bytes": 671088640,
+            "cpu_waste_ratio": 0.2782,
+            "mem_waste_ratio": 0.663,
+            "cpu_projected_monthly_waste_usd": 4.054,
+            "memory_projected_monthly_waste_usd": 1.061,
+            "projected_monthly_waste_usd": 5.115
+          }
+        ]
+      },
+      {
+        "id": 1104,
+        "consolidated_at": "2026-09-20T00:15:20Z",
+        "timestamp": "2026-09-20T00:15:20Z",
+        "start_time": "2026-09-20T00:13:20Z",
+        "end_time": "2026-09-20T00:15:20Z",
+        "scrapes_count": 12,
+        "indicators": {
+          "cpu_waste_ratio": 0,
+          "mem_waste_ratio": 0.663,
+          "cpu_projected_monthly_waste_usd": 5.501,
+          "memory_projected_monthly_waste_usd": 1.061,
+          "projected_monthly_waste_usd": 6.562
+        },
+        "inputs": {
+          "total_cpu_requested": 0.5,
+          "total_cpu_used": 0.532,
+          "total_memory_requested_bytes": 536870912,
+          "total_memory_used_bytes": 180899840
+        },
+        "items": [
+          {
+            "namespace": "finops-test",
+            "pod": "cpu-negative",
+            "container": "",
+            "cpu_requested_cores": 0,
+            "cpu_used_cores": 0.2409,
+            "memory_requested_bytes": 0,
+            "memory_used_bytes": 0,
+            "cpu_waste_ratio": 0,
+            "mem_waste_ratio": 0,
+            "cpu_projected_monthly_waste_usd": 0,
+            "memory_projected_monthly_waste_usd": 0,
+            "projected_monthly_waste_usd": 0
+          },
+          {
+            "namespace": "finops-test",
+            "pod": "memory-positive",
+            "container": "stress",
+            "cpu_requested_cores": 0.5,
+            "cpu_used_cores": 0.3113,
+            "cpu_limit_cores": 0.5,
+            "memory_requested_bytes": 536870912,
+            "memory_used_bytes": 180899840,
+            "memory_limit_bytes": 671088640,
+            "cpu_waste_ratio": 0.3775,
+            "mem_waste_ratio": 0.663,
+            "cpu_projected_monthly_waste_usd": 5.501,
+            "memory_projected_monthly_waste_usd": 1.061,
+            "projected_monthly_waste_usd": 6.562
+          }
+        ]
+      },
+      {
+        "id": 1103,
+        "consolidated_at": "2026-09-20T00:14:50Z",
+        "timestamp": "2026-09-20T00:14:50Z",
+        "start_time": "2026-09-20T00:12:50Z",
+        "end_time": "2026-09-20T00:14:50Z",
+        "scrapes_count": 12,
+        "indicators": {
+          "cpu_waste_ratio": 0,
+          "mem_waste_ratio": 0.663,
+          "cpu_projected_monthly_waste_usd": 6.962,
+          "memory_projected_monthly_waste_usd": 1.0609,
+          "projected_monthly_waste_usd": 8.0229
+        },
+        "inputs": {
+          "total_cpu_requested": 0.5,
+          "total_cpu_used": 0.5761,
+          "total_memory_requested_bytes": 536870912,
+          "total_memory_used_bytes": 180943530.6667
+        },
+        "items": [
+          {
+            "namespace": "finops-test",
+            "pod": "cpu-negative",
+            "container": "",
+            "cpu_requested_cores": 0,
+            "cpu_used_cores": 0.315,
+            "memory_requested_bytes": 0,
+            "memory_used_bytes": 0,
+            "cpu_waste_ratio": 0,
+            "mem_waste_ratio": 0,
+            "cpu_projected_monthly_waste_usd": 0,
+            "memory_projected_monthly_waste_usd": 0,
+            "projected_monthly_waste_usd": 0
+          },
+          {
+            "namespace": "finops-test",
+            "pod": "memory-positive",
+            "container": "stress",
+            "cpu_requested_cores": 0.5,
+            "cpu_used_cores": 0.2611,
+            "cpu_limit_cores": 0.5,
+            "memory_requested_bytes": 536870912,
+            "memory_used_bytes": 180943530.6667,
+            "memory_limit_bytes": 671088640,
+            "cpu_waste_ratio": 0.4777,
+            "mem_waste_ratio": 0.663,
+            "cpu_projected_monthly_waste_usd": 6.962,
+            "memory_projected_monthly_waste_usd": 1.0609,
+            "projected_monthly_waste_usd": 8.0229
+          }
+        ]
+      },
+      {
+        "id": 1102,
+        "consolidated_at": "2026-09-20T00:14:20Z",
+        "timestamp": "2026-09-20T00:14:20Z",
+        "start_time": "2026-09-20T00:12:20Z",
+        "end_time": "2026-09-20T00:14:20Z",
+        "scrapes_count": 12,
+        "indicators": {
+          "cpu_waste_ratio": 0,
+          "mem_waste_ratio": 0.6721,
+          "cpu_projected_monthly_waste_usd": 8.4098,
+          "memory_projected_monthly_waste_usd": 1.0756,
+          "projected_monthly_waste_usd": 9.4854
+        },
+        "inputs": {
+          "total_cpu_requested": 0.5,
+          "total_cpu_used": 0.6154,
+          "total_memory_requested_bytes": 536870912,
+          "total_memory_used_bytes": 176015018.6667
+        },
+        "items": [
+          {
+            "namespace": "finops-test",
+            "pod": "cpu-negative",
+            "container": "",
+            "cpu_requested_cores": 0,
+            "cpu_used_cores": 0.404,
+            "memory_requested_bytes": 0,
+            "memory_used_bytes": 0,
+            "cpu_waste_ratio": 0,
+            "mem_waste_ratio": 0,
+            "cpu_projected_monthly_waste_usd": 0,
+            "memory_projected_monthly_waste_usd": 0,
+            "projected_monthly_waste_usd": 0
+          },
+          {
+            "namespace": "finops-test",
+            "pod": "memory-positive",
+            "container": "stress",
+            "cpu_requested_cores": 0.5,
+            "cpu_used_cores": 0.2115,
+            "cpu_limit_cores": 0.5,
+            "memory_requested_bytes": 536870912,
+            "memory_used_bytes": 176015018.6667,
+            "memory_limit_bytes": 671088640,
+            "cpu_waste_ratio": 0.5771,
+            "mem_waste_ratio": 0.6721,
+            "cpu_projected_monthly_waste_usd": 8.4098,
+            "memory_projected_monthly_waste_usd": 1.0756,
+            "projected_monthly_waste_usd": 9.4854
+          }
+        ]
+      },
+      {
+        "id": 1101,
+        "consolidated_at": "2026-09-20T00:13:50Z",
+        "timestamp": "2026-09-20T00:13:50Z",
+        "start_time": "2026-09-20T00:11:50Z",
+        "end_time": "2026-09-20T00:13:50Z",
+        "scrapes_count": 12,
+        "indicators": {
+          "cpu_waste_ratio": 0,
+          "mem_waste_ratio": 0.6813,
+          "cpu_projected_monthly_waste_usd": 9.8177,
+          "memory_projected_monthly_waste_usd": 1.0903,
+          "projected_monthly_waste_usd": 10.908
+        },
+        "inputs": {
+          "total_cpu_requested": 0.5,
+          "total_cpu_used": 0.6566,
+          "total_memory_requested_bytes": 536870912,
+          "total_memory_used_bytes": 171086506.6667
+        },
+        "items": [
+          {
+            "namespace": "finops-test",
+            "pod": "cpu-negative",
+            "container": "",
+            "cpu_requested_cores": 0,
+            "cpu_used_cores": 0.4934,
+            "memory_requested_bytes": 0,
+            "memory_used_bytes": 0,
+            "cpu_waste_ratio": 0,
+            "mem_waste_ratio": 0,
+            "cpu_projected_monthly_waste_usd": 0,
+            "memory_projected_monthly_waste_usd": 0,
+            "projected_monthly_waste_usd": 0
+          },
+          {
+            "namespace": "finops-test",
+            "pod": "memory-positive",
+            "container": "stress",
+            "cpu_requested_cores": 0.5,
+            "cpu_used_cores": 0.1632,
+            "cpu_limit_cores": 0.5,
+            "memory_requested_bytes": 536870912,
+            "memory_used_bytes": 171086506.6667,
+            "memory_limit_bytes": 671088640,
+            "cpu_waste_ratio": 0.6737,
+            "mem_waste_ratio": 0.6813,
+            "cpu_projected_monthly_waste_usd": 9.8177,
+            "memory_projected_monthly_waste_usd": 1.0903,
+            "projected_monthly_waste_usd": 10.908
+          }
+        ]
+      },
+      {
+        "id": 1100,
+        "consolidated_at": "2026-09-20T00:13:20Z",
+        "timestamp": "2026-09-20T00:13:20Z",
+        "start_time": "2026-09-20T00:11:20Z",
+        "end_time": "2026-09-20T00:13:20Z",
+        "scrapes_count": 12,
+        "indicators": {
+          "cpu_waste_ratio": 0,
+          "mem_waste_ratio": 0.6905,
+          "cpu_projected_monthly_waste_usd": 11.394,
+          "memory_projected_monthly_waste_usd": 1.105,
+          "projected_monthly_waste_usd": 12.499
+        },
+        "inputs": {
+          "total_cpu_requested": 0.5,
+          "total_cpu_used": 0.6919,
+          "total_memory_requested_bytes": 536870912,
+          "total_memory_used_bytes": 166157994.6667
+        },
+        "items": [
+          {
+            "namespace": "finops-test",
+            "pod": "cpu-negative",
+            "container": "",
+            "cpu_requested_cores": 0,
+            "cpu_used_cores": 0.5828,
+            "memory_requested_bytes": 0,
+            "memory_used_bytes": 0,
+            "cpu_waste_ratio": 0,
+            "mem_waste_ratio": 0,
+            "cpu_projected_monthly_waste_usd": 0,
+            "memory_projected_monthly_waste_usd": 0,
+            "projected_monthly_waste_usd": 0
+          },
+          {
+            "namespace": "finops-test",
+            "pod": "memory-positive",
+            "container": "stress",
+            "cpu_requested_cores": 0.5,
+            "cpu_used_cores": 0.1091,
+            "cpu_limit_cores": 0.5,
+            "memory_requested_bytes": 536870912,
+            "memory_used_bytes": 166157994.6667,
+            "memory_limit_bytes": 671088640,
+            "cpu_waste_ratio": 0.7819,
+            "mem_waste_ratio": 0.6905,
+            "cpu_projected_monthly_waste_usd": 11.394,
+            "memory_projected_monthly_waste_usd": 1.105,
+            "projected_monthly_waste_usd": 12.499
+          }
+        ]
+      },
+      {
+        "id": 1099,
+        "consolidated_at": "2026-09-20T00:12:50Z",
+        "timestamp": "2026-09-20T00:12:50Z",
+        "start_time": "2026-09-20T00:10:50Z",
+        "end_time": "2026-09-20T00:12:50Z",
+        "scrapes_count": 12,
+        "indicators": {
+          "cpu_waste_ratio": 0,
+          "mem_waste_ratio": 0.7298,
+          "cpu_projected_monthly_waste_usd": 10.3204,
+          "memory_projected_monthly_waste_usd": 0.9732,
+          "projected_monthly_waste_usd": 11.2936
+        },
+        "inputs": {
+          "total_cpu_requested": 0.4167,
+          "total_cpu_used": 0.7348,
+          "total_memory_requested_bytes": 447392426.6667,
+          "total_memory_used_bytes": 120889344
+        },
+        "items": [
+          {
+            "namespace": "finops-test",
+            "pod": "cpu-negative",
+            "container": "",
+            "cpu_requested_cores": 0,
+            "cpu_used_cores": 0.6722,
+            "memory_requested_bytes": 0,
+            "memory_used_bytes": 0,
+            "cpu_waste_ratio": 0,
+            "mem_waste_ratio": 0,
+            "cpu_projected_monthly_waste_usd": 0,
+            "memory_projected_monthly_waste_usd": 0,
+            "projected_monthly_waste_usd": 0
+          },
+          {
+            "namespace": "finops-test",
+            "pod": "memory-positive",
+            "container": "stress",
+            "cpu_requested_cores": 0.5,
+            "cpu_used_cores": 0.0751,
+            "cpu_limit_cores": 0.5,
+            "memory_requested_bytes": 536870912,
+            "memory_used_bytes": 145067212.8,
+            "memory_limit_bytes": 671088640,
+            "cpu_waste_ratio": 0.8499,
+            "mem_waste_ratio": 0.7298,
+            "cpu_projected_monthly_waste_usd": 12.3845,
+            "memory_projected_monthly_waste_usd": 1.1678,
+            "projected_monthly_waste_usd": 13.5523
+          }
+        ]
+      },
+      {
+        "id": 1098,
+        "consolidated_at": "2026-09-20T00:12:20Z",
+        "timestamp": "2026-09-20T00:12:20Z",
+        "start_time": "2026-09-20T00:10:20Z",
+        "end_time": "2026-09-20T00:12:20Z",
+        "scrapes_count": 11,
+        "indicators": {
+          "cpu_waste_ratio": 0,
+          "mem_waste_ratio": 0.7415,
+          "cpu_projected_monthly_waste_usd": 8.3717,
+          "memory_projected_monthly_waste_usd": 0.7567,
+          "projected_monthly_waste_usd": 9.1284
+        },
+        "inputs": {
+          "total_cpu_requested": 0.4,
+          "total_cpu_used": 0.7782,
+          "total_memory_requested_bytes": 342407726.5455,
+          "total_memory_used_bytes": 88525730.9091
+        },
+        "items": [
+          {
+            "namespace": "finops-test",
+            "pod": "cpu-negative",
+            "container": "",
+            "cpu_requested_cores": 0,
+            "cpu_used_cores": 0.732,
+            "memory_requested_bytes": 0,
+            "memory_used_bytes": 0,
+            "cpu_waste_ratio": 0,
+            "mem_waste_ratio": 0,
+            "cpu_projected_monthly_waste_usd": 0,
+            "memory_projected_monthly_waste_usd": 0,
+            "projected_monthly_waste_usd": 0
+          },
+          {
+            "namespace": "finops-test",
+            "pod": "cpu-negative",
+            "container": "stress",
+            "cpu_requested_cores": 0.9,
+            "cpu_used_cores": 0.8997,
+            "cpu_limit_cores": 2,
+            "memory_requested_bytes": 8388608,
+            "memory_used_bytes": 6668288,
+            "memory_limit_bytes": 67108864,
+            "cpu_waste_ratio": 0.0003,
+            "mem_waste_ratio": 0.2051,
+            "cpu_projected_monthly_waste_usd": 0.0084,
+            "memory_projected_monthly_waste_usd": 0.0051,
+            "projected_monthly_waste_usd": 0.0135
+          },
+          {
+            "namespace": "finops-test",
+            "pod": "memory-positive",
+            "container": "stress",
+            "cpu_requested_cores": 0.5,
+            "cpu_used_cores": 0.0487,
+            "cpu_limit_cores": 0.5,
+            "memory_requested_bytes": 536870912,
+            "memory_used_bytes": 138159250.2857,
+            "memory_limit_bytes": 671088640,
+            "cpu_waste_ratio": 0.9027,
+            "mem_waste_ratio": 0.7427,
+            "cpu_projected_monthly_waste_usd": 13.1543,
+            "memory_projected_monthly_waste_usd": 1.1884,
+            "projected_monthly_waste_usd": 14.3427
+          }
+        ]
+      },
+      {
+        "id": 1097,
+        "consolidated_at": "2026-09-20T00:11:50Z",
+        "timestamp": "2026-09-20T00:11:50Z",
+        "start_time": "2026-09-20T00:09:50Z",
+        "end_time": "2026-09-20T00:11:50Z",
+        "scrapes_count": 8,
+        "indicators": {
+          "cpu_waste_ratio": 0,
+          "mem_waste_ratio": 0.7726,
+          "cpu_projected_monthly_waste_usd": 7.0666,
+          "memory_projected_monthly_waste_usd": 0.6206,
+          "projected_monthly_waste_usd": 7.6872
+        },
+        "inputs": {
+          "total_cpu_requested": 0.3625,
+          "total_cpu_used": 0.7999,
+          "total_memory_requested_bytes": 269484032,
+          "total_memory_used_bytes": 61278208
+        },
+        "items": [
+          {
+            "namespace": "finops-test",
+            "pod": "cpu-negative",
+            "container": "",
+            "cpu_requested_cores": 0,
+            "cpu_used_cores": 0.7769,
+            "memory_requested_bytes": 0,
+            "memory_used_bytes": 0,
+            "cpu_waste_ratio": 0,
+            "mem_waste_ratio": 0,
+            "cpu_projected_monthly_waste_usd": 0,
+            "memory_projected_monthly_waste_usd": 0,
+            "projected_monthly_waste_usd": 0
+          },
+          {
+            "namespace": "finops-test",
+            "pod": "cpu-negative",
+            "container": "stress",
+            "cpu_requested_cores": 0.9,
+            "cpu_used_cores": 0.8997,
+            "cpu_limit_cores": 2,
+            "memory_requested_bytes": 8388608,
+            "memory_used_bytes": 6668288,
+            "memory_limit_bytes": 67108864,
+            "cpu_waste_ratio": 0.0003,
+            "mem_waste_ratio": 0.2051,
+            "cpu_projected_monthly_waste_usd": 0.0084,
+            "memory_projected_monthly_waste_usd": 0.0051,
+            "projected_monthly_waste_usd": 0.0135
+          },
+          {
+            "namespace": "finops-test",
+            "pod": "memory-positive",
+            "container": "stress",
+            "cpu_requested_cores": 0.5,
+            "cpu_used_cores": 0.0152,
+            "cpu_limit_cores": 0.5,
+            "memory_requested_bytes": 536870912,
+            "memory_used_bytes": 120889344,
+            "memory_limit_bytes": 671088640,
+            "cpu_waste_ratio": 0.9697,
+            "mem_waste_ratio": 0.7748,
+            "cpu_projected_monthly_waste_usd": 14.131,
+            "memory_projected_monthly_waste_usd": 1.2399,
+            "projected_monthly_waste_usd": 15.3709
+          }
+        ]
+      },
+      {
+        "id": 1096,
+        "consolidated_at": "2026-09-20T00:11:20Z",
+        "timestamp": "2026-09-20T00:11:20Z",
+        "start_time": "2026-09-20T00:09:20Z",
+        "end_time": "2026-09-20T00:11:20Z",
+        "scrapes_count": 5,
+        "indicators": {
+          "cpu_waste_ratio": 0,
+          "mem_waste_ratio": 0.9878,
+          "cpu_projected_monthly_waste_usd": 2.9162,
+          "memory_projected_monthly_waste_usd": 0.3211,
+          "projected_monthly_waste_usd": 3.2373
+        },
+        "inputs": {
+          "total_cpu_requested": 0.28,
+          "total_cpu_used": 0.8374,
+          "total_memory_requested_bytes": 109051904,
+          "total_memory_used_bytes": 1333657.6
+        },
+        "items": [
+          {
+            "namespace": "finops-test",
+            "pod": "cpu-negative",
+            "container": "",
+            "cpu_requested_cores": 0,
+            "cpu_used_cores": 0.8218,
+            "memory_requested_bytes": 0,
+            "memory_used_bytes": 0,
+            "cpu_waste_ratio": 0,
+            "mem_waste_ratio": 0,
+            "cpu_projected_monthly_waste_usd": 0,
+            "memory_projected_monthly_waste_usd": 0,
+            "projected_monthly_waste_usd": 0
+          },
+          {
+            "namespace": "finops-test",
+            "pod": "cpu-negative",
+            "container": "stress",
+            "cpu_requested_cores": 0.9,
+            "cpu_used_cores": 0.8997,
+            "cpu_limit_cores": 2,
+            "memory_requested_bytes": 8388608,
+            "memory_used_bytes": 6668288,
+            "memory_limit_bytes": 67108864,
+            "cpu_waste_ratio": 0.0003,
+            "mem_waste_ratio": 0.2051,
+            "cpu_projected_monthly_waste_usd": 0.0084,
+            "memory_projected_monthly_waste_usd": 0.0051,
+            "projected_monthly_waste_usd": 0.0135
+          },
+          {
+            "namespace": "finops-test",
+            "pod": "memory-positive",
+            "container": "stress",
+            "cpu_requested_cores": 0.5,
+            "cpu_used_cores": 0,
+            "cpu_limit_cores": 0.5,
+            "memory_requested_bytes": 536870912,
+            "memory_used_bytes": 0,
+            "memory_limit_bytes": 671088640,
+            "cpu_waste_ratio": 1,
+            "mem_waste_ratio": 1,
+            "cpu_projected_monthly_waste_usd": 14.5728,
+            "memory_projected_monthly_waste_usd": 1.6002,
+            "projected_monthly_waste_usd": 16.173
+          }
+        ]
+      },
+      {
+        "id": 1095,
+        "consolidated_at": "2026-09-20T00:10:50Z",
+        "timestamp": "2026-09-20T00:10:50Z",
+        "start_time": "2026-09-20T00:08:50Z",
+        "end_time": "2026-09-20T00:10:50Z",
+        "scrapes_count": 2,
+        "indicators": {
+          "cpu_waste_ratio": 0,
+          "mem_waste_ratio": 0.2051,
+          "cpu_projected_monthly_waste_usd": 0.0042,
+          "memory_projected_monthly_waste_usd": 0.0026,
+          "projected_monthly_waste_usd": 0.0068
+        },
+        "inputs": {
+          "total_cpu_requested": 0.45,
+          "total_cpu_used": 0.8833,
+          "total_memory_requested_bytes": 4194304,
+          "total_memory_used_bytes": 3334144
+        },
+        "items": [
+          {
+            "namespace": "finops-test",
+            "pod": "cpu-negative",
+            "container": "",
+            "cpu_requested_cores": 0,
+            "cpu_used_cores": 0.8669,
+            "memory_requested_bytes": 0,
+            "memory_used_bytes": 0,
+            "cpu_waste_ratio": 0,
+            "mem_waste_ratio": 0,
+            "cpu_projected_monthly_waste_usd": 0,
+            "memory_projected_monthly_waste_usd": 0,
+            "projected_monthly_waste_usd": 0
+          },
+          {
+            "namespace": "finops-test",
+            "pod": "cpu-negative",
+            "container": "stress",
+            "cpu_requested_cores": 0.9,
+            "cpu_used_cores": 0.8997,
+            "cpu_limit_cores": 2,
+            "memory_requested_bytes": 8388608,
+            "memory_used_bytes": 6668288,
+            "memory_limit_bytes": 67108864,
+            "cpu_waste_ratio": 0.0003,
+            "mem_waste_ratio": 0.2051,
+            "cpu_projected_monthly_waste_usd": 0.0084,
+            "memory_projected_monthly_waste_usd": 0.0051,
+            "projected_monthly_waste_usd": 0.0135
+          }
+        ]
+      }
+    ],
+    "page": 1,
+    "pageSize": 1000,
+    "totalPages": 1,
+    "totalItems": 25,
+    "hasNext": false,
+    "hasPrevious": false
+  },
+  "workload_details": {
+    "namespace": "finops-test",
+    "pod": "memory-positive",
+    "container": "stress",
+    "current": {
+      "cpu_requested_cores": 0.5,
+      "cpu_used_cores": 0,
+      "cpu_limit_cores": 0.5,
+      "cpu_waste_ratio": 1,
+      "memory_requested_bytes": 536870912,
+      "memory_used_bytes": 0,
+      "memory_limit_bytes": 671088640,
+      "mem_waste_ratio": 1,
+      "cpu_projected_monthly_waste_usd": 14.5728,
+      "memory_projected_monthly_waste_usd": 1.6002,
+      "projected_monthly_waste_usd": 16.173,
+      "timestamp": "2026-09-20T00:23:04Z"
+    },
+    "historical": {
+      "last_10_consolidations_count": 24,
+      "avg_cpu_requested_cores": 0.5,
+      "avg_cpu_used_cores": 0.34688750000000007,
+      "avg_cpu_waste_ratio": 0.3062291666666667,
+      "avg_memory_requested_bytes": 536870912,
+      "avg_memory_used_bytes": 166393216.40635827,
+      "avg_mem_waste_ratio": 0.6900666666666669,
+      "avg_projected_monthly_waste_usd": 5.567041666666667,
+      "avg_cpu_projected_monthly_waste_usd": 4.462791666666667,
+      "avg_memory_projected_monthly_waste_usd": 1.1042500000000002,
+      "points": [
+        {
+          "consolidation_id": 1119,
+          "timestamp": "2026-09-20T00:22:50Z",
+          "cpu_requested_cores": 0.5,
+          "cpu_used_cores": 0.4939,
+          "cpu_limit_cores": 0.5,
+          "cpu_waste_ratio": 0.0122,
+          "memory_requested_bytes": 536870912,
+          "memory_used_bytes": 181009066.6667,
+          "memory_limit_bytes": 671088640,
+          "mem_waste_ratio": 0.6628,
+          "cpu_projected_monthly_waste_usd": 0.1783,
+          "memory_projected_monthly_waste_usd": 1.0607,
+          "projected_monthly_waste_usd": 1.239
+        },
+        {
+          "consolidation_id": 1118,
+          "timestamp": "2026-09-20T00:22:20Z",
+          "cpu_requested_cores": 0.5,
+          "cpu_used_cores": 0.4942,
+          "cpu_limit_cores": 0.5,
+          "cpu_waste_ratio": 0.0115,
+          "memory_requested_bytes": 536870912,
+          "memory_used_bytes": 180987221.3333,
+          "memory_limit_bytes": 671088640,
+          "mem_waste_ratio": 0.6629,
+          "cpu_projected_monthly_waste_usd": 0.1681,
+          "memory_projected_monthly_waste_usd": 1.0607,
+          "projected_monthly_waste_usd": 1.2288
+        },
+        {
+          "consolidation_id": 1117,
+          "timestamp": "2026-09-20T00:21:50Z",
+          "cpu_requested_cores": 0.5,
+          "cpu_used_cores": 0.4946,
+          "cpu_limit_cores": 0.5,
+          "cpu_waste_ratio": 0.0107,
+          "memory_requested_bytes": 536870912,
+          "memory_used_bytes": 180987221.3333,
+          "memory_limit_bytes": 671088640,
+          "mem_waste_ratio": 0.6629,
+          "cpu_projected_monthly_waste_usd": 0.1568,
+          "memory_projected_monthly_waste_usd": 1.0607,
+          "projected_monthly_waste_usd": 1.2175
+        },
+        {
+          "consolidation_id": 1116,
+          "timestamp": "2026-09-20T00:21:20Z",
+          "cpu_requested_cores": 0.5,
+          "cpu_used_cores": 0.4945,
+          "cpu_limit_cores": 0.5,
+          "cpu_waste_ratio": 0.0109,
+          "memory_requested_bytes": 536870912,
+          "memory_used_bytes": 180987221.3333,
+          "memory_limit_bytes": 671088640,
+          "mem_waste_ratio": 0.6629,
+          "cpu_projected_monthly_waste_usd": 0.1598,
+          "memory_projected_monthly_waste_usd": 1.0607,
+          "projected_monthly_waste_usd": 1.2205
+        },
+        {
+          "consolidation_id": 1115,
+          "timestamp": "2026-09-20T00:20:50Z",
+          "cpu_requested_cores": 0.5,
+          "cpu_used_cores": 0.4942,
+          "cpu_limit_cores": 0.5,
+          "cpu_waste_ratio": 0.0116,
+          "memory_requested_bytes": 536870912,
+          "memory_used_bytes": 180899840,
+          "memory_limit_bytes": 671088640,
+          "mem_waste_ratio": 0.663,
+          "cpu_projected_monthly_waste_usd": 0.1692,
+          "memory_projected_monthly_waste_usd": 1.061,
+          "projected_monthly_waste_usd": 1.2302
+        },
+        {
+          "consolidation_id": 1114,
+          "timestamp": "2026-09-20T00:20:20Z",
+          "cpu_requested_cores": 0.5,
+          "cpu_used_cores": 0.4955,
+          "cpu_limit_cores": 0.5,
+          "cpu_waste_ratio": 0.0089,
+          "memory_requested_bytes": 536870912,
+          "memory_used_bytes": 180899840,
+          "memory_limit_bytes": 671088640,
+          "mem_waste_ratio": 0.663,
+          "cpu_projected_monthly_waste_usd": 0.13,
+          "memory_projected_monthly_waste_usd": 1.061,
+          "projected_monthly_waste_usd": 1.191
+        },
+        {
+          "consolidation_id": 1113,
+          "timestamp": "2026-09-20T00:19:50Z",
+          "cpu_requested_cores": 0.5,
+          "cpu_used_cores": 0.4933,
+          "cpu_limit_cores": 0.5,
+          "cpu_waste_ratio": 0.0134,
+          "memory_requested_bytes": 536870912,
+          "memory_used_bytes": 180921685.3333,
+          "memory_limit_bytes": 671088640,
+          "mem_waste_ratio": 0.663,
+          "cpu_projected_monthly_waste_usd": 0.1956,
+          "memory_projected_monthly_waste_usd": 1.0609,
+          "projected_monthly_waste_usd": 1.2565
+        },
+        {
+          "consolidation_id": 1112,
+          "timestamp": "2026-09-20T00:19:20Z",
+          "cpu_requested_cores": 0.5,
+          "cpu_used_cores": 0.4921,
+          "cpu_limit_cores": 0.5,
+          "cpu_waste_ratio": 0.0157,
+          "memory_requested_bytes": 536870912,
+          "memory_used_bytes": 180943530.6667,
+          "memory_limit_bytes": 671088640,
+          "mem_waste_ratio": 0.663,
+          "cpu_projected_monthly_waste_usd": 0.2288,
+          "memory_projected_monthly_waste_usd": 1.0609,
+          "projected_monthly_waste_usd": 1.2897
+        },
+        {
+          "consolidation_id": 1111,
+          "timestamp": "2026-09-20T00:18:50Z",
+          "cpu_requested_cores": 0.5,
+          "cpu_used_cores": 0.4919,
+          "cpu_limit_cores": 0.5,
+          "cpu_waste_ratio": 0.0162,
+          "memory_requested_bytes": 536870912,
+          "memory_used_bytes": 180943530.6667,
+          "memory_limit_bytes": 671088640,
+          "mem_waste_ratio": 0.663,
+          "cpu_projected_monthly_waste_usd": 0.2366,
+          "memory_projected_monthly_waste_usd": 1.0609,
+          "projected_monthly_waste_usd": 1.2975
+        },
+        {
+          "consolidation_id": 1110,
+          "timestamp": "2026-09-20T00:18:20Z",
+          "cpu_requested_cores": 0.5,
+          "cpu_used_cores": 0.4919,
+          "cpu_limit_cores": 0.5,
+          "cpu_waste_ratio": 0.0162,
+          "memory_requested_bytes": 536870912,
+          "memory_used_bytes": 180943530.6667,
+          "memory_limit_bytes": 671088640,
+          "mem_waste_ratio": 0.663,
+          "cpu_projected_monthly_waste_usd": 0.2367,
+          "memory_projected_monthly_waste_usd": 1.0609,
+          "projected_monthly_waste_usd": 1.2976
+        },
+        {
+          "consolidation_id": 1109,
+          "timestamp": "2026-09-20T00:17:50Z",
+          "cpu_requested_cores": 0.5,
+          "cpu_used_cores": 0.492,
+          "cpu_limit_cores": 0.5,
+          "cpu_waste_ratio": 0.016,
+          "memory_requested_bytes": 536870912,
+          "memory_used_bytes": 180965376,
+          "memory_limit_bytes": 671088640,
+          "mem_waste_ratio": 0.6629,
+          "cpu_projected_monthly_waste_usd": 0.2331,
+          "memory_projected_monthly_waste_usd": 1.0608,
+          "projected_monthly_waste_usd": 1.2939
+        },
+        {
+          "consolidation_id": 1108,
+          "timestamp": "2026-09-20T00:17:20Z",
+          "cpu_requested_cores": 0.5,
+          "cpu_used_cores": 0.4784,
+          "cpu_limit_cores": 0.5,
+          "cpu_waste_ratio": 0.0433,
+          "memory_requested_bytes": 536870912,
+          "memory_used_bytes": 180943530.6667,
+          "memory_limit_bytes": 671088640,
+          "mem_waste_ratio": 0.663,
+          "cpu_projected_monthly_waste_usd": 0.6314,
+          "memory_projected_monthly_waste_usd": 1.0609,
+          "projected_monthly_waste_usd": 1.6923
+        },
+        {
+          "consolidation_id": 1107,
+          "timestamp": "2026-09-20T00:16:50Z",
+          "cpu_requested_cores": 0.5,
+          "cpu_used_cores": 0.4519,
+          "cpu_limit_cores": 0.5,
+          "cpu_waste_ratio": 0.0961,
+          "memory_requested_bytes": 536870912,
+          "memory_used_bytes": 180943530.6667,
+          "memory_limit_bytes": 671088640,
+          "mem_waste_ratio": 0.663,
+          "cpu_projected_monthly_waste_usd": 1.4012,
+          "memory_projected_monthly_waste_usd": 1.0609,
+          "projected_monthly_waste_usd": 2.4621
+        },
+        {
+          "consolidation_id": 1106,
+          "timestamp": "2026-09-20T00:16:20Z",
+          "cpu_requested_cores": 0.5,
+          "cpu_used_cores": 0.4108,
+          "cpu_limit_cores": 0.5,
+          "cpu_waste_ratio": 0.1784,
+          "memory_requested_bytes": 536870912,
+          "memory_used_bytes": 180943530.6667,
+          "memory_limit_bytes": 671088640,
+          "mem_waste_ratio": 0.663,
+          "cpu_projected_monthly_waste_usd": 2.6003,
+          "memory_projected_monthly_waste_usd": 1.0609,
+          "projected_monthly_waste_usd": 3.6612
+        },
+        {
+          "consolidation_id": 1105,
+          "timestamp": "2026-09-20T00:15:50Z",
+          "cpu_requested_cores": 0.5,
+          "cpu_used_cores": 0.3609,
+          "cpu_limit_cores": 0.5,
+          "cpu_waste_ratio": 0.2782,
+          "memory_requested_bytes": 536870912,
+          "memory_used_bytes": 180899840,
+          "memory_limit_bytes": 671088640,
+          "mem_waste_ratio": 0.663,
+          "cpu_projected_monthly_waste_usd": 4.054,
+          "memory_projected_monthly_waste_usd": 1.061,
+          "projected_monthly_waste_usd": 5.115
+        },
+        {
+          "consolidation_id": 1104,
+          "timestamp": "2026-09-20T00:15:20Z",
+          "cpu_requested_cores": 0.5,
+          "cpu_used_cores": 0.3113,
+          "cpu_limit_cores": 0.5,
+          "cpu_waste_ratio": 0.3775,
+          "memory_requested_bytes": 536870912,
+          "memory_used_bytes": 180899840,
+          "memory_limit_bytes": 671088640,
+          "mem_waste_ratio": 0.663,
+          "cpu_projected_monthly_waste_usd": 5.501,
+          "memory_projected_monthly_waste_usd": 1.061,
+          "projected_monthly_waste_usd": 6.562
+        },
+        {
+          "consolidation_id": 1103,
+          "timestamp": "2026-09-20T00:14:50Z",
+          "cpu_requested_cores": 0.5,
+          "cpu_used_cores": 0.2611,
+          "cpu_limit_cores": 0.5,
+          "cpu_waste_ratio": 0.4777,
+          "memory_requested_bytes": 536870912,
+          "memory_used_bytes": 180943530.6667,
+          "memory_limit_bytes": 671088640,
+          "mem_waste_ratio": 0.663,
+          "cpu_projected_monthly_waste_usd": 6.962,
+          "memory_projected_monthly_waste_usd": 1.0609,
+          "projected_monthly_waste_usd": 8.0229
+        },
+        {
+          "consolidation_id": 1102,
+          "timestamp": "2026-09-20T00:14:20Z",
+          "cpu_requested_cores": 0.5,
+          "cpu_used_cores": 0.2115,
+          "cpu_limit_cores": 0.5,
+          "cpu_waste_ratio": 0.5771,
+          "memory_requested_bytes": 536870912,
+          "memory_used_bytes": 176015018.6667,
+          "memory_limit_bytes": 671088640,
+          "mem_waste_ratio": 0.6721,
+          "cpu_projected_monthly_waste_usd": 8.4098,
+          "memory_projected_monthly_waste_usd": 1.0756,
+          "projected_monthly_waste_usd": 9.4854
+        },
+        {
+          "consolidation_id": 1101,
+          "timestamp": "2026-09-20T00:13:50Z",
+          "cpu_requested_cores": 0.5,
+          "cpu_used_cores": 0.1632,
+          "cpu_limit_cores": 0.5,
+          "cpu_waste_ratio": 0.6737,
+          "memory_requested_bytes": 536870912,
+          "memory_used_bytes": 171086506.6667,
+          "memory_limit_bytes": 671088640,
+          "mem_waste_ratio": 0.6813,
+          "cpu_projected_monthly_waste_usd": 9.8177,
+          "memory_projected_monthly_waste_usd": 1.0903,
+          "projected_monthly_waste_usd": 10.908
+        },
+        {
+          "consolidation_id": 1100,
+          "timestamp": "2026-09-20T00:13:20Z",
+          "cpu_requested_cores": 0.5,
+          "cpu_used_cores": 0.1091,
+          "cpu_limit_cores": 0.5,
+          "cpu_waste_ratio": 0.7819,
+          "memory_requested_bytes": 536870912,
+          "memory_used_bytes": 166157994.6667,
+          "memory_limit_bytes": 671088640,
+          "mem_waste_ratio": 0.6905,
+          "cpu_projected_monthly_waste_usd": 11.394,
+          "memory_projected_monthly_waste_usd": 1.105,
+          "projected_monthly_waste_usd": 12.499
+        },
+        {
+          "consolidation_id": 1099,
+          "timestamp": "2026-09-20T00:12:50Z",
+          "cpu_requested_cores": 0.5,
+          "cpu_used_cores": 0.0751,
+          "cpu_limit_cores": 0.5,
+          "cpu_waste_ratio": 0.8499,
+          "memory_requested_bytes": 536870912,
+          "memory_used_bytes": 145067212.8,
+          "memory_limit_bytes": 671088640,
+          "mem_waste_ratio": 0.7298,
+          "cpu_projected_monthly_waste_usd": 12.3845,
+          "memory_projected_monthly_waste_usd": 1.1678,
+          "projected_monthly_waste_usd": 13.5523
+        },
+        {
+          "consolidation_id": 1098,
+          "timestamp": "2026-09-20T00:12:20Z",
+          "cpu_requested_cores": 0.5,
+          "cpu_used_cores": 0.0487,
+          "cpu_limit_cores": 0.5,
+          "cpu_waste_ratio": 0.9027,
+          "memory_requested_bytes": 536870912,
+          "memory_used_bytes": 138159250.2857,
+          "memory_limit_bytes": 671088640,
+          "mem_waste_ratio": 0.7427,
+          "cpu_projected_monthly_waste_usd": 13.1543,
+          "memory_projected_monthly_waste_usd": 1.1884,
+          "projected_monthly_waste_usd": 14.3427
+        },
+        {
+          "consolidation_id": 1097,
+          "timestamp": "2026-09-20T00:11:50Z",
+          "cpu_requested_cores": 0.5,
+          "cpu_used_cores": 0.0152,
+          "cpu_limit_cores": 0.5,
+          "cpu_waste_ratio": 0.9697,
+          "memory_requested_bytes": 536870912,
+          "memory_used_bytes": 120889344,
+          "memory_limit_bytes": 671088640,
+          "mem_waste_ratio": 0.7748,
+          "cpu_projected_monthly_waste_usd": 14.131,
+          "memory_projected_monthly_waste_usd": 1.2399,
+          "projected_monthly_waste_usd": 15.3709
+        },
+        {
+          "consolidation_id": 1096,
+          "timestamp": "2026-09-20T00:11:20Z",
+          "cpu_requested_cores": 0.5,
+          "cpu_used_cores": 0,
+          "cpu_limit_cores": 0.5,
+          "cpu_waste_ratio": 1,
+          "memory_requested_bytes": 536870912,
+          "memory_used_bytes": 0,
+          "memory_limit_bytes": 671088640,
+          "mem_waste_ratio": 1,
+          "cpu_projected_monthly_waste_usd": 14.5728,
+          "memory_projected_monthly_waste_usd": 1.6002,
+          "projected_monthly_waste_usd": 16.173
+        }
+      ]
+    }
+  },
+  "notifications_before": {
+    "cpu_waste_ratio|global|||": 8.0,
+    "mem_waste_ratio|global|||": 9.0,
+    "cpu_waste_ratio|workload|finops-test|cpu-positive|stress": 8.0,
+    "mem_waste_ratio|workload|finops-test|cpu-negative|stress": 1.0,
+    "mem_waste_ratio|workload|finops-test|memory-positive|stress": 8.0
+  },
+  "notifications_after": {
+    "cpu_waste_ratio|global|||": 8.0,
+    "mem_waste_ratio|global|||": 10.0,
+    "cpu_waste_ratio|workload|finops-test|cpu-positive|stress": 8.0,
+    "mem_waste_ratio|workload|finops-test|cpu-negative|stress": 1.0,
+    "mem_waste_ratio|workload|finops-test|memory-positive|stress": 9.0
+  }
+}

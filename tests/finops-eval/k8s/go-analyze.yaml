@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: ConfigMap
+metadata: {name: go-analyze-config, namespace: finops-system}
+data:
+  PROMETHEUS_ENDPOINT: http://monitoring-kube-prometheus-prometheus.monitoring.svc:9090
+  SERVER_ADDRESS: :8080
+  DEFAULT_WINDOW: 5m
+  SCRAPE_INTERVAL: 10s
+  CONSOLIDATE_INTERVAL: 30s
+  CONSOLIDATE_WINDOW: 2m
+  WASTE_THRESHOLD: "0.50"
+  SUSTAINED_CPU_MEM_DURATION: 5m
+  NOTIFICATION_COOLDOWN: 30m
+  EXPERIMENT_RESET_ENABLED: "true"
+  DB_HOST: postgres.finops-system.svc
+  DB_PORT: "5432"
+  DB_NAME: go_analyze
+  DB_SSLMODE: disable
+  OTEL_ENABLED: "false"
+  OBSERVABILITY_NAMESPACES: kube-system,kubernetes-dashboard,monitoring,finops-system
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: go-analyze, namespace: finops-system}
+spec:
+  replicas: 1
+  selector: {matchLabels: {app: go-analyze}}
+  template:
+    metadata: {labels: {app: go-analyze}}
+    spec:
+      containers:
+        - name: go-analyze
+          image: go-analyze:finops-eval-20260919-v2
+          imagePullPolicy: Never
+          ports: [{containerPort: 8080}]
+          envFrom:
+            - {configMapRef: {name: go-analyze-config}}
+            - {secretRef: {name: finops-secrets}}
+          readinessProbe: {httpGet: {path: /healthz, port: 8080}, initialDelaySeconds: 5, periodSeconds: 5, failureThreshold: 12}
+          resources:
+            requests: {cpu: 100m, memory: 128Mi}
+            limits: {cpu: "1", memory: 512Mi}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: go-analyze, namespace: finops-system}
+spec:
+  selector: {app: go-analyze}
+  ports: [{name: http, port: 8080, targetPort: 8080}]

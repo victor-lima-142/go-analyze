@@ -1,0 +1,57 @@
+{
+  "timestamp": "2026-09-19T17:09:35.314777+00:00",
+  "checks": [
+    {
+      "name": "kubectl_context",
+      "ok": true,
+      "detail": "mba-finops"
+    },
+    {
+      "name": "namespace",
+      "ok": true,
+      "detail": "namespace/finops-test"
+    },
+    {
+      "name": "healthz",
+      "ok": true,
+      "detail": {
+        "checks": {
+          "db": "ok",
+          "prometheus": "ok"
+        },
+        "status": "ok"
+      }
+    },
+    {
+      "name": "metrics",
+      "ok": true,
+      "detail": true
+    },
+    {
+      "name": "prometheus_ready",
+      "ok": true,
+      "detail": "Prometheus Server is Ready."
+    },
+    {
+      "name": "metric:kube_pod_container_resource_requests",
+      "ok": true,
+      "detail": true
+    },
+    {
+      "name": "metric:container_cpu_usage_seconds_total",
+      "ok": true,
+      "detail": true
+    },
+    {
+      "name": "metric:container_memory_working_set_bytes",
+      "ok": true,
+      "detail": true
+    },
+    {
+      "name": "reset_authenticated",
+      "ok": true,
+      "detail": true
+    }
+  ],
+  "ok": true
+}

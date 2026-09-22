@@ -1,0 +1,13 @@
+NAMESPACE       NAME                                                   READY   STATUS    RESTARTS   AGE   IP             NODE         NOMINATED NODE   READINESS GATES
+finops-system   go-analyze-66797d9657-qwwc6                            1/1     Running   0          10h   10.244.0.17    mba-finops   <none>           <none>
+finops-system   postgres-564b56b4df-wwlmc                              1/1     Running   0          11h   10.244.0.8     mba-finops   <none>           <none>
+kube-system     coredns-7d764666f9-bdbcq                               1/1     Running   0          11h   10.244.0.2     mba-finops   <none>           <none>
+kube-system     etcd-mba-finops                                        1/1     Running   0          11h   192.168.49.2   mba-finops   <none>           <none>
+kube-system     kube-apiserver-mba-finops                              1/1     Running   0          11h   192.168.49.2   mba-finops   <none>           <none>
+kube-system     kube-controller-manager-mba-finops                     1/1     Running   0          11h   192.168.49.2   mba-finops   <none>           <none>
+kube-system     kube-proxy-rd89c                                       1/1     Running   0          11h   192.168.49.2   mba-finops   <none>           <none>
+kube-system     kube-scheduler-mba-finops                              1/1     Running   0          11h   192.168.49.2   mba-finops   <none>           <none>
+kube-system     storage-provisioner                                    1/1     Running   0          11h   192.168.49.2   mba-finops   <none>           <none>
+monitoring      monitoring-kube-prometheus-operator-7bc7fd7f97-96tmm   1/1     Running   0          11h   10.244.0.4     mba-finops   <none>           <none>
+monitoring      monitoring-kube-state-metrics-6d8ffd8867-j74zb         1/1     Running   0          11h   10.244.0.5     mba-finops   <none>           <none>
+monitoring      prometheus-monitoring-kube-prometheus-prometheus-0     2/2     Running   0          11h   10.244.0.6     mba-finops   <none>           <none>

@@ -1,0 +1,5 @@
+scenario,label,runs,valid_runs,invalid_runs,error_runs,TP,FN,FP,TN,detection_rate,false_positive_rate,rate_wilson95_low,rate_wilson95_high
+memory_positive,positive,10,10,0,0,10,0,0,0,1.0,,0.7225,1.0
+memory_negative,negative,10,10,0,0,0,0,0,10,,0.0,0,0.2775
+cpu_positive,positive,10,10,0,0,10,0,0,0,1.0,,0.7225,1.0
+cpu_negative,negative,10,10,0,0,0,0,0,10,,0.0,0,0.2775

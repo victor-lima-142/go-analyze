@@ -1,0 +1,14 @@
+test_classification_excludes_invalid (test_harness.HarnessTests.test_classification_excludes_invalid) ... ok
+test_csv_schema (test_harness.HarnessTests.test_csv_schema) ... ok
+test_exact_metric_labels (test_harness.HarnessTests.test_exact_metric_labels) ... ok
+test_indicator_content_contract (test_harness.HarnessTests.test_indicator_content_contract) ... ok
+test_maturation_validation (test_harness.HarnessTests.test_maturation_validation) ... ok
+test_reproducible_randomization (test_harness.HarnessTests.test_reproducible_randomization) ... ok
+test_resume_reads_incremental_csv (test_harness.HarnessTests.test_resume_reads_incremental_csv) ... ok
+test_validate_accepts_campaign_timing (test_harness.HarnessTests.test_validate_accepts_campaign_timing) ... ok
+test_wilson_interval (test_harness.HarnessTests.test_wilson_interval) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.001s
+
+OK

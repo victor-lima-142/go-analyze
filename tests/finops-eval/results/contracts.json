@@ -1,0 +1,300 @@
+{
+  "timestamp": "2026-09-20T01:54:33.359215+00:00",
+  "cases": [
+    {
+      "name": "health",
+      "method": "GET",
+      "path": "/healthz",
+      "expected": 200,
+      "actual": 200,
+      "ok": true,
+      "content_type": "application/json",
+      "body_excerpt": "{\"checks\":{\"db\":\"ok\",\"prometheus\":\"ok\"},\"status\":\"ok\"}\n"
+    },
+    {
+      "name": "metrics",
+      "method": "GET",
+      "path": "/metrics",
+      "expected": 200,
+      "actual": 200,
+      "ok": true,
+      "content_type": "text/plain; version=0.0.4; charset=utf-8; escaping=underscores",
+      "body_excerpt": "# HELP go_analyze_consolidation_errors_total Number of consolidations that failed.\n# TYPE go_analyze_consolidation_errors_total counter\ngo_analyze_consolidation_errors_total 0\n# HELP go_analyze_consolidations_total Number of consolidations executed.\n# TYPE go_analyze_consolidations_total counter\ngo_"
+    },
+    {
+      "name": "swagger_redirect",
+      "method": "GET",
+      "path": "/swagger",
+      "expected": 301,
+      "actual": 301,
+      "ok": true,
+      "content_type": "text/html; charset=utf-8",
+      "body_excerpt": "<a href=\"/swagger/index.html\">Moved Permanently</a>.\n\n"
+    },
+    {
+      "name": "swagger_ui",
+      "method": "GET",
+      "path": "/swagger/index.html",
+      "expected": 200,
+      "actual": 200,
+      "ok": true,
+      "content_type": "text/html; charset=utf-8",
+      "body_excerpt": "\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <title>Swagger UI</title>\n  <link rel=\"stylesheet\" type=\"text/css\" href=\"./swagger-ui.css\" >\n  <link rel=\"icon\" type=\"image/png\" href=\"./favicon-32x32.png\" sizes=\"32x32\" />\n  <link rel=\"icon\" type=\"image/png\" href=\"./favicon-16x16.p"
+    },
+    {
+      "name": "swagger_openapi",
+      "method": "GET",
+      "path": "/swagger/doc.json",
+      "expected": 200,
+      "actual": 200,
+      "ok": true,
+      "content_type": "application/json; charset=utf-8",
+      "body_excerpt": "{\n    \"schemes\": [],\n    \"swagger\": \"2.0\",\n    \"info\": {\n        \"description\": \"Esta é a API do analisador de recursos e custos de workloads Kubernetes (go-analyze).\",\n        \"title\": \"Go Analyze API\",\n        \"contact\": {\n            \"name\": \"Suporte Go-Analyze\"\n        },\n        \"version\": \"1.0"
+    },
+    {
+      "name": "indicators_default",
+      "method": "GET",
+      "path": "/api/v1/indicators",
+      "expected": 200,
+      "actual": 200,
+      "ok": true,
+      "content_type": "application/json",
+      "body_excerpt": "{\"timestamp\":\"2026-09-20T01:54:33Z\",\"filters\":{\"namespace\":\"\",\"pod\":\"\",\"container\":\"\",\"window\":\"5m\"},\"indicators\":{\"cpu_waste_ratio\":0,\"mem_waste_ratio\":0,\"cpu_projected_monthly_waste_usd\":0,\"memory_projected_monthly_waste_usd\":0,\"projected_monthly_waste_usd\":0},\"inputs\":{\"cpu_requested_cores\":0,\"cp"
+    },
+    {
+      "name": "indicators_exact",
+      "method": "GET",
+      "path": "/api/v1/indicators?namespace=finops-test&pod=cpu-positive&container=stress&window=5m",
+      "expected": 200,
+      "actual": 200,
+      "ok": true,
+      "content_type": "application/json",
+      "body_excerpt": "{\"timestamp\":\"2026-09-20T01:54:33Z\",\"filters\":{\"namespace\":\"finops-test\",\"pod\":\"cpu-positive\",\"container\":\"stress\",\"window\":\"5m\"},\"indicators\":{\"cpu_waste_ratio\":0,\"mem_waste_ratio\":0,\"cpu_projected_monthly_waste_usd\":0,\"memory_projected_monthly_waste_usd\":0,\"projected_monthly_waste_usd\":0},\"inputs\""
+    },
+    {
+      "name": "indicators_prefix",
+      "method": "GET",
+      "path": "/api/v1/indicators?namespace=finops-test&pod=cpu-%25&container=stress",
+      "expected": 200,
+      "actual": 200,
+      "ok": true,
+      "content_type": "application/json",
+      "body_excerpt": "{\"timestamp\":\"2026-09-20T01:54:33Z\",\"filters\":{\"namespace\":\"finops-test\",\"pod\":\"cpu-%\",\"container\":\"stress\",\"window\":\"5m\"},\"indicators\":{\"cpu_waste_ratio\":0,\"mem_waste_ratio\":0,\"cpu_projected_monthly_waste_usd\":0,\"memory_projected_monthly_waste_usd\":0,\"projected_monthly_waste_usd\":0},\"inputs\":{\"cpu_"
+    },
+    {
+      "name": "indicators_page",
+      "method": "GET",
+      "path": "/api/v1/indicators?page=1&pageSize=1",
+      "expected": 200,
+      "actual": 200,
+      "ok": true,
+      "content_type": "application/json",
+      "body_excerpt": "{\"timestamp\":\"2026-09-20T01:54:33Z\",\"filters\":{\"namespace\":\"\",\"pod\":\"\",\"container\":\"\",\"window\":\"5m\"},\"indicators\":{\"cpu_waste_ratio\":0,\"mem_waste_ratio\":0,\"cpu_projected_monthly_waste_usd\":0,\"memory_projected_monthly_waste_usd\":0,\"projected_monthly_waste_usd\":0},\"inputs\":{\"cpu_requested_cores\":0,\"cp"
+    },
+    {
+      "name": "indicators_method",
+      "method": "POST",
+      "path": "/api/v1/indicators",
+      "expected": 405,
+      "actual": 405,
+      "ok": true,
+      "content_type": "application/json",
+      "body_excerpt": "{\"error\":\"method not allowed\",\"status\":405}\n"
+    },
+    {
+      "name": "consolidated_default",
+      "method": "GET",
+      "path": "/api/v1/consolidated",
+      "expected": 200,
+      "actual": 200,
+      "ok": true,
+      "content_type": "application/json",
+      "body_excerpt": "{\"content\":[{\"id\":1300,\"consolidated_at\":\"2026-09-20T01:54:20Z\",\"timestamp\":\"2026-09-20T01:54:20Z\",\"start_time\":\"2026-09-20T01:52:20Z\",\"end_time\":\"2026-09-20T01:54:20Z\",\"scrapes_count\":12,\"indicators\":{\"cpu_waste_ratio\":0,\"mem_waste_ratio\":0,\"cpu_projected_monthly_waste_usd\":0,\"memory_projected_mont"
+    },
+    {
+      "name": "consolidated_no_items",
+      "method": "GET",
+      "path": "/api/v1/consolidated?include_items=false&period=30min",
+      "expected": 200,
+      "actual": 200,
+      "ok": true,
+      "content_type": "application/json",
+      "body_excerpt": "{\"content\":[{\"id\":1300,\"consolidated_at\":\"2026-09-20T01:54:20Z\",\"timestamp\":\"2026-09-20T01:54:20Z\",\"start_time\":\"2026-09-20T01:52:20Z\",\"end_time\":\"2026-09-20T01:54:20Z\",\"scrapes_count\":12,\"indicators\":{\"cpu_waste_ratio\":0,\"mem_waste_ratio\":0,\"cpu_projected_monthly_waste_usd\":0,\"memory_projected_mont"
+    },
+    {
+      "name": "consolidated_page",
+      "method": "GET",
+      "path": "/api/v1/consolidated?page=1&pageSize=1",
+      "expected": 200,
+      "actual": 200,
+      "ok": true,
+      "content_type": "application/json",
+      "body_excerpt": "{\"content\":[{\"id\":1300,\"consolidated_at\":\"2026-09-20T01:54:20Z\",\"timestamp\":\"2026-09-20T01:54:20Z\",\"start_time\":\"2026-09-20T01:52:20Z\",\"end_time\":\"2026-09-20T01:54:20Z\",\"scrapes_count\":12,\"indicators\":{\"cpu_waste_ratio\":0,\"mem_waste_ratio\":0,\"cpu_projected_monthly_waste_usd\":0,\"memory_projected_mont"
+    },
+    {
+      "name": "consolidated_bad_period",
+      "method": "GET",
+      "path": "/api/v1/consolidated?period=bogus",
+      "expected": 400,
+      "actual": 400,
+      "ok": true,
+      "content_type": "application/json",
+      "body_excerpt": "{\"error\":\"invalid period: bogus. Supported values: 1min, 5min, 10min, 30min, 1hr, 5d, 10d\",\"status\":400}\n"
+    },
+    {
+      "name": "consolidated_bad_date",
+      "method": "GET",
+      "path": "/api/v1/consolidated?start_at=nope",
+      "expected": 400,
+      "actual": 400,
+      "ok": true,
+      "content_type": "application/json",
+      "body_excerpt": "{\"error\":\"invalid start_at format: parsing time \\\"nope\\\" as \\\"2006-01-02\\\": cannot parse \\\"nope\\\" as \\\"2006\\\"\",\"status\":400}\n"
+    },
+    {
+      "name": "consolidated_method",
+      "method": "POST",
+      "path": "/api/v1/consolidated",
+      "expected": 405,
+      "actual": 405,
+      "ok": true,
+      "content_type": "application/json",
+      "body_excerpt": "{\"error\":\"method not allowed\",\"status\":405}\n"
+    },
+    {
+      "name": "workload_required",
+      "method": "GET",
+      "path": "/api/v1/workloads/details",
+      "expected": 400,
+      "actual": 400,
+      "ok": true,
+      "content_type": "application/json",
+      "body_excerpt": "{\"error\":\"namespace and container are required parameters\",\"status\":400}\n"
+    },
+    {
+      "name": "workload_exact",
+      "method": "GET",
+      "path": "/api/v1/workloads/details?namespace=finops-test&pod=cpu-positive&container=stress&limit=2",
+      "expected": 200,
+      "actual": 200,
+      "ok": true,
+      "content_type": "application/json",
+      "body_excerpt": "{\"namespace\":\"finops-test\",\"pod\":\"cpu-positive\",\"container\":\"stress\",\"current\":null,\"historical\":{\"last_10_consolidations_count\":2,\"avg_cpu_requested_cores\":1,\"avg_cpu_used_cores\":0.09985,\"avg_cpu_waste_ratio\":0.9002,\"avg_memory_requested_bytes\":8388608,\"avg_memory_used_bytes\":6656000,\"avg_mem_waste"
+    },
+    {
+      "name": "workload_prefix",
+      "method": "GET",
+      "path": "/api/v1/workloads/details?namespace=finops-test&pod=cpu-&container=stress&period=30min",
+      "expected": 200,
+      "actual": 200,
+      "ok": true,
+      "content_type": "application/json",
+      "body_excerpt": "{\"namespace\":\"finops-test\",\"pod\":\"cpu-\",\"container\":\"stress\",\"current\":null,\"historical\":{\"last_10_consolidations_count\":30,\"avg_cpu_requested_cores\":1,\"avg_cpu_used_cores\":0.09265333333333334,\"avg_cpu_waste_ratio\":0.9073533333333331,\"avg_memory_requested_bytes\":8388608,\"avg_memory_used_bytes\":65270"
+    },
+    {
+      "name": "workload_bad_date",
+      "method": "GET",
+      "path": "/api/v1/workloads/details?namespace=finops-test&container=stress&start_at=nope",
+      "expected": 400,
+      "actual": 400,
+      "ok": true,
+      "content_type": "application/json",
+      "body_excerpt": "{\"error\":\"invalid start_at format: parsing time \\\"nope\\\" as \\\"2006-01-02\\\": cannot parse \\\"nope\\\" as \\\"2006\\\"\",\"status\":400}\n"
+    },
+    {
+      "name": "workload_method",
+      "method": "POST",
+      "path": "/api/v1/workloads/details",
+      "expected": 405,
+      "actual": 405,
+      "ok": true,
+      "content_type": "application/json",
+      "body_excerpt": "{\"error\":\"method not allowed\",\"status\":405}\n"
+    },
+    {
+      "name": "audit_period",
+      "method": "GET",
+      "path": "/api/v1/audit?period=30min",
+      "expected": 200,
+      "actual": 200,
+      "ok": true,
+      "content_type": "application/json",
+      "body_excerpt": "{\"audit_type\":\"internal_consistency\",\"window\":\"30m0s\",\"start_at\":\"2026-09-20T01:24:33Z\",\"end_at\":\"2026-09-20T01:54:33Z\",\"scrapes_count\":93,\"audited_scrapes_count\":93,\"skipped_scrapes_count\":0,\"conclusive\":true,\"cost_model\":\"aws-fargate-us-east-1-static\",\"reported_projected_monthly_waste_usd\":1957.90"
+    },
+    {
+      "name": "audit_details",
+      "method": "GET",
+      "path": "/api/v1/audit?period=30min&details=true",
+      "expected": 200,
+      "actual": 200,
+      "ok": true,
+      "content_type": "application/json",
+      "body_excerpt": "{\"audit_type\":\"internal_consistency\",\"window\":\"30m0s\",\"start_at\":\"2026-09-20T01:24:33Z\",\"end_at\":\"2026-09-20T01:54:33Z\",\"scrapes_count\":93,\"audited_scrapes_count\":93,\"skipped_scrapes_count\":0,\"conclusive\":true,\"cost_model\":\"aws-fargate-us-east-1-static\",\"reported_projected_monthly_waste_usd\":1957.90"
+    },
+    {
+      "name": "audit_bad_period",
+      "method": "GET",
+      "path": "/api/v1/audit?period=bogus",
+      "expected": 400,
+      "actual": 400,
+      "ok": true,
+      "content_type": "application/json",
+      "body_excerpt": "{\"error\":\"invalid period: bogus. Supported values: 1min, 5min, 10min, 30min, 1hr, 5d, 10d\",\"status\":400}\n"
+    },
+    {
+      "name": "audit_method",
+      "method": "POST",
+      "path": "/api/v1/audit",
+      "expected": 405,
+      "actual": 405,
+      "ok": true,
+      "content_type": "application/json",
+      "body_excerpt": "{\"error\":\"method not allowed\",\"status\":405}\n"
+    },
+    {
+      "name": "reset_missing",
+      "method": "POST",
+      "path": "/api/v1/experiment/reset",
+      "expected": 401,
+      "actual": 401,
+      "ok": true,
+      "content_type": "application/json",
+      "body_excerpt": "{\"error\":\"invalid or missing bearer token\",\"status\":401}\n"
+    },
+    {
+      "name": "reset_invalid",
+      "method": "POST",
+      "path": "/api/v1/experiment/reset",
+      "expected": 401,
+      "actual": 401,
+      "ok": true,
+      "content_type": "application/json",
+      "body_excerpt": "{\"error\":\"invalid or missing bearer token\",\"status\":401}\n"
+    },
+    {
+      "name": "reset_method",
+      "method": "GET",
+      "path": "/api/v1/experiment/reset",
+      "expected": 405,
+      "actual": 405,
+      "ok": true,
+      "content_type": "application/json",
+      "body_excerpt": "{\"error\":\"method not allowed\",\"status\":405}\n"
+    },
+    {
+      "name": "reset_valid",
+      "method": "POST",
+      "path": "/api/v1/experiment/reset",
+      "expected": 200,
+      "actual": 200,
+      "ok": true,
+      "content_type": "application/json",
+      "body_excerpt": "{\"message\":\"experiment data truncated and trackers reset\",\"status\":\"ok\"}\n"
+    }
+  ],
+  "semantic": {
+    "ratios_in_range": true,
+    "cost_sum": true
+  },
+  "ok": true
+}

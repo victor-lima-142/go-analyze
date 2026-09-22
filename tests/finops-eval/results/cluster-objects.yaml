@@ -1,0 +1,1764 @@
+apiVersion: v1
+items:
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "4"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"go-analyze","namespace":"finops-system"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"go-analyze"}},"template":{"metadata":{"labels":{"app":"go-analyze"}},"spec":{"containers":[{"envFrom":[{"configMapRef":{"name":"go-analyze-config"}},{"secretRef":{"name":"finops-secrets"}}],"image":"go-analyze:finops-eval-20260919-v2","imagePullPolicy":"Never","name":"go-analyze","ports":[{"containerPort":8080}],"readinessProbe":{"failureThreshold":12,"httpGet":{"path":"/healthz","port":8080},"initialDelaySeconds":5,"periodSeconds":5},"resources":{"limits":{"cpu":"1","memory":"512Mi"},"requests":{"cpu":"100m","memory":"128Mi"}}}]}}}}
+    creationTimestamp: "2026-09-19T14:46:37Z"
+    generation: 4
+    name: go-analyze
+    namespace: finops-system
+    resourceVersion: "2466"
+    uid: c2d0d959-e3e5-4388-8d03-7c6165182d6f
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: go-analyze
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-09-19T12:11:49-03:00"
+        labels:
+          app: go-analyze
+      spec:
+        containers:
+        - envFrom:
+          - configMapRef:
+              name: go-analyze-config
+          - secretRef:
+              name: finops-secrets
+          image: go-analyze:finops-eval-20260919-v2
+          imagePullPolicy: Never
+          name: go-analyze
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 12
+            httpGet:
+              path: /healthz
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "1"
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-09-19T14:56:20Z"
+      lastUpdateTime: "2026-09-19T14:56:20Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2026-09-19T14:46:37Z"
+      lastUpdateTime: "2026-09-19T15:11:56Z"
+      message: ReplicaSet "go-analyze-66797d9657" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 4
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"postgres","namespace":"finops-system"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"postgres"}},"template":{"metadata":{"labels":{"app":"postgres"}},"spec":{"containers":[{"env":[{"name":"POSTGRES_DB","value":"go_analyze"},{"name":"POSTGRES_USER","valueFrom":{"secretKeyRef":{"key":"DB_USER","name":"finops-secrets"}}},{"name":"POSTGRES_PASSWORD","valueFrom":{"secretKeyRef":{"key":"DB_PASSWORD","name":"finops-secrets"}}}],"image":"postgres:17.6-alpine","name":"postgres","ports":[{"containerPort":5432}],"readinessProbe":{"exec":{"command":["pg_isready","-U","go_analyze"]},"initialDelaySeconds":5,"periodSeconds":5},"resources":{"limits":{"cpu":"1","memory":"1Gi"},"requests":{"cpu":"100m","memory":"256Mi"}},"volumeMounts":[{"mountPath":"/var/lib/postgresql/data","name":"data"}]}],"volumes":[{"emptyDir":{},"name":"data"}]}}}}
+    creationTimestamp: "2026-09-19T14:45:09Z"
+    generation: 1
+    name: postgres
+    namespace: finops-system
+    resourceVersion: "774"
+    uid: 1e576e68-8f33-427f-974c-5884b5e426d6
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: postgres
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        labels:
+          app: postgres
+      spec:
+        containers:
+        - env:
+          - name: POSTGRES_DB
+            value: go_analyze
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                key: DB_USER
+                name: finops-secrets
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: DB_PASSWORD
+                name: finops-secrets
+          image: postgres:17.6-alpine
+          imagePullPolicy: IfNotPresent
+          name: postgres
+          ports:
+          - containerPort: 5432
+            protocol: TCP
+          readinessProbe:
+            exec:
+              command:
+              - pg_isready
+              - -U
+              - go_analyze
+            failureThreshold: 3
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "1"
+              memory: 1Gi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /var/lib/postgresql/data
+            name: data
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - emptyDir: {}
+          name: data
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-09-19T14:45:37Z"
+      lastUpdateTime: "2026-09-19T14:45:37Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2026-09-19T14:45:09Z"
+      lastUpdateTime: "2026-09-19T14:45:37Z"
+      message: ReplicaSet "postgres-564b56b4df" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+    creationTimestamp: "2026-09-19T14:44:15Z"
+    generation: 2
+    labels:
+      k8s-app: kube-dns
+    name: coredns
+    namespace: kube-system
+    resourceVersion: "624"
+    uid: 28c78e89-8000-4b0e-b933-19004240f099
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        k8s-app: kube-dns
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 1
+      type: RollingUpdate
+    template:
+      metadata:
+        labels:
+          k8s-app: kube-dns
+      spec:
+        affinity:
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                  - key: k8s-app
+                    operator: In
+                    values:
+                    - kube-dns
+                topologyKey: kubernetes.io/hostname
+              weight: 100
+        containers:
+        - args:
+          - -conf
+          - /etc/coredns/Corefile
+          image: registry.k8s.io/coredns/coredns:v1.13.1
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /health
+              port: liveness-probe
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          name: coredns
+          ports:
+          - containerPort: 53
+            name: dns
+            protocol: UDP
+          - containerPort: 53
+            name: dns-tcp
+            protocol: TCP
+          - containerPort: 9153
+            name: metrics
+            protocol: TCP
+          - containerPort: 8080
+            name: liveness-probe
+            protocol: TCP
+          - containerPort: 8181
+            name: readiness-probe
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /ready
+              port: readiness-probe
+              scheme: HTTP
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              memory: 170Mi
+            requests:
+              cpu: 100m
+              memory: 70Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              add:
+              - NET_BIND_SERVICE
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /etc/coredns
+            name: config-volume
+            readOnly: true
+        dnsPolicy: Default
+        nodeSelector:
+          kubernetes.io/os: linux
+        priorityClassName: system-cluster-critical
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: coredns
+        serviceAccountName: coredns
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/control-plane
+        volumes:
+        - configMap:
+            defaultMode: 420
+            items:
+            - key: Corefile
+              path: Corefile
+            name: coredns
+          name: config-volume
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-09-19T14:44:20Z"
+      lastUpdateTime: "2026-09-19T14:44:20Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2026-09-19T14:44:20Z"
+      lastUpdateTime: "2026-09-19T14:44:59Z"
+      message: ReplicaSet "coredns-7d764666f9" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 2
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      meta.helm.sh/release-name: monitoring
+      meta.helm.sh/release-namespace: monitoring
+    creationTimestamp: "2026-09-19T14:44:32Z"
+    generation: 1
+    labels:
+      app: kube-prometheus-stack-operator
+      app.kubernetes.io/component: prometheus-operator
+      app.kubernetes.io/instance: monitoring
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kube-prometheus-stack-prometheus-operator
+      app.kubernetes.io/part-of: kube-prometheus-stack
+      app.kubernetes.io/version: 91.4.0
+      chart: kube-prometheus-stack-91.4.0
+      heritage: Helm
+      release: monitoring
+    name: monitoring-kube-prometheus-operator
+    namespace: monitoring
+    resourceVersion: "660"
+    uid: b2c84430-8b64-4e94-b9bb-1f997e1dab9c
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: kube-prometheus-stack-operator
+        release: monitoring
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        labels:
+          app: kube-prometheus-stack-operator
+          app.kubernetes.io/component: prometheus-operator
+          app.kubernetes.io/instance: monitoring
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: kube-prometheus-stack-prometheus-operator
+          app.kubernetes.io/part-of: kube-prometheus-stack
+          app.kubernetes.io/version: 91.4.0
+          chart: kube-prometheus-stack-91.4.0
+          heritage: Helm
+          release: monitoring
+      spec:
+        automountServiceAccountToken: true
+        containers:
+        - args:
+          - --kubelet-service=kube-system/monitoring-kube-prometheus-kubelet
+          - --kubelet-endpoints=true
+          - --kubelet-endpointslice=false
+          - --localhost=127.0.0.1
+          - --prometheus-config-reloader=quay.io/prometheus-operator/prometheus-config-reloader:v0.94.0
+          - --config-reloader-cpu-request=0
+          - --config-reloader-cpu-limit=0
+          - --config-reloader-memory-request=0
+          - --config-reloader-memory-limit=0
+          - --thanos-default-base-image=quay.io/thanos/thanos:v0.42.4
+          - --secret-field-selector=type!=kubernetes.io/dockercfg,type!=helm.sh/release.v1
+          - --web.enable-tls=true
+          - --web.cert-file=/cert/cert
+          - --web.key-file=/cert/key
+          - --web.listen-address=:10250
+          - --web.tls-min-version=VersionTLS13
+          env:
+          - name: GOGC
+            value: "30"
+          image: quay.io/prometheus-operator/prometheus-operator:v0.94.0
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: https
+              scheme: HTTPS
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: kube-prometheus-stack
+          ports:
+          - containerPort: 10250
+            name: https
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: https
+              scheme: HTTPS
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /cert
+            name: tls-secret
+            readOnly: true
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 65534
+          runAsGroup: 65534
+          runAsNonRoot: true
+          runAsUser: 65534
+          seccompProfile:
+            type: RuntimeDefault
+        serviceAccount: monitoring-kube-prometheus-operator
+        serviceAccountName: monitoring-kube-prometheus-operator
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: tls-secret
+          secret:
+            defaultMode: 420
+            secretName: monitoring-kube-prometheus-admission
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-09-19T14:45:01Z"
+      lastUpdateTime: "2026-09-19T14:45:01Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2026-09-19T14:44:32Z"
+      lastUpdateTime: "2026-09-19T14:45:01Z"
+      message: ReplicaSet "monitoring-kube-prometheus-operator-7bc7fd7f97" has successfully
+        progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      meta.helm.sh/release-name: monitoring
+      meta.helm.sh/release-namespace: monitoring
+    creationTimestamp: "2026-09-19T14:44:32Z"
+    generation: 1
+    labels:
+      app.kubernetes.io/component: metrics
+      app.kubernetes.io/instance: monitoring
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kube-state-metrics
+      app.kubernetes.io/part-of: kube-state-metrics
+      app.kubernetes.io/version: 2.20.0
+      helm.sh/chart: kube-state-metrics-8.5.0
+      release: monitoring
+    name: monitoring-kube-state-metrics
+    namespace: monitoring
+    resourceVersion: "667"
+    uid: 12b93aa4-1956-4c2b-9c84-378d20126d20
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/instance: monitoring
+        app.kubernetes.io/name: kube-state-metrics
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        labels:
+          app.kubernetes.io/component: metrics
+          app.kubernetes.io/instance: monitoring
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: kube-state-metrics
+          app.kubernetes.io/part-of: kube-state-metrics
+          app.kubernetes.io/version: 2.20.0
+          release: monitoring
+      spec:
+        automountServiceAccountToken: true
+        containers:
+        - args:
+          - --port=8080
+          - --resources=certificatesigningrequests,configmaps,cronjobs,daemonsets,deployments,endpointslices,horizontalpodautoscalers,ingresses,jobs,leases,limitranges,mutatingwebhookconfigurations,namespaces,networkpolicies,nodes,persistentvolumeclaims,persistentvolumes,poddisruptionbudgets,pods,replicasets,replicationcontrollers,resourcequotas,secrets,services,statefulsets,storageclasses,validatingwebhookconfigurations,volumeattachments
+          image: registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.20.0
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /livez
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          name: kube-state-metrics
+          ports:
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          - containerPort: 8081
+            name: metrics
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /readyz
+              port: metrics
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 65534
+          runAsGroup: 65534
+          runAsNonRoot: true
+          runAsUser: 65534
+          seccompProfile:
+            type: RuntimeDefault
+        serviceAccount: monitoring-kube-state-metrics
+        serviceAccountName: monitoring-kube-state-metrics
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-09-19T14:45:03Z"
+      lastUpdateTime: "2026-09-19T14:45:03Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2026-09-19T14:44:32Z"
+      lastUpdateTime: "2026-09-19T14:45:03Z"
+      message: ReplicaSet "monitoring-kube-state-metrics-6d8ffd8867" has successfully
+        progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: "2026-09-19T14:44:14Z"
+    labels:
+      component: apiserver
+      provider: kubernetes
+    name: kubernetes
+    namespace: default
+    resourceVersion: "202"
+    uid: 1514af62-2364-43c6-89e3-84e8ee40ac82
+  spec:
+    clusterIP: 10.96.0.1
+    clusterIPs:
+    - 10.96.0.1
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: https
+      port: 443
+      protocol: TCP
+      targetPort: 8443
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"go-analyze","namespace":"finops-system"},"spec":{"ports":[{"name":"http","port":8080,"targetPort":8080}],"selector":{"app":"go-analyze"}}}
+    creationTimestamp: "2026-09-19T14:46:37Z"
+    name: go-analyze
+    namespace: finops-system
+    resourceVersion: "848"
+    uid: 6c29e292-caa3-4361-8c2c-c4b5504b134a
+  spec:
+    clusterIP: 10.103.18.159
+    clusterIPs:
+    - 10.103.18.159
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: go-analyze
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"postgres","namespace":"finops-system"},"spec":{"ports":[{"name":"postgres","port":5432,"targetPort":5432}],"selector":{"app":"postgres"}}}
+    creationTimestamp: "2026-09-19T14:45:09Z"
+    name: postgres
+    namespace: finops-system
+    resourceVersion: "719"
+    uid: 20cf2513-cd0b-4c94-89e6-b39d37f90fc0
+  spec:
+    clusterIP: 10.102.107.115
+    clusterIPs:
+    - 10.102.107.115
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: postgres
+      port: 5432
+      protocol: TCP
+      targetPort: 5432
+    selector:
+      app: postgres
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      prometheus.io/port: "9153"
+      prometheus.io/scrape: "true"
+    creationTimestamp: "2026-09-19T14:44:15Z"
+    labels:
+      k8s-app: kube-dns
+      kubernetes.io/cluster-service: "true"
+      kubernetes.io/name: CoreDNS
+    name: kube-dns
+    namespace: kube-system
+    resourceVersion: "249"
+    uid: e55ca912-ab53-40f4-9b4e-31596fed52f5
+  spec:
+    clusterIP: 10.96.0.10
+    clusterIPs:
+    - 10.96.0.10
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: dns
+      port: 53
+      protocol: UDP
+      targetPort: 53
+    - name: dns-tcp
+      port: 53
+      protocol: TCP
+      targetPort: 53
+    - name: metrics
+      port: 9153
+      protocol: TCP
+      targetPort: 9153
+    selector:
+      k8s-app: kube-dns
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: monitoring
+      meta.helm.sh/release-namespace: monitoring
+    creationTimestamp: "2026-09-19T14:44:32Z"
+    labels:
+      app: kube-prometheus-stack-coredns
+      app.kubernetes.io/instance: monitoring
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/part-of: kube-prometheus-stack
+      app.kubernetes.io/version: 91.4.0
+      chart: kube-prometheus-stack-91.4.0
+      heritage: Helm
+      jobLabel: coredns
+      release: monitoring
+    name: monitoring-kube-prometheus-coredns
+    namespace: kube-system
+    resourceVersion: "492"
+    uid: 57e22d0f-ca7b-401c-ada4-6db19e245495
+  spec:
+    clusterIP: None
+    clusterIPs:
+    - None
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: http-metrics
+      port: 9153
+      protocol: TCP
+      targetPort: 9153
+    selector:
+      k8s-app: kube-dns
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: monitoring
+      meta.helm.sh/release-namespace: monitoring
+    creationTimestamp: "2026-09-19T14:44:32Z"
+    labels:
+      app: kube-prometheus-stack-kube-controller-manager
+      app.kubernetes.io/instance: monitoring
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/part-of: kube-prometheus-stack
+      app.kubernetes.io/version: 91.4.0
+      chart: kube-prometheus-stack-91.4.0
+      heritage: Helm
+      jobLabel: kube-controller-manager
+      release: monitoring
+    name: monitoring-kube-prometheus-kube-controller-manager
+    namespace: kube-system
+    resourceVersion: "487"
+    uid: 695ebf94-2c16-4b8d-8f7d-f0525501fa49
+  spec:
+    clusterIP: None
+    clusterIPs:
+    - None
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: http-metrics
+      port: 10257
+      protocol: TCP
+      targetPort: 10257
+    selector:
+      component: kube-controller-manager
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: monitoring
+      meta.helm.sh/release-namespace: monitoring
+    creationTimestamp: "2026-09-19T14:44:32Z"
+    labels:
+      app: kube-prometheus-stack-kube-etcd
+      app.kubernetes.io/instance: monitoring
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/part-of: kube-prometheus-stack
+      app.kubernetes.io/version: 91.4.0
+      chart: kube-prometheus-stack-91.4.0
+      heritage: Helm
+      jobLabel: kube-etcd
+      release: monitoring
+    name: monitoring-kube-prometheus-kube-etcd
+    namespace: kube-system
+    resourceVersion: "490"
+    uid: 8004f951-b38f-4e5e-ba53-6d3b35fe5c00
+  spec:
+    clusterIP: None
+    clusterIPs:
+    - None
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: http-metrics
+      port: 2381
+      protocol: TCP
+      targetPort: 2381
+    selector:
+      component: etcd
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: monitoring
+      meta.helm.sh/release-namespace: monitoring
+    creationTimestamp: "2026-09-19T14:44:32Z"
+    labels:
+      app: kube-prometheus-stack-kube-proxy
+      app.kubernetes.io/instance: monitoring
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/part-of: kube-prometheus-stack
+      app.kubernetes.io/version: 91.4.0
+      chart: kube-prometheus-stack-91.4.0
+      heritage: Helm
+      jobLabel: kube-proxy
+      release: monitoring
+    name: monitoring-kube-prometheus-kube-proxy
+    namespace: kube-system
+    resourceVersion: "489"
+    uid: 22dfe2b9-a9de-4f08-a62b-5d76a2c702da
+  spec:
+    clusterIP: None
+    clusterIPs:
+    - None
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: http-metrics
+      port: 10249
+      protocol: TCP
+      targetPort: 10249
+    selector:
+      k8s-app: kube-proxy
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: monitoring
+      meta.helm.sh/release-namespace: monitoring
+    creationTimestamp: "2026-09-19T14:44:32Z"
+    labels:
+      app: kube-prometheus-stack-kube-scheduler
+      app.kubernetes.io/instance: monitoring
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/part-of: kube-prometheus-stack
+      app.kubernetes.io/version: 91.4.0
+      chart: kube-prometheus-stack-91.4.0
+      heritage: Helm
+      jobLabel: kube-scheduler
+      release: monitoring
+    name: monitoring-kube-prometheus-kube-scheduler
+    namespace: kube-system
+    resourceVersion: "488"
+    uid: 631ee377-cffd-400c-95e8-fe2690d63518
+  spec:
+    clusterIP: None
+    clusterIPs:
+    - None
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: http-metrics
+      port: 10259
+      protocol: TCP
+      targetPort: 10259
+    selector:
+      component: kube-scheduler
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: "2026-09-19T14:45:01Z"
+    labels:
+      app.kubernetes.io/managed-by: prometheus-operator
+      app.kubernetes.io/name: kubelet
+      k8s-app: kubelet
+    name: monitoring-kube-prometheus-kubelet
+    namespace: kube-system
+    resourceVersion: "629"
+    uid: 1b5df726-1301-4a43-9fd3-bdae6e7ec5ec
+  spec:
+    clusterIP: None
+    clusterIPs:
+    - None
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    - IPv6
+    ipFamilyPolicy: RequireDualStack
+    ports:
+    - name: https-metrics
+      port: 10250
+      protocol: TCP
+      targetPort: 10250
+    - name: cadvisor
+      port: 4194
+      protocol: TCP
+      targetPort: 4194
+    - name: http-metrics
+      port: 10255
+      protocol: TCP
+      targetPort: 10255
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: monitoring
+      meta.helm.sh/release-namespace: monitoring
+    creationTimestamp: "2026-09-19T14:44:32Z"
+    labels:
+      app: kube-prometheus-stack-operator
+      app.kubernetes.io/component: prometheus-operator
+      app.kubernetes.io/instance: monitoring
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kube-prometheus-stack-prometheus-operator
+      app.kubernetes.io/part-of: kube-prometheus-stack
+      app.kubernetes.io/version: 91.4.0
+      chart: kube-prometheus-stack-91.4.0
+      heritage: Helm
+      release: monitoring
+    name: monitoring-kube-prometheus-operator
+    namespace: monitoring
+    resourceVersion: "505"
+    uid: 3825635b-86db-4f7f-952a-4c5085f75f4a
+  spec:
+    clusterIP: 10.109.62.155
+    clusterIPs:
+    - 10.109.62.155
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: https
+      port: 443
+      protocol: TCP
+      targetPort: https
+    selector:
+      app: kube-prometheus-stack-operator
+      release: monitoring
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: monitoring
+      meta.helm.sh/release-namespace: monitoring
+    creationTimestamp: "2026-09-19T14:44:32Z"
+    labels:
+      app: kube-prometheus-stack-prometheus
+      app.kubernetes.io/instance: monitoring
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/part-of: kube-prometheus-stack
+      app.kubernetes.io/version: 91.4.0
+      chart: kube-prometheus-stack-91.4.0
+      heritage: Helm
+      release: monitoring
+      self-monitor: "true"
+    name: monitoring-kube-prometheus-prometheus
+    namespace: monitoring
+    resourceVersion: "493"
+    uid: 2c2e411c-6649-4b74-8d4a-9a08d9c9bb78
+  spec:
+    clusterIP: 10.97.91.200
+    clusterIPs:
+    - 10.97.91.200
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: http-web
+      port: 9090
+      protocol: TCP
+      targetPort: 9090
+    - appProtocol: http
+      name: reloader-web
+      port: 8080
+      protocol: TCP
+      targetPort: reloader-web
+    selector:
+      app.kubernetes.io/name: prometheus
+      operator.prometheus.io/name: monitoring-kube-prometheus-prometheus
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: monitoring
+      meta.helm.sh/release-namespace: monitoring
+    creationTimestamp: "2026-09-19T14:44:32Z"
+    labels:
+      app.kubernetes.io/component: metrics
+      app.kubernetes.io/instance: monitoring
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kube-state-metrics
+      app.kubernetes.io/part-of: kube-state-metrics
+      app.kubernetes.io/version: 2.20.0
+      helm.sh/chart: kube-state-metrics-8.5.0
+      release: monitoring
+    name: monitoring-kube-state-metrics
+    namespace: monitoring
+    resourceVersion: "513"
+    uid: c47cb8cf-f14e-4350-ae7c-9682203e3293
+  spec:
+    clusterIP: 10.99.127.239
+    clusterIPs:
+    - 10.99.127.239
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: http
+    selector:
+      app.kubernetes.io/instance: monitoring
+      app.kubernetes.io/name: kube-state-metrics
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: "2026-09-19T14:45:01Z"
+    labels:
+      app.kubernetes.io/managed-by: prometheus-operator
+      managed-by: prometheus-operator
+      operated-prometheus: "true"
+    name: prometheus-operated
+    namespace: monitoring
+    ownerReferences:
+    - apiVersion: monitoring.coreos.com/v1
+      kind: Prometheus
+      name: monitoring-kube-prometheus-prometheus
+      uid: c57fc6c8-0409-47db-a5fd-ae106ba03499
+    resourceVersion: "638"
+    uid: b53f22b2-f89d-4972-8eea-6934ce0fbf7f
+  spec:
+    clusterIP: None
+    clusterIPs:
+    - None
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: http-web
+      port: 9090
+      protocol: TCP
+      targetPort: http-web
+    selector:
+      app.kubernetes.io/name: prometheus
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  data:
+    ca.crt: |
+      -----BEGIN CERTIFICATE-----
+      MIIDBjCCAe6gAwIBAgIBATANBgkqhkiG9w0BAQsFADAVMRMwEQYDVQQDEwptaW5p
+      a3ViZUNBMB4XDTI2MDkxODE0NDQwOVoXDTM2MDkxNjE0NDQwOVowFTETMBEGA1UE
+      AxMKbWluaWt1YmVDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANGM
+      XcD3wofAwi6Y+2DPrezQCKzVVA6P9LcanARbOkwAFM6SrbfWdxX/mKuUZ78v9oUw
+      f9LffkhfI41iFaoMuipSEV5awhtM02R7T0uaMxXAlMB7CMxtYnKErPlpJp3kmpnu
+      6enCcvWZRNaG+ewpms0M1l3iE0RN7im7+hyhbmxVGMMWL3AJ6J1imzfJRv/MvBhn
+      quN+2qBCrj94EwpcJLbSotjx5i1xRF9DtfEh+PWx/5ifrc2OKX/UVUiP/DeOBlhL
+      Wuxw/EcinfaKoCTH5dy2WDRzTU+mXgIYqP7RAOHhO9WYwo9KNE0QuLA60NK4YjSI
+      UbqH8+qP1Xfl6DvdrrMCAwEAAaNhMF8wDgYDVR0PAQH/BAQDAgKkMB0GA1UdJQQW
+      MBQGCCsGAQUFBwMCBggrBgEFBQcDATAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQW
+      BBSqLHmLW0ujNK6RH3cXHKEcmVjwSjANBgkqhkiG9w0BAQsFAAOCAQEATAlc6nnd
+      prGu306inmDPSmS0F/WzE27fF4LUcJArNUBGPYa1fao0sOjhvTcOVdYNX0mUysl+
+      933Vspjoi3ran5lTEi5mpQVG7C9moQHw5mT8g6UDmQVC6OKbwqk8EiBBxbp4Ga6u
+      LBirL+COH/ROZr/JIhdNr857mHvbUW9RrAVdG9qi4nkGT4ecxUHtowIpLZaIL+0N
+      df4iR2YHxK1DfXf1JnBoEGlJ9SpG2JVOJWfpX3uWqtkdVAWrq72CgdYAXvTHn9ty
+      WmKuXbkCjtZdoAIFfGp+mH1dcn9CpETAcd1V7sPSt+3yV5g/FPnfVf3I1zsKRGEO
+      vzwzldiBq9xOLw==
+      -----END CERTIFICATE-----
+  kind: ConfigMap
+  metadata:
+    annotations:
+      kubernetes.io/description: Contains a CA bundle that can be used to verify the
+        kube-apiserver when using internal endpoints such as the internal service
+        IP or kubernetes.default.svc. No other usage is guaranteed across distributions
+        of Kubernetes clusters.
+    creationTimestamp: "2026-09-19T14:44:21Z"
+    name: kube-root-ca.crt
+    namespace: default
+    resourceVersion: "366"
+    uid: 8161a665-d9d5-4580-be52-199885a775ff
+- apiVersion: v1
+  data:
+    CONSOLIDATE_INTERVAL: 30s
+    CONSOLIDATE_WINDOW: 2m
+    DB_HOST: postgres.finops-system.svc
+    DB_NAME: go_analyze
+    DB_PORT: "5432"
+    DB_SSLMODE: disable
+    DEFAULT_WINDOW: 5m
+    EXPERIMENT_RESET_ENABLED: "true"
+    NOTIFICATION_COOLDOWN: 30m
+    OBSERVABILITY_NAMESPACES: kube-system,kubernetes-dashboard,monitoring,finops-system
+    OTEL_ENABLED: "false"
+    PROMETHEUS_ENDPOINT: http://monitoring-kube-prometheus-prometheus.monitoring.svc:9090
+    SCRAPE_INTERVAL: 10s
+    SERVER_ADDRESS: :8080
+    SUSTAINED_CPU_MEM_DURATION: 5m
+    WASTE_THRESHOLD: "0.50"
+  kind: ConfigMap
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","data":{"CONSOLIDATE_INTERVAL":"30s","CONSOLIDATE_WINDOW":"2m","DB_HOST":"postgres.finops-system.svc","DB_NAME":"go_analyze","DB_PORT":"5432","DB_SSLMODE":"disable","DEFAULT_WINDOW":"5m","EXPERIMENT_RESET_ENABLED":"true","NOTIFICATION_COOLDOWN":"30m","OBSERVABILITY_NAMESPACES":"kube-system,kubernetes-dashboard,monitoring,finops-system","OTEL_ENABLED":"false","PROMETHEUS_ENDPOINT":"http://monitoring-kube-prometheus-prometheus.monitoring.svc:9090","SCRAPE_INTERVAL":"10s","SERVER_ADDRESS":":8080","SUSTAINED_CPU_MEM_DURATION":"5m","WASTE_THRESHOLD":"0.50"},"kind":"ConfigMap","metadata":{"annotations":{},"name":"go-analyze-config","namespace":"finops-system"}}
+    creationTimestamp: "2026-09-19T14:46:37Z"
+    name: go-analyze-config
+    namespace: finops-system
+    resourceVersion: "2419"
+    uid: 07181bb8-7959-49b6-a598-c2e97f0b7459
+- apiVersion: v1
+  data:
+    ca.crt: |
+      -----BEGIN CERTIFICATE-----
+      MIIDBjCCAe6gAwIBAgIBATANBgkqhkiG9w0BAQsFADAVMRMwEQYDVQQDEwptaW5p
+      a3ViZUNBMB4XDTI2MDkxODE0NDQwOVoXDTM2MDkxNjE0NDQwOVowFTETMBEGA1UE
+      AxMKbWluaWt1YmVDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANGM
+      XcD3wofAwi6Y+2DPrezQCKzVVA6P9LcanARbOkwAFM6SrbfWdxX/mKuUZ78v9oUw
+      f9LffkhfI41iFaoMuipSEV5awhtM02R7T0uaMxXAlMB7CMxtYnKErPlpJp3kmpnu
+      6enCcvWZRNaG+ewpms0M1l3iE0RN7im7+hyhbmxVGMMWL3AJ6J1imzfJRv/MvBhn
+      quN+2qBCrj94EwpcJLbSotjx5i1xRF9DtfEh+PWx/5ifrc2OKX/UVUiP/DeOBlhL
+      Wuxw/EcinfaKoCTH5dy2WDRzTU+mXgIYqP7RAOHhO9WYwo9KNE0QuLA60NK4YjSI
+      UbqH8+qP1Xfl6DvdrrMCAwEAAaNhMF8wDgYDVR0PAQH/BAQDAgKkMB0GA1UdJQQW
+      MBQGCCsGAQUFBwMCBggrBgEFBQcDATAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQW
+      BBSqLHmLW0ujNK6RH3cXHKEcmVjwSjANBgkqhkiG9w0BAQsFAAOCAQEATAlc6nnd
+      prGu306inmDPSmS0F/WzE27fF4LUcJArNUBGPYa1fao0sOjhvTcOVdYNX0mUysl+
+      933Vspjoi3ran5lTEi5mpQVG7C9moQHw5mT8g6UDmQVC6OKbwqk8EiBBxbp4Ga6u
+      LBirL+COH/ROZr/JIhdNr857mHvbUW9RrAVdG9qi4nkGT4ecxUHtowIpLZaIL+0N
+      df4iR2YHxK1DfXf1JnBoEGlJ9SpG2JVOJWfpX3uWqtkdVAWrq72CgdYAXvTHn9ty
+      WmKuXbkCjtZdoAIFfGp+mH1dcn9CpETAcd1V7sPSt+3yV5g/FPnfVf3I1zsKRGEO
+      vzwzldiBq9xOLw==
+      -----END CERTIFICATE-----
+  kind: ConfigMap
+  metadata:
+    annotations:
+      kubernetes.io/description: Contains a CA bundle that can be used to verify the
+        kube-apiserver when using internal endpoints such as the internal service
+        IP or kubernetes.default.svc. No other usage is guaranteed across distributions
+        of Kubernetes clusters.
+    creationTimestamp: "2026-09-19T14:44:21Z"
+    name: kube-root-ca.crt
+    namespace: finops-system
+    resourceVersion: "367"
+    uid: 69459ef0-1a50-4220-a7fc-3fd17eaaed15
+- apiVersion: v1
+  data:
+    ca.crt: |
+      -----BEGIN CERTIFICATE-----
+      MIIDBjCCAe6gAwIBAgIBATANBgkqhkiG9w0BAQsFADAVMRMwEQYDVQQDEwptaW5p
+      a3ViZUNBMB4XDTI2MDkxODE0NDQwOVoXDTM2MDkxNjE0NDQwOVowFTETMBEGA1UE
+      AxMKbWluaWt1YmVDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANGM
+      XcD3wofAwi6Y+2DPrezQCKzVVA6P9LcanARbOkwAFM6SrbfWdxX/mKuUZ78v9oUw
+      f9LffkhfI41iFaoMuipSEV5awhtM02R7T0uaMxXAlMB7CMxtYnKErPlpJp3kmpnu
+      6enCcvWZRNaG+ewpms0M1l3iE0RN7im7+hyhbmxVGMMWL3AJ6J1imzfJRv/MvBhn
+      quN+2qBCrj94EwpcJLbSotjx5i1xRF9DtfEh+PWx/5ifrc2OKX/UVUiP/DeOBlhL
+      Wuxw/EcinfaKoCTH5dy2WDRzTU+mXgIYqP7RAOHhO9WYwo9KNE0QuLA60NK4YjSI
+      UbqH8+qP1Xfl6DvdrrMCAwEAAaNhMF8wDgYDVR0PAQH/BAQDAgKkMB0GA1UdJQQW
+      MBQGCCsGAQUFBwMCBggrBgEFBQcDATAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQW
+      BBSqLHmLW0ujNK6RH3cXHKEcmVjwSjANBgkqhkiG9w0BAQsFAAOCAQEATAlc6nnd
+      prGu306inmDPSmS0F/WzE27fF4LUcJArNUBGPYa1fao0sOjhvTcOVdYNX0mUysl+
+      933Vspjoi3ran5lTEi5mpQVG7C9moQHw5mT8g6UDmQVC6OKbwqk8EiBBxbp4Ga6u
+      LBirL+COH/ROZr/JIhdNr857mHvbUW9RrAVdG9qi4nkGT4ecxUHtowIpLZaIL+0N
+      df4iR2YHxK1DfXf1JnBoEGlJ9SpG2JVOJWfpX3uWqtkdVAWrq72CgdYAXvTHn9ty
+      WmKuXbkCjtZdoAIFfGp+mH1dcn9CpETAcd1V7sPSt+3yV5g/FPnfVf3I1zsKRGEO
+      vzwzldiBq9xOLw==
+      -----END CERTIFICATE-----
+  kind: ConfigMap
+  metadata:
+    annotations:
+      kubernetes.io/description: Contains a CA bundle that can be used to verify the
+        kube-apiserver when using internal endpoints such as the internal service
+        IP or kubernetes.default.svc. No other usage is guaranteed across distributions
+        of Kubernetes clusters.
+    creationTimestamp: "2026-09-19T14:44:21Z"
+    name: kube-root-ca.crt
+    namespace: finops-test
+    resourceVersion: "360"
+    uid: 3f1b792d-6c49-4480-a664-81ff95bfee18
+- apiVersion: v1
+  data:
+    ca.crt: |
+      -----BEGIN CERTIFICATE-----
+      MIIDBjCCAe6gAwIBAgIBATANBgkqhkiG9w0BAQsFADAVMRMwEQYDVQQDEwptaW5p
+      a3ViZUNBMB4XDTI2MDkxODE0NDQwOVoXDTM2MDkxNjE0NDQwOVowFTETMBEGA1UE
+      AxMKbWluaWt1YmVDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANGM
+      XcD3wofAwi6Y+2DPrezQCKzVVA6P9LcanARbOkwAFM6SrbfWdxX/mKuUZ78v9oUw
+      f9LffkhfI41iFaoMuipSEV5awhtM02R7T0uaMxXAlMB7CMxtYnKErPlpJp3kmpnu
+      6enCcvWZRNaG+ewpms0M1l3iE0RN7im7+hyhbmxVGMMWL3AJ6J1imzfJRv/MvBhn
+      quN+2qBCrj94EwpcJLbSotjx5i1xRF9DtfEh+PWx/5ifrc2OKX/UVUiP/DeOBlhL
+      Wuxw/EcinfaKoCTH5dy2WDRzTU+mXgIYqP7RAOHhO9WYwo9KNE0QuLA60NK4YjSI
+      UbqH8+qP1Xfl6DvdrrMCAwEAAaNhMF8wDgYDVR0PAQH/BAQDAgKkMB0GA1UdJQQW
+      MBQGCCsGAQUFBwMCBggrBgEFBQcDATAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQW
+      BBSqLHmLW0ujNK6RH3cXHKEcmVjwSjANBgkqhkiG9w0BAQsFAAOCAQEATAlc6nnd
+      prGu306inmDPSmS0F/WzE27fF4LUcJArNUBGPYa1fao0sOjhvTcOVdYNX0mUysl+
+      933Vspjoi3ran5lTEi5mpQVG7C9moQHw5mT8g6UDmQVC6OKbwqk8EiBBxbp4Ga6u
+      LBirL+COH/ROZr/JIhdNr857mHvbUW9RrAVdG9qi4nkGT4ecxUHtowIpLZaIL+0N
+      df4iR2YHxK1DfXf1JnBoEGlJ9SpG2JVOJWfpX3uWqtkdVAWrq72CgdYAXvTHn9ty
+      WmKuXbkCjtZdoAIFfGp+mH1dcn9CpETAcd1V7sPSt+3yV5g/FPnfVf3I1zsKRGEO
+      vzwzldiBq9xOLw==
+      -----END CERTIFICATE-----
+  kind: ConfigMap
+  metadata:
+    annotations:
+      kubernetes.io/description: Contains a CA bundle that can be used to verify the
+        kube-apiserver when using internal endpoints such as the internal service
+        IP or kubernetes.default.svc. No other usage is guaranteed across distributions
+        of Kubernetes clusters.
+    creationTimestamp: "2026-09-19T14:44:21Z"
+    name: kube-root-ca.crt
+    namespace: kube-node-lease
+    resourceVersion: "361"
+    uid: 50c387d4-57d4-4415-b405-43cd7c489210
+- apiVersion: v1
+  data:
+    jws-kubeconfig-2d4sug: eyJhbGciOiJIUzI1NiIsImtpZCI6IjJkNHN1ZyJ9..KqPXFAHctW8g-i-0fSIoFnXhUP-dU2pSAeoPWxjOsTo
+    kubeconfig: |
+      apiVersion: v1
+      clusters:
+      - cluster:
+          certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCakNDQWU2Z0F3SUJBZ0lCQVRBTkJna3Foa2lHOXcwQkFRc0ZBREFWTVJNd0VRWURWUVFERXdwdGFXNXAKYTNWaVpVTkJNQjRYRFRJMk1Ea3hPREUwTkRRd09Wb1hEVE0yTURreE5qRTBORFF3T1Zvd0ZURVRNQkVHQTFVRQpBeE1LYldsdWFXdDFZbVZEUVRDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTkdNClhjRDN3b2ZBd2k2WSsyRFByZXpRQ0t6VlZBNlA5TGNhbkFSYk9rd0FGTTZTcmJmV2R4WC9tS3VVWjc4djlvVXcKZjlMZmZraGZJNDFpRmFvTXVpcFNFVjVhd2h0TTAyUjdUMHVhTXhYQWxNQjdDTXh0WW5LRXJQbHBKcDNrbXBudQo2ZW5DY3ZXWlJOYUcrZXdwbXMwTTFsM2lFMFJON2ltNytoeWhibXhWR01NV0wzQUo2SjFpbXpmSlJ2L012QmhuCnF1TisycUJDcmo5NEV3cGNKTGJTb3RqeDVpMXhSRjlEdGZFaCtQV3gvNWlmcmMyT0tYL1VWVWlQL0RlT0JsaEwKV3V4dy9FY2luZmFLb0NUSDVkeTJXRFJ6VFUrbVhnSVlxUDdSQU9IaE85V1l3bzlLTkUwUXVMQTYwTks0WWpTSQpVYnFIOCtxUDFYZmw2RHZkcnJNQ0F3RUFBYU5oTUY4d0RnWURWUjBQQVFIL0JBUURBZ0trTUIwR0ExVWRKUVFXCk1CUUdDQ3NHQVFVRkJ3TUNCZ2dyQmdFRkJRY0RBVEFQQmdOVkhSTUJBZjhFQlRBREFRSC9NQjBHQTFVZERnUVcKQkJTcUxIbUxXMHVqTks2UkgzY1hIS0VjbVZqd1NqQU5CZ2txaGtpRzl3MEJBUXNGQUFPQ0FRRUFUQWxjNm5uZApwckd1MzA2aW5tRFBTbVMwRi9XekUyN2ZGNExVY0pBck5VQkdQWWExZmFvMHNPamh2VGNPVmRZTlgwbVV5c2wrCjkzM1ZzcGpvaTNyYW41bFRFaTVtcFFWRzdDOW1vUUh3NW1UOGc2VURtUVZDNk9LYndxazhFaUJCeGJwNEdhNnUKTEJpckwrQ09IL1JPWnIvSkloZE5yODU3bUh2YlVXOVJyQVZkRzlxaTRua0dUNGVjeFVIdG93SXBMWmFJTCswTgpkZjRpUjJZSHhLMURmWGYxSm5Cb0VHbEo5U3BHMkpWT0pXZnBYM3VXcXRrZFZBV3JxNzJDZ2RZQVh2VEhuOXR5CldtS3VYYmtDanRaZG9BSUZmR3ArbUgxZGNuOUNwRVRBY2QxVjdzUFN0KzN5VjVnL0ZQbmZWZjNJMXpzS1JHRU8Kdnp3emxkaUJxOXhPTHc9PQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+          server: https://control-plane.minikube.internal:8443
+        name: ""
+      contexts: null
+      current-context: ""
+      kind: Config
+      users: null
+  kind: ConfigMap
+  metadata:
+    creationTimestamp: "2026-09-19T14:44:14Z"
+    name: cluster-info
+    namespace: kube-public
+    resourceVersion: "370"
+    uid: 251e4966-7518-4bd8-8013-bf4e8d96d3db
+- apiVersion: v1
+  data:
+    ca.crt: |
+      -----BEGIN CERTIFICATE-----
+      MIIDBjCCAe6gAwIBAgIBATANBgkqhkiG9w0BAQsFADAVMRMwEQYDVQQDEwptaW5p
+      a3ViZUNBMB4XDTI2MDkxODE0NDQwOVoXDTM2MDkxNjE0NDQwOVowFTETMBEGA1UE
+      AxMKbWluaWt1YmVDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANGM
+      XcD3wofAwi6Y+2DPrezQCKzVVA6P9LcanARbOkwAFM6SrbfWdxX/mKuUZ78v9oUw
+      f9LffkhfI41iFaoMuipSEV5awhtM02R7T0uaMxXAlMB7CMxtYnKErPlpJp3kmpnu
+      6enCcvWZRNaG+ewpms0M1l3iE0RN7im7+hyhbmxVGMMWL3AJ6J1imzfJRv/MvBhn
+      quN+2qBCrj94EwpcJLbSotjx5i1xRF9DtfEh+PWx/5ifrc2OKX/UVUiP/DeOBlhL
+      Wuxw/EcinfaKoCTH5dy2WDRzTU+mXgIYqP7RAOHhO9WYwo9KNE0QuLA60NK4YjSI
+      UbqH8+qP1Xfl6DvdrrMCAwEAAaNhMF8wDgYDVR0PAQH/BAQDAgKkMB0GA1UdJQQW
+      MBQGCCsGAQUFBwMCBggrBgEFBQcDATAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQW
+      BBSqLHmLW0ujNK6RH3cXHKEcmVjwSjANBgkqhkiG9w0BAQsFAAOCAQEATAlc6nnd
+      prGu306inmDPSmS0F/WzE27fF4LUcJArNUBGPYa1fao0sOjhvTcOVdYNX0mUysl+
+      933Vspjoi3ran5lTEi5mpQVG7C9moQHw5mT8g6UDmQVC6OKbwqk8EiBBxbp4Ga6u
+      LBirL+COH/ROZr/JIhdNr857mHvbUW9RrAVdG9qi4nkGT4ecxUHtowIpLZaIL+0N
+      df4iR2YHxK1DfXf1JnBoEGlJ9SpG2JVOJWfpX3uWqtkdVAWrq72CgdYAXvTHn9ty
+      WmKuXbkCjtZdoAIFfGp+mH1dcn9CpETAcd1V7sPSt+3yV5g/FPnfVf3I1zsKRGEO
+      vzwzldiBq9xOLw==
+      -----END CERTIFICATE-----
+  kind: ConfigMap
+  metadata:
+    annotations:
+      kubernetes.io/description: Contains a CA bundle that can be used to verify the
+        kube-apiserver when using internal endpoints such as the internal service
+        IP or kubernetes.default.svc. No other usage is guaranteed across distributions
+        of Kubernetes clusters.
+    creationTimestamp: "2026-09-19T14:44:21Z"
+    name: kube-root-ca.crt
+    namespace: kube-public
+    resourceVersion: "362"
+    uid: b6398a31-c7f0-46a0-86cf-c043f21eeb3d
+- apiVersion: v1
+  data:
+    Corefile: |
+      .:53 {
+          log
+          errors
+          health {
+             lameduck 5s
+          }
+          ready
+          kubernetes cluster.local in-addr.arpa ip6.arpa {
+             pods insecure
+             fallthrough in-addr.arpa ip6.arpa
+             ttl 30
+          }
+          prometheus :9153
+          hosts {
+             192.168.49.1 host.minikube.internal
+             fallthrough
+          }
+          forward . /etc/resolv.conf {
+             max_concurrent 1000
+          }
+          cache 30 {
+             disable success cluster.local
+             disable denial cluster.local
+          }
+          loop
+          reload
+          loadbalance
+      }
+  kind: ConfigMap
+  metadata:
+    creationTimestamp: "2026-09-19T14:44:15Z"
+    name: coredns
+    namespace: kube-system
+    resourceVersion: "268"
+    uid: 8e599912-b746-4034-8ceb-ec0192211c23
+- apiVersion: v1
+  data:
+    client-ca-file: |
+      -----BEGIN CERTIFICATE-----
+      MIIDBjCCAe6gAwIBAgIBATANBgkqhkiG9w0BAQsFADAVMRMwEQYDVQQDEwptaW5p
+      a3ViZUNBMB4XDTI2MDkxODE0NDQwOVoXDTM2MDkxNjE0NDQwOVowFTETMBEGA1UE
+      AxMKbWluaWt1YmVDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANGM
+      XcD3wofAwi6Y+2DPrezQCKzVVA6P9LcanARbOkwAFM6SrbfWdxX/mKuUZ78v9oUw
+      f9LffkhfI41iFaoMuipSEV5awhtM02R7T0uaMxXAlMB7CMxtYnKErPlpJp3kmpnu
+      6enCcvWZRNaG+ewpms0M1l3iE0RN7im7+hyhbmxVGMMWL3AJ6J1imzfJRv/MvBhn
+      quN+2qBCrj94EwpcJLbSotjx5i1xRF9DtfEh+PWx/5ifrc2OKX/UVUiP/DeOBlhL
+      Wuxw/EcinfaKoCTH5dy2WDRzTU+mXgIYqP7RAOHhO9WYwo9KNE0QuLA60NK4YjSI
+      UbqH8+qP1Xfl6DvdrrMCAwEAAaNhMF8wDgYDVR0PAQH/BAQDAgKkMB0GA1UdJQQW
+      MBQGCCsGAQUFBwMCBggrBgEFBQcDATAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQW
+      BBSqLHmLW0ujNK6RH3cXHKEcmVjwSjANBgkqhkiG9w0BAQsFAAOCAQEATAlc6nnd
+      prGu306inmDPSmS0F/WzE27fF4LUcJArNUBGPYa1fao0sOjhvTcOVdYNX0mUysl+
+      933Vspjoi3ran5lTEi5mpQVG7C9moQHw5mT8g6UDmQVC6OKbwqk8EiBBxbp4Ga6u
+      LBirL+COH/ROZr/JIhdNr857mHvbUW9RrAVdG9qi4nkGT4ecxUHtowIpLZaIL+0N
+      df4iR2YHxK1DfXf1JnBoEGlJ9SpG2JVOJWfpX3uWqtkdVAWrq72CgdYAXvTHn9ty
+      WmKuXbkCjtZdoAIFfGp+mH1dcn9CpETAcd1V7sPSt+3yV5g/FPnfVf3I1zsKRGEO
+      vzwzldiBq9xOLw==
+      -----END CERTIFICATE-----
+    requestheader-allowed-names: '["front-proxy-client"]'
+    requestheader-client-ca-file: |
+      -----BEGIN CERTIFICATE-----
+      MIIDETCCAfmgAwIBAgIIc9tetD5HZYswDQYJKoZIhvcNAQELBQAwGTEXMBUGA1UE
+      AxMOZnJvbnQtcHJveHktY2EwHhcNMjYwOTE5MTQzOTA5WhcNMzYwOTE2MTQ0NDA5
+      WjAZMRcwFQYDVQQDEw5mcm9udC1wcm94eS1jYTCCASIwDQYJKoZIhvcNAQEBBQAD
+      ggEPADCCAQoCggEBANtmN2EMFdz4tSuO3vGtTvZj037hq35r0vB3Gwlkvx3wMYu7
+      kguaOb0YP9Jgx2BKfJ0S96IgGpRH5WfTFIkC+SxS07D/DSS8qxXotRdSsP3G10S5
+      CkQPsX0lvMJEBBDOcTWKNhMTBagQL0y7RFQlntrADoApvbjC3kJxAOUX9Rp+RmFv
+      ZJybA0yVYweOloiEnU2Ww1p0mKZFMIn0AuYA5xWw2k9SdUrgIBjnxWrsS2pPOxtA
+      8ypC7b2pp5x9IKn7MFs53a+2p7OC06AJxp4mCoV7hJzeDmI301Q06cewwuw7gO6R
+      YvqXsXNlMgZmMtDq05Ob7YHPBp+WGdIklKVF+KcCAwEAAaNdMFswDgYDVR0PAQH/
+      BAQDAgKkMA8GA1UdEwEB/wQFMAMBAf8wHQYDVR0OBBYEFB4opfOIWfgYJcnV4Xzx
+      n+1HcqFQMBkGA1UdEQQSMBCCDmZyb250LXByb3h5LWNhMA0GCSqGSIb3DQEBCwUA
+      A4IBAQASJmrpbqELkaqvKC/u9hLplLzXzEl0z/L4OsxBhj3oPWR6ijzyV9215vV6
+      O2C9+LTIaQKxRCWcRJdUy3sJzvSUUlc5BWvYnnvgEGs4TGWJScpKObjsn25El/px
+      L8iRF0VQRfRHVQ5Blztnk/rYlMaPFr+GC6Wc8JusEnXsSIo0NzZqBtkkE/7tfMig
+      jhRkSdA+7U+H7uuhR5iaPIfek7AeDiO67GF3REWZDIsKPU8fIeHZd1k/kjsFHvnD
+      BoisUkM3A5RIvTRyaP/pW8DU0HOtu589Azg8qqOqUgNgapTcgZcsAOFWCWw28HFK
+      QmJid1PsFPXFC2ioz1uQ4bWiJaKh
+      -----END CERTIFICATE-----
+    requestheader-extra-headers-prefix: '["X-Remote-Extra-"]'
+    requestheader-group-headers: '["X-Remote-Group"]'
+    requestheader-username-headers: '["X-Remote-User"]'
+  kind: ConfigMap
+  metadata:
+    creationTimestamp: "2026-09-19T14:44:13Z"
+    name: extension-apiserver-authentication
+    namespace: kube-system
+    resourceVersion: "21"
+    uid: ec59e2ba-53e1-4cc9-85ea-8b1d44c22961
+- apiVersion: v1
+  data:
+    since: "2026-09-19"
+  kind: ConfigMap
+  metadata:
+    creationTimestamp: "2026-09-19T14:44:13Z"
+    name: kube-apiserver-legacy-service-account-token-tracking
+    namespace: kube-system
+    resourceVersion: "28"
+    uid: 93529c02-6d49-41bf-a105-8024a3e0377d
+- apiVersion: v1
+  data:
+    config.conf: |-
+      apiVersion: kubeproxy.config.k8s.io/v1alpha1
+      bindAddress: 0.0.0.0
+      bindAddressHardFail: false
+      clientConnection:
+        acceptContentTypes: ""
+        burst: 0
+        contentType: ""
+        kubeconfig: /var/lib/kube-proxy/kubeconfig.conf
+        qps: 0
+      clusterCIDR: 10.244.0.0/16
+      configSyncPeriod: 0s
+      conntrack:
+        maxPerCore: 0
+        min: null
+        tcpBeLiberal: false
+        tcpCloseWaitTimeout: 0s
+        tcpEstablishedTimeout: 0s
+        udpStreamTimeout: 0s
+        udpTimeout: 0s
+      detectLocal:
+        bridgeInterface: ""
+        interfaceNamePrefix: ""
+      detectLocalMode: ""
+      enableProfiling: false
+      healthzBindAddress: ""
+      hostnameOverride: ""
+      iptables:
+        localhostNodePorts: null
+        masqueradeAll: false
+        masqueradeBit: null
+        minSyncPeriod: 0s
+        syncPeriod: 0s
+      ipvs:
+        excludeCIDRs: null
+        minSyncPeriod: 0s
+        scheduler: ""
+        strictARP: false
+        syncPeriod: 0s
+        tcpFinTimeout: 0s
+        tcpTimeout: 0s
+        udpTimeout: 0s
+      kind: KubeProxyConfiguration
+      logging:
+        flushFrequency: 0
+        options:
+          json:
+            infoBufferSize: "0"
+          text:
+            infoBufferSize: "0"
+        verbosity: 0
+      metricsBindAddress: 0.0.0.0:10249
+      mode: ""
+      nftables:
+        masqueradeAll: false
+        masqueradeBit: null
+        minSyncPeriod: 0s
+        syncPeriod: 0s
+      nodePortAddresses: null
+      oomScoreAdj: null
+      portRange: ""
+      showHiddenMetricsForVersion: ""
+      winkernel:
+        enableDSR: false
+        forwardHealthCheckVip: false
+        networkName: ""
+        rootHnsEndpointName: ""
+        sourceVip: ""
+    kubeconfig.conf: |-
+      apiVersion: v1
+      kind: Config
+      clusters:
+      - cluster:
+          certificate-authority: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+          server: https://control-plane.minikube.internal:8443
+        name: default
+      contexts:
+      - context:
+          cluster: default
+          namespace: default
+          user: default
+        name: default
+      current-context: default
+      users:
+      - name: default
+        user:
+          tokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+  kind: ConfigMap
+  metadata:
+    creationTimestamp: "2026-09-19T14:44:15Z"
+    labels:
+      app: kube-proxy
+    name: kube-proxy
+    namespace: kube-system
+    resourceVersion: "250"
+    uid: 16a07768-8f29-40ac-986d-83b6dbcdcd0a
+- apiVersion: v1
+  data:
+    ca.crt: |
+      -----BEGIN CERTIFICATE-----
+      MIIDBjCCAe6gAwIBAgIBATANBgkqhkiG9w0BAQsFADAVMRMwEQYDVQQDEwptaW5p
+      a3ViZUNBMB4XDTI2MDkxODE0NDQwOVoXDTM2MDkxNjE0NDQwOVowFTETMBEGA1UE
+      AxMKbWluaWt1YmVDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANGM
+      XcD3wofAwi6Y+2DPrezQCKzVVA6P9LcanARbOkwAFM6SrbfWdxX/mKuUZ78v9oUw
+      f9LffkhfI41iFaoMuipSEV5awhtM02R7T0uaMxXAlMB7CMxtYnKErPlpJp3kmpnu
+      6enCcvWZRNaG+ewpms0M1l3iE0RN7im7+hyhbmxVGMMWL3AJ6J1imzfJRv/MvBhn
+      quN+2qBCrj94EwpcJLbSotjx5i1xRF9DtfEh+PWx/5ifrc2OKX/UVUiP/DeOBlhL
+      Wuxw/EcinfaKoCTH5dy2WDRzTU+mXgIYqP7RAOHhO9WYwo9KNE0QuLA60NK4YjSI
+      UbqH8+qP1Xfl6DvdrrMCAwEAAaNhMF8wDgYDVR0PAQH/BAQDAgKkMB0GA1UdJQQW
+      MBQGCCsGAQUFBwMCBggrBgEFBQcDATAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQW
+      BBSqLHmLW0ujNK6RH3cXHKEcmVjwSjANBgkqhkiG9w0BAQsFAAOCAQEATAlc6nnd
+      prGu306inmDPSmS0F/WzE27fF4LUcJArNUBGPYa1fao0sOjhvTcOVdYNX0mUysl+
+      933Vspjoi3ran5lTEi5mpQVG7C9moQHw5mT8g6UDmQVC6OKbwqk8EiBBxbp4Ga6u
+      LBirL+COH/ROZr/JIhdNr857mHvbUW9RrAVdG9qi4nkGT4ecxUHtowIpLZaIL+0N
+      df4iR2YHxK1DfXf1JnBoEGlJ9SpG2JVOJWfpX3uWqtkdVAWrq72CgdYAXvTHn9ty
+      WmKuXbkCjtZdoAIFfGp+mH1dcn9CpETAcd1V7sPSt+3yV5g/FPnfVf3I1zsKRGEO
+      vzwzldiBq9xOLw==
+      -----END CERTIFICATE-----
+  kind: ConfigMap
+  metadata:
+    annotations:
+      kubernetes.io/description: Contains a CA bundle that can be used to verify the
+        kube-apiserver when using internal endpoints such as the internal service
+        IP or kubernetes.default.svc. No other usage is guaranteed across distributions
+        of Kubernetes clusters.
+    creationTimestamp: "2026-09-19T14:44:21Z"
+    name: kube-root-ca.crt
+    namespace: kube-system
+    resourceVersion: "364"
+    uid: fc76225d-5d9a-47b3-8621-4067b3cfc661
+- apiVersion: v1
+  data:
+    ClusterConfiguration: |
+      apiServer:
+        certSANs:
+        - 127.0.0.1
+        - localhost
+        - 192.168.49.2
+        extraArgs:
+        - name: enable-admission-plugins
+          value: NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,DefaultTolerationSeconds,NodeRestriction,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota
+      apiVersion: kubeadm.k8s.io/v1beta4
+      caCertificateValidityPeriod: 87600h0m0s
+      certificateValidityPeriod: 8760h0m0s
+      certificatesDir: /var/lib/minikube/certs
+      clusterName: mk
+      controlPlaneEndpoint: control-plane.minikube.internal:8443
+      controllerManager:
+        extraArgs:
+        - name: allocate-node-cidrs
+          value: "true"
+        - name: leader-elect
+          value: "false"
+      dns: {}
+      encryptionAlgorithm: RSA-2048
+      etcd:
+        local:
+          dataDir: /var/lib/minikube/etcd
+      imageRepository: registry.k8s.io
+      kind: ClusterConfiguration
+      kubernetesVersion: v1.35.1
+      networking:
+        dnsDomain: cluster.local
+        podSubnet: 10.244.0.0/16
+        serviceSubnet: 10.96.0.0/12
+      proxy: {}
+      scheduler:
+        extraArgs:
+        - name: leader-elect
+          value: "false"
+  kind: ConfigMap
+  metadata:
+    creationTimestamp: "2026-09-19T14:44:14Z"
+    name: kubeadm-config
+    namespace: kube-system
+    resourceVersion: "207"
+    uid: 221c4425-7dec-40d1-a2c1-217d00c7efe4
+- apiVersion: v1
+  data:
+    kubelet: |
+      apiVersion: kubelet.config.k8s.io/v1beta1
+      authentication:
+        anonymous:
+          enabled: false
+        webhook:
+          cacheTTL: 0s
+          enabled: true
+        x509:
+          clientCAFile: /var/lib/minikube/certs/ca.crt
+      authorization:
+        mode: Webhook
+        webhook:
+          cacheAuthorizedTTL: 0s
+          cacheUnauthorizedTTL: 0s
+      cgroupDriver: systemd
+      clusterDNS:
+      - 10.96.0.10
+      clusterDomain: cluster.local
+      containerRuntimeEndpoint: unix:///var/run/cri-dockerd.sock
+      cpuManagerReconcilePeriod: 0s
+      crashLoopBackOff: {}
+      evictionHard:
+        imagefs.available: 0%
+        nodefs.available: 0%
+        nodefs.inodesFree: 0%
+      evictionPressureTransitionPeriod: 0s
+      failSwapOn: false
+      fileCheckFrequency: 0s
+      hairpinMode: hairpin-veth
+      healthzBindAddress: 127.0.0.1
+      healthzPort: 10248
+      httpCheckFrequency: 0s
+      imageGCHighThresholdPercent: 100
+      imageMaximumGCAge: 0s
+      imageMinimumGCAge: 0s
+      kind: KubeletConfiguration
+      logging:
+        flushFrequency: 0
+        options:
+          json:
+            infoBufferSize: "0"
+          text:
+            infoBufferSize: "0"
+        verbosity: 0
+      memorySwap: {}
+      nodeStatusReportFrequency: 0s
+      nodeStatusUpdateFrequency: 0s
+      rotateCertificates: true
+      runtimeRequestTimeout: 15m0s
+      shutdownGracePeriod: 0s
+      shutdownGracePeriodCriticalPods: 0s
+      staticPodPath: /etc/kubernetes/manifests
+      streamingConnectionIdleTimeout: 0s
+      syncFrequency: 0s
+      volumeStatsAggPeriod: 0s
+  kind: ConfigMap
+  metadata:
+    creationTimestamp: "2026-09-19T14:44:14Z"
+    name: kubelet-config
+    namespace: kube-system
+    resourceVersion: "210"
+    uid: 4d95bac3-5583-45ed-bbfe-f84d1552ce9c
+- apiVersion: v1
+  data:
+    ca.crt: |
+      -----BEGIN CERTIFICATE-----
+      MIIDBjCCAe6gAwIBAgIBATANBgkqhkiG9w0BAQsFADAVMRMwEQYDVQQDEwptaW5p
+      a3ViZUNBMB4XDTI2MDkxODE0NDQwOVoXDTM2MDkxNjE0NDQwOVowFTETMBEGA1UE
+      AxMKbWluaWt1YmVDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANGM
+      XcD3wofAwi6Y+2DPrezQCKzVVA6P9LcanARbOkwAFM6SrbfWdxX/mKuUZ78v9oUw
+      f9LffkhfI41iFaoMuipSEV5awhtM02R7T0uaMxXAlMB7CMxtYnKErPlpJp3kmpnu
+      6enCcvWZRNaG+ewpms0M1l3iE0RN7im7+hyhbmxVGMMWL3AJ6J1imzfJRv/MvBhn
+      quN+2qBCrj94EwpcJLbSotjx5i1xRF9DtfEh+PWx/5ifrc2OKX/UVUiP/DeOBlhL
+      Wuxw/EcinfaKoCTH5dy2WDRzTU+mXgIYqP7RAOHhO9WYwo9KNE0QuLA60NK4YjSI
+      UbqH8+qP1Xfl6DvdrrMCAwEAAaNhMF8wDgYDVR0PAQH/BAQDAgKkMB0GA1UdJQQW
+      MBQGCCsGAQUFBwMCBggrBgEFBQcDATAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQW
+      BBSqLHmLW0ujNK6RH3cXHKEcmVjwSjANBgkqhkiG9w0BAQsFAAOCAQEATAlc6nnd
+      prGu306inmDPSmS0F/WzE27fF4LUcJArNUBGPYa1fao0sOjhvTcOVdYNX0mUysl+
+      933Vspjoi3ran5lTEi5mpQVG7C9moQHw5mT8g6UDmQVC6OKbwqk8EiBBxbp4Ga6u
+      LBirL+COH/ROZr/JIhdNr857mHvbUW9RrAVdG9qi4nkGT4ecxUHtowIpLZaIL+0N
+      df4iR2YHxK1DfXf1JnBoEGlJ9SpG2JVOJWfpX3uWqtkdVAWrq72CgdYAXvTHn9ty
+      WmKuXbkCjtZdoAIFfGp+mH1dcn9CpETAcd1V7sPSt+3yV5g/FPnfVf3I1zsKRGEO
+      vzwzldiBq9xOLw==
+      -----END CERTIFICATE-----
+  kind: ConfigMap
+  metadata:
+    annotations:
+      kubernetes.io/description: Contains a CA bundle that can be used to verify the
+        kube-apiserver when using internal endpoints such as the internal service
+        IP or kubernetes.default.svc. No other usage is guaranteed across distributions
+        of Kubernetes clusters.
+    creationTimestamp: "2026-09-19T14:44:21Z"
+    name: kube-root-ca.crt
+    namespace: monitoring
+    resourceVersion: "365"
+    uid: 1f08d36f-7451-4efa-9280-a5a2ec9508f0
+- apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    creationTimestamp: "2026-09-19T14:45:01Z"
+    labels:
+      app.kubernetes.io/managed-by: prometheus-operator
+      managed-by: prometheus-operator
+      prometheus-name: monitoring-kube-prometheus-prometheus
+    name: prometheus-monitoring-kube-prometheus-prometheus-rulefiles-0
+    namespace: monitoring
+    ownerReferences:
+    - apiVersion: monitoring.coreos.com/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Prometheus
+      name: monitoring-kube-prometheus-prometheus
+      uid: c57fc6c8-0409-47db-a5fd-ae106ba03499
+    resourceVersion: "633"
+    uid: 7e751c31-f244-4445-8c8d-8c1026a14972
+kind: List
+metadata:
+  resourceVersion: ""

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cpu-positive
+  namespace: finops-test
+  labels: {finops-test: "true", finops-role: positive}
+spec:
+  restartPolicy: Never
+  containers:
+    - name: stress
+      image: alexeiled/stress-ng@sha256:91f1313a67e3c8c23f3c75855019d01c4a43e2f872b099f720047f03309d8ad4
+      args: ["--cpu", "1", "--cpu-load", "10"]
+      resources:
+        requests: {cpu: "1000m", memory: "8Mi"}
+        limits: {cpu: "1500m", memory: "64Mi"}
